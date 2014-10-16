@@ -117,3 +117,7 @@ GitHost.prototype.file = function (P) {
     comittish: this.comittish || "master"
   })
 }
+
+GitHost.prototype.toString = function () {
+  return this[this.default||"sshurl"]()
+}

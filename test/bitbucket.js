@@ -11,6 +11,7 @@ test("fromUrl(bitbucket url)", function (t) {
     t.is( hostinfo.https().toLowerCase(), "https://bitbucket.org/a/b.git" + hash, label + " -> https" )
     t.is( hostinfo.ssh().toLowerCase(), "git@bitbucket.org:a/b.git" + hash, label + " -> ssh" )
     t.is( hostinfo.sshurl().toLowerCase(), "git+ssh://git@bitbucket.org/a/b.git" + hash, label + " -> sshurl" )
+    t.is( (""+hostinfo).toLowerCase(), "git+ssh://git@bitbucket.org/a/b.git" + hash, label + " -> stringify" )
     t.is( hostinfo.file("C").toLowerCase(), "https://bitbucket.org/a/b/raw/"+(branch||"master")+"/c", label + " -> file" )
   }
 

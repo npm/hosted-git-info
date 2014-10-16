@@ -12,6 +12,7 @@ test("fromUrl(gitlab url)", function (t) {
     t.is( hostinfo.https().toLowerCase(), "https://gitlab.com/a/b.git" + hash, label + " -> https" )
     t.is( hostinfo.ssh().toLowerCase(), "git@gitlab.com:a/b.git" + hash, label + " -> ssh" )
     t.is( hostinfo.sshurl().toLowerCase(), "git+ssh://git@gitlab.com/a/b.git" + hash, label + " -> sshurl" )
+    t.is( (""+hostinfo).toLowerCase(), "git+ssh://git@gitlab.com/a/b.git" + hash, label + " -> stringify" )
     t.is( hostinfo.file("C").toLowerCase(), "https://gitlab.com/a/b/raw/"+(branch||"master")+"/c", label + " -> file" )
   }
 

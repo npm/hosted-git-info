@@ -12,6 +12,7 @@ test("fromUrl(github url)", function (t) {
     t.is( hostinfo.https().toLowerCase(), "https://github.com/a/b.git" + hash, label + " -> https" )
     t.is( hostinfo.ssh().toLowerCase(), "git@github.com:a/b.git" + hash, label + " -> ssh" )
     t.is( hostinfo.sshurl().toLowerCase(), "git+ssh://git@github.com/a/b.git" + hash, label + " -> sshurl" )
+    t.is( (""+hostinfo).toLowerCase(), "git+ssh://git@github.com/a/b.git" + hash, label + " -> stringify" )
     t.is( hostinfo.file("C").toLowerCase(), "https://raw.githubusercontent.com/a/b/"+(branch||"master")+"/c", label + " -> file" )
   }
 
