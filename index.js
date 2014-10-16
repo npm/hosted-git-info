@@ -57,13 +57,11 @@ var gitHosts = {
   },
   bitbucket: {
     "protocols": [ "git+ssh", "git+https", "ssh", "https" ],
-    "domain": "bitbucket.org",
-    "filetemplate": "https://{domain}/{user}/{project}/raw/{comittish}/{path}"
+    "domain": "bitbucket.org"
   },
   gitlab: {
     "protocols": [ "git+ssh", "git+https", "ssh", "https" ],
-    "domain": "gitlab.com",
-    "filetemplate": "https://{domain}/{user}/{project}/raw/{comittish}/{path}"
+    "domain": "gitlab.com"
   }
 }
 
@@ -100,19 +98,23 @@ GitHost.prototype._fill = function (template, vars) {
 }
 
 GitHost.prototype.ssh = function () {
-  return this._fill("git@{domain}:{user}/{project}.git{#comittish}")
+  var sshtemplate = this.sshtemplate || "git@{domain}:{user}/{project}.git{#comittish}"
+  return this._fill(sshtemplate)
 }
 
 GitHost.prototype.sshurl = function () {
-  return this._fill("git+ssh://git@{domain}/{user}/{project}.git{#comittish}")
+  var sshurltemplate = this.sshurltemplate || "git+ssh://git@{domain}/{user}/{project}.git{#comittish}"
+  return this._fill(sshurltemplate)
 }
 
 GitHost.prototype.https = function () {
-  return this._fill("https://{domain}/{user}/{project}.git{#comittish}")
+  var httpstemplate = this.httpstemplate || "https://{domain}/{user}/{project}.git{#comittish}"
+  return this._fill(httpstemplate)
 }
 
 GitHost.prototype.file = function (P) {
-  return this._fill(this.filetemplate, {
+  var filetemplate = this.filetemplate || "https://{domain}/{user}/{project}/raw/{comittish}/{path}"
+  return this._fill(filetemplate, {
     path: P.replace(/^[/]+/g, ""),
     comittish: this.comittish || "master"
   })
