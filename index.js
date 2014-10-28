@@ -10,6 +10,7 @@ var GitHost = exports = module.exports = function (type, user, project, comittis
   this.browsetemplate = gitHosts[type].browsetemplate
   this.docstemplate   = gitHosts[type].docstemplate
   this.bugstemplate   = gitHosts[type].bugstemplate
+  this.gittemplate    = gitHosts[type].gittemplate
   this.httpstemplate  = gitHosts[type].httpstemplate
   this.treepath       = gitHosts[type].treepath
   this.user           = user
@@ -68,7 +69,8 @@ var gitHosts = {
     "domain": "github.com",
     "treepath": "tree",
     "filetemplate": "https://raw.githubusercontent.com/{user}/{project}/{comittish}/{path}",
-    "bugstemplate": "https://{domain}/{user}/{project}/issues"
+    "bugstemplate": "https://{domain}/{user}/{project}/issues",
+    "gittemplate": "git://{domain}/{user}/{project}.git{#comittish}"
   },
   bitbucket: {
     "protocols": [ "git+ssh", "git+https", "ssh", "https" ],
@@ -149,6 +151,11 @@ GitHost.prototype.bugs = function() {
 GitHost.prototype.https = function () {
   var httpstemplate = this.httpstemplate || "https://{domain}/{user}/{project}.git{#comittish}"
   return this._fill(httpstemplate)
+}
+
+GitHost.prototype.git = function () {
+  if (! this.gittemplate) return
+  return this._fill(this.gittemplate)
 }
 
 GitHost.prototype.file = function (P) {
