@@ -31,7 +31,7 @@ exports.fromUrl = function (giturl) {
     }
     if (parsed.host != gitHost.domain) return
     if (! gitHost.protocols_re.test(parsed.protocol)) return
-    var matched = parsed.path.match(/^[/]([^/]+)[/]([^/]+?)(?:[.]git)?$/)
+    var matched = parsed.path.match(gitHost.pathmatch)
     if (! matched) return
     return new GitHost(
       V,
@@ -67,6 +67,7 @@ var gitHosts = {
   github: {
     "protocols": [ "git", "git+ssh", "git+https", "ssh", "https" ],
     "domain": "github.com",
+    "pathmatch": /^[/]([^/]+)[/]([^/]+?)(?:[.]git)?$/,
     "treepath": "tree",
     "filetemplate": "https://raw.githubusercontent.com/{user}/{project}/{comittish}/{path}",
     "bugstemplate": "https://{domain}/{user}/{project}/issues",
@@ -75,11 +76,13 @@ var gitHosts = {
   bitbucket: {
     "protocols": [ "git+ssh", "git+https", "ssh", "https" ],
     "domain": "bitbucket.org",
+    "pathmatch": /^[/]([^/]+)[/]([^/]+?)(?:[.]git)?$/,
     "treepath": "src"
   },
   gitlab: {
     "protocols": [ "git+ssh", "git+https", "ssh", "https" ],
     "domain": "gitlab.com",
+    "pathmatch": /^[/]([^/]+)[/]([^/]+?)(?:[.]git)?$/,
     "treepath": "tree",
     "docstemplate": "https://{domain}/{user}/{project}{/tree/comittish}#README",
     "bugstemplate": "https://{domain}/{user}/{project}/issues"
