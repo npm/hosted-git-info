@@ -7,6 +7,7 @@ var GitHost = exports = module.exports = function (type, user, project, comittis
   this.filetemplate   = gitHosts[type].filetemplate
   this.sshtemplate    = gitHosts[type].sshtemplate
   this.sshurltemplate = gitHosts[type].sshurltemplate
+  this.browsetemplate = gitHosts[type].browsetemplate
   this.httpstemplate  = gitHosts[type].httpstemplate
   this.user           = user
   this.project        = project
@@ -60,11 +61,13 @@ var gitHosts = {
   },
   bitbucket: {
     "protocols": [ "git+ssh", "git+https", "ssh", "https" ],
-    "domain": "bitbucket.org"
+    "domain": "bitbucket.org",
+    "browsetemplate": "https://bitbucket.org/{user}/{project}/overview"
   },
   gitlab: {
     "protocols": [ "git+ssh", "git+https", "ssh", "https" ],
-    "domain": "gitlab.com"
+    "domain": "gitlab.com",
+    "browsetemplate": "https://gitlab.com/{user}/{project}"
   }
 }
 
@@ -91,8 +94,8 @@ GitHost.prototype._fill = function (template, vars) {
   if (!vars) vars = {}
   var self = this
   Object.keys(this).forEach(function(K){ if (self[K]!=null && vars[K]==null) vars[K] = self[K] })
-  Object.keys(vars).forEach(function(K){ vars[K] = encodeURIComponent(vars[K]) })
   vars["#comittish"] = vars.comittish ? "#" + vars.comittish : ""
+  Object.keys(vars).forEach(function(K){ (K[0]!='#') && (vars[K] = encodeURIComponent(vars[K])) })
   var res = template
   Object.keys(vars).forEach(function(K){
     res = res.replace(new RegExp("[{]" + K + "[}]", "g"), vars[K])
@@ -108,6 +111,13 @@ GitHost.prototype.ssh = function () {
 GitHost.prototype.sshurl = function () {
   var sshurltemplate = this.sshurltemplate || "git+ssh://git@{domain}/{user}/{project}.git{#comittish}"
   return this._fill(sshurltemplate)
+}
+
+GitHost.prototype.browse = function () {
+  var browsetemplate = this.browsetemplate || "https://{domain}/{user}/{project}{#/comittish}"
+  return this._fill(browsetemplate, {
+    "#/comittish": this.comittish ? "/tree/" + this.comittish : ""
+  })
 }
 
 GitHost.prototype.https = function () {

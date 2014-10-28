@@ -45,6 +45,10 @@ would return `https://raw.githubusercontent.com/npm/hosted-git-info/v1.0.0/packa
 
 eg, `github:npm/hosted-git-info`
 
+* info.browse()
+
+eg, `https://github.com/npm/hosted-git-info/tree/v1.2.0`
+
 * info.https()
 
 eg, `https://github.com/npm/hosted-git-info.git`

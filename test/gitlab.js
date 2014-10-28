@@ -10,6 +10,7 @@ test("fromUrl(gitlab url)", function (t) {
     t.ok(hostinfo, label)
     if (! hostinfo) return
     t.is( hostinfo.https().toLowerCase(), "https://gitlab.com/a/b.git" + hash, label + " -> https" )
+    t.is( hostinfo.browse().toLowerCase(), "https://gitlab.com/a/b", label + " -> browse" )
     t.is( hostinfo.ssh().toLowerCase(), "git@gitlab.com:a/b.git" + hash, label + " -> ssh" )
     t.is( hostinfo.sshurl().toLowerCase(), "git+ssh://git@gitlab.com/a/b.git" + hash, label + " -> sshurl" )
     t.is( (""+hostinfo).toLowerCase(), "git+ssh://git@gitlab.com/a/b.git" + hash, label + " -> stringify" )
