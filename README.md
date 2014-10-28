@@ -49,6 +49,14 @@ eg, `github:npm/hosted-git-info`
 
 eg, `https://github.com/npm/hosted-git-info/tree/v1.2.0`
 
+* info.bugs()
+
+eg, `https://github.com/npm/hosted-git-info/issues`
+
+* info.docs()
+
+eg, `https://github.com/npm/hosted-git-info/tree/v1.2.0#readme`
+
 * info.https()
 
 eg, `https://github.com/npm/hosted-git-info.git`

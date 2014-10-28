@@ -8,7 +8,10 @@ var GitHost = exports = module.exports = function (type, user, project, comittis
   this.sshtemplate    = gitHosts[type].sshtemplate
   this.sshurltemplate = gitHosts[type].sshurltemplate
   this.browsetemplate = gitHosts[type].browsetemplate
+  this.docstemplate   = gitHosts[type].docstemplate
+  this.bugstemplate   = gitHosts[type].bugstemplate
   this.httpstemplate  = gitHosts[type].httpstemplate
+  this.treepath       = gitHosts[type].treepath
   this.user           = user
   this.project        = project
   this.comittish      = comittish
@@ -57,17 +60,21 @@ var gitHosts = {
   github: {
     "protocols": [ "git", "git+ssh", "git+https", "ssh", "https" ],
     "domain": "github.com",
-    "filetemplate": "https://raw.githubusercontent.com/{user}/{project}/{comittish}/{path}"
+    "treepath": "tree",
+    "filetemplate": "https://raw.githubusercontent.com/{user}/{project}/{comittish}/{path}",
+    "bugstemplate": "https://{domain}/{user}/{project}/issues"
   },
   bitbucket: {
     "protocols": [ "git+ssh", "git+https", "ssh", "https" ],
     "domain": "bitbucket.org",
-    "browsetemplate": "https://bitbucket.org/{user}/{project}/overview"
+    "treepath": "src"
   },
   gitlab: {
     "protocols": [ "git+ssh", "git+https", "ssh", "https" ],
     "domain": "gitlab.com",
-    "browsetemplate": "https://gitlab.com/{user}/{project}"
+    "treepath": "tree",
+    "docstemplate": "https://{domain}/{user}/{project}{/tree/comittish}#README",
+    "bugstemplate": "https://{domain}/{user}/{project}/issues"
   }
 }
 
@@ -91,11 +98,16 @@ GitHost.prototype.path = function () {
 }
 
 GitHost.prototype._fill = function (template, vars) {
+  if (! template) throw new Error("BOOM")
   if (!vars) vars = {}
   var self = this
   Object.keys(this).forEach(function(K){ if (self[K]!=null && vars[K]==null) vars[K] = self[K] })
-  vars["#comittish"] = vars.comittish ? "#" + vars.comittish : ""
+  var rawComittish = vars.comittish
   Object.keys(vars).forEach(function(K){ (K[0]!='#') && (vars[K] = encodeURIComponent(vars[K])) })
+  vars["#comittish"] = rawComittish ? "#" + rawComittish : ""
+  vars["/tree/comittish"] = vars.comittish ? "/"+vars.treepath+"/" + vars.comittish : "",
+  vars["/src/comittish"] = vars.comittish ? "/src/" + vars.comittish : "",
+  vars.comittish = vars.comittish || "master"
   var res = template
   Object.keys(vars).forEach(function(K){
     res = res.replace(new RegExp("[{]" + K + "[}]", "g"), vars[K])
@@ -114,10 +126,18 @@ GitHost.prototype.sshurl = function () {
 }
 
 GitHost.prototype.browse = function () {
-  var browsetemplate = this.browsetemplate || "https://{domain}/{user}/{project}{#/comittish}"
-  return this._fill(browsetemplate, {
-    "#/comittish": this.comittish ? "/tree/" + this.comittish : ""
-  })
+  var browsetemplate = this.browsetemplate || "https://{domain}/{user}/{project}{/tree/comittish}"
+  return this._fill(browsetemplate)
+}
+
+GitHost.prototype.docs = function () {
+  var docstemplate = this.docstemplate || "https://{domain}/{user}/{project}{/tree/comittish}#readme"
+  return this._fill(docstemplate)
+}
+
+GitHost.prototype.bugs = function() {
+  if (! this.bugstemplate) return
+  return this._fill(this.bugstemplate)
 }
 
 GitHost.prototype.https = function () {
@@ -128,8 +148,7 @@ GitHost.prototype.https = function () {
 GitHost.prototype.file = function (P) {
   var filetemplate = this.filetemplate || "https://{domain}/{user}/{project}/raw/{comittish}/{path}"
   return this._fill(filetemplate, {
-    path: P.replace(/^[/]+/g, ""),
-    comittish: this.comittish || "master"
+    path: P.replace(/^[/]+/g, "")
   })
 }
 

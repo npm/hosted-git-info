@@ -9,7 +9,8 @@ test("fromUrl(bitbucket url)", function (t) {
     t.ok(hostinfo, label)
     if (! hostinfo) return
     t.is( hostinfo.https().toLowerCase(), "https://bitbucket.org/a/b.git" + hash, label + " -> https" )
-    t.is( hostinfo.browse().toLowerCase(), "https://bitbucket.org/a/b/overview", label + " -> browse" )
+    t.is( hostinfo.browse().toLowerCase(), "https://bitbucket.org/a/b" + (branch ? "/src/" + branch : ""), label + " -> browse" )
+    t.is( hostinfo.docs().toLowerCase(), "https://bitbucket.org/a/b" + (branch ? "/src/" + branch : "") + "#readme", label + " -> docs" )
     t.is( hostinfo.ssh().toLowerCase(), "git@bitbucket.org:a/b.git" + hash, label + " -> ssh" )
     t.is( hostinfo.sshurl().toLowerCase(), "git+ssh://git@bitbucket.org/a/b.git" + hash, label + " -> sshurl" )
     t.is( (""+hostinfo).toLowerCase(), "git+ssh://git@bitbucket.org/a/b.git" + hash, label + " -> stringify" )

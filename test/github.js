@@ -11,6 +11,8 @@ test("fromUrl(github url)", function (t) {
     if (! hostinfo) return
     t.is( hostinfo.https().toLowerCase(), "https://github.com/a/b.git" + hash, label + " -> https" )
     t.is( hostinfo.browse().toLowerCase(), "https://github.com/a/b" + (branch ? "/tree/" + branch : ""), label + " -> browse" )
+    t.is( hostinfo.bugs().toLowerCase(), "https://github.com/a/b/issues", label + " -> bugs" )
+    t.is( hostinfo.docs().toLowerCase(), "https://github.com/a/b" + (branch ? "/tree/" + branch : "") + "#readme", label + " -> docs" )
     t.is( hostinfo.ssh().toLowerCase(), "git@github.com:a/b.git" + hash, label + " -> ssh" )
     t.is( hostinfo.sshurl().toLowerCase(), "git+ssh://git@github.com/a/b.git" + hash, label + " -> sshurl" )
     t.is( (""+hostinfo).toLowerCase(), "git+ssh://git@github.com/a/b.git" + hash, label + " -> stringify" )
