@@ -21,7 +21,7 @@ GitHost.prototype = {}
 
 exports.fromUrl = function (giturl) {
   if (giturl == null || giturl == "") return
-  var parsed = parseGitUrl(giturl)
+  var parsed = parseGitUrl(maybeGitHubShorthand(giturl) ? "github:" + giturl : giturl)
   var matches = Object.keys(gitHosts).map(function(V) {
     var gitHost = gitHosts[V]
     var comittish = parsed.hash ? decodeURIComponent(parsed.hash.substr(1)) : null
@@ -41,6 +41,18 @@ exports.fromUrl = function (giturl) {
   }).filter(function(V){ return V })
   if (matches.length != 1) return
   return matches[0]
+}
+
+function maybeGitHubShorthand(arg) {
+  // Note: This does not fully test the git ref format.
+  // See https://www.kernel.org/pub/software/scm/git/docs/git-check-ref-format.html
+  //
+  // The only way to do this properly would be to shell out to
+  // git-check-ref-format, and as this is a fast sync function,
+  // we don't want to do that.  Just let git fail if it turns
+  // out that the commit-ish is invalid.
+  // GH usernames cannot start with . or -
+  return /^[^:@%/\s.-][^:@%/\s]*[/][^:@\s/%]+(?:#.*)?$/.test(arg)
 }
 
 var parseGitUrl = function (giturl) {
