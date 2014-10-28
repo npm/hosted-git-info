@@ -2,12 +2,15 @@
 var url = require("url")
 
 var GitHost = exports = module.exports = function (type, user, project, comittish) {
-  this.type         = type
-  this.domain       = gitHosts[type].domain
-  this.filetemplate = gitHosts[type].filetemplate
-  this.user         = user
-  this.project      = project
-  this.comittish    = comittish
+  this.type           = type
+  this.domain         = gitHosts[type].domain
+  this.filetemplate   = gitHosts[type].filetemplate
+  this.sshtemplate    = gitHosts[type].sshtemplate
+  this.sshurltemplate = gitHosts[type].sshurltemplate
+  this.httpstemplate  = gitHosts[type].httpstemplate
+  this.user           = user
+  this.project        = project
+  this.comittish      = comittish
 }
 GitHost.prototype = {}
 
