@@ -19,6 +19,7 @@ var GitHost = exports = module.exports = function (type, user, project, comittis
 GitHost.prototype = {}
 
 exports.fromUrl = function (giturl) {
+  if (giturl == null || giturl == "") return
   var parsed = parseGitUrl(giturl)
   var matches = Object.keys(gitHosts).map(function(V) {
     var gitHost = gitHosts[V]
@@ -38,6 +39,7 @@ exports.fromUrl = function (giturl) {
 }
 
 var parseGitUrl = function (giturl) {
+  if (typeof giturl != "string") giturl = "" + giturl
   var matched = giturl.match(/^([^@]+)@([^:]+):([^/]+[/][^/]+?)(?:[.]git)?(#.*)?$/)
   if (! matched) return url.parse(giturl)
   return {
