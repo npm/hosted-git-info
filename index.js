@@ -114,7 +114,6 @@ GitHost.prototype._fill = function (template, vars) {
   Object.keys(vars).forEach(function(K){ (K[0]!='#') && (vars[K] = encodeURIComponent(vars[K])) })
   vars["#comittish"] = rawComittish ? "#" + rawComittish : ""
   vars["/tree/comittish"] = vars.comittish ? "/"+vars.treepath+"/" + vars.comittish : "",
-  vars["/src/comittish"] = vars.comittish ? "/src/" + vars.comittish : "",
   vars.comittish = vars.comittish || "master"
   var res = template
   Object.keys(vars).forEach(function(K){
