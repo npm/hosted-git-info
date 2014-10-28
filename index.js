@@ -32,7 +32,11 @@ exports.fromUrl = function (giturl) {
     if (! gitHost.protocols_re.test(parsed.protocol)) return
     var matched = parsed.path.match(/^[/]([^/]+)[/]([^/]+?)(?:[.]git)?$/)
     if (! matched) return
-    return new GitHost(V, decodeURIComponent(matched[1]), decodeURIComponent(matched[2]), comittish)
+    return new GitHost(
+      V,
+      matched[1]!=null && decodeURIComponent(matched[1]),
+      matched[2]!=null && decodeURIComponent(matched[2]),
+      comittish)
   }).filter(function(V){ return V })
   if (matches.length != 1) return
   return matches[0]
