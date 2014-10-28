@@ -45,7 +45,7 @@ exports.fromUrl = function (giturl) {
 
 var parseGitUrl = function (giturl) {
   if (typeof giturl != "string") giturl = "" + giturl
-  var matched = giturl.match(/^([^@]+)@([^:]+):([^/]+[/][^/]+?)(?:[.]git)?(#.*)?$/)
+  var matched = giturl.match(/^([^@]+)@([^:]+):[/]?((?:[^/]+[/])?[^/]+?)(?:[.]git)?(#.*)?$/)
   if (! matched) return url.parse(giturl)
   return {
     protocol: "git+ssh:",
@@ -86,7 +86,20 @@ var gitHosts = {
     "treepath": "tree",
     "docstemplate": "https://{domain}/{user}/{project}{/tree/comittish}#README",
     "bugstemplate": "https://{domain}/{user}/{project}/issues"
-  }
+  },
+  gist: {
+    "protocols": [ "git", "git+ssh", "git+https", "ssh", "https" ],
+    "domain": "gist.github.com",
+    "pathmatch": /^[/](?:([^/]+)[/])?(\d+)(?:[.]git)?$/,
+    "filetemplate": "https://gist.githubusercontent.com/{user}/{project}/raw{/comittish}/{path}",
+    "bugstemplate": "https://{domain}/{project}",
+    "gittemplate": "git://{domain}/{project}.git{#comittish}",
+    "sshtemplate": "git@{domain}:/{project}.git{#comittish}",
+    "sshurltemplate": "git+ssh://git@{domain}/{project}.git{#comittish}",
+    "browsetemplate": "https://{domain}/{project}{/comittish}",
+    "docstemplate": "https://{domain}/{project}{/comittish}",
+    "httpstemplate": "https://{domain}/{project}.git{#comittish}",
+  },
 }
 
 Object.keys(gitHosts).forEach(function(host) {
@@ -117,6 +130,7 @@ GitHost.prototype._fill = function (template, vars) {
   Object.keys(vars).forEach(function(K){ (K[0]!='#') && (vars[K] = encodeURIComponent(vars[K])) })
   vars["#comittish"] = rawComittish ? "#" + rawComittish : ""
   vars["/tree/comittish"] = vars.comittish ? "/"+vars.treepath+"/" + vars.comittish : "",
+  vars["/comittish"] = vars.comittish ? "/" + vars.comittish : ""
   vars.comittish = vars.comittish || "master"
   var res = template
   Object.keys(vars).forEach(function(K){
