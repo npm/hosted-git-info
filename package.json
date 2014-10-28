@@ -1,6 +1,6 @@
 {
   "name": "hosted-git-info",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Provides metadata and conversions from repository urls for Github, Bitbucket and Gitlab",
   "main": "index.js",
   "repository": {
