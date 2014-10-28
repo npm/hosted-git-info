@@ -9,13 +9,13 @@ test("fromUrl(gitlab url)", function (t) {
     var hash = branch ? "#" + branch : ""
     t.ok(hostinfo, label)
     if (! hostinfo) return
-    t.is( hostinfo.https().toLowerCase(), "https://gitlab.com/a/b.git" + hash, label + " -> https" )
-    t.is( hostinfo.browse().toLowerCase(), "https://gitlab.com/a/b" + (branch ? "/tree/" + branch : ""), label + " -> browse" )
-    t.is( hostinfo.docs().toLowerCase(), "https://gitlab.com/a/b" + (branch ? "/tree/" + branch : "") + "#readme", label + " -> docs" )
-    t.is( hostinfo.ssh().toLowerCase(), "git@gitlab.com:a/b.git" + hash, label + " -> ssh" )
-    t.is( hostinfo.sshurl().toLowerCase(), "git+ssh://git@gitlab.com/a/b.git" + hash, label + " -> sshurl" )
-    t.is( (""+hostinfo).toLowerCase(), "git+ssh://git@gitlab.com/a/b.git" + hash, label + " -> stringify" )
-    t.is( hostinfo.file("C").toLowerCase(), "https://gitlab.com/a/b/raw/"+(branch||"master")+"/c", label + " -> file" )
+    t.is( hostinfo.https(), "https://gitlab.com/111/222.git" + hash, label + " -> https" )
+    t.is( hostinfo.browse(), "https://gitlab.com/111/222" + (branch ? "/tree/" + branch : ""), label + " -> browse" )
+    t.is( hostinfo.docs(), "https://gitlab.com/111/222" + (branch ? "/tree/" + branch : "") + "#README", label + " -> docs" )
+    t.is( hostinfo.ssh(), "git@gitlab.com:111/222.git" + hash, label + " -> ssh" )
+    t.is( hostinfo.sshurl(), "git+ssh://git@gitlab.com/111/222.git" + hash, label + " -> sshurl" )
+    t.is( (""+hostinfo), "git+ssh://git@gitlab.com/111/222.git" + hash, label + " -> stringify" )
+    t.is( hostinfo.file("C"), "https://gitlab.com/111/222/raw/"+(branch||"master")+"/C", label + " -> file" )
   }
 
   require('./lib/standard-tests')(verify, "gitlab.com", "gitlab")
