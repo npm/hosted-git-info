@@ -20,12 +20,20 @@ test("fromUrl(github url)", function (t) {
     t.is( hostinfo.file("C"), "https://raw.githubusercontent.com/111/222/"+(branch||"master")+"/C", label + " -> file" )
   }
 
+  // github shorturls
   verify("111/222", "github-short")
   verify("111/222#branch", "github-short#branch", "branch")
+
+  // insecure protocols
   verify("git://github.com/111/222", "git")
   verify("git://github.com/111/222.git", "git.git")
   verify("git://github.com/111/222#branch", "git#branch", "branch")
   verify("git://github.com/111/222.git#branch", "git.git#branch", "branch")
+
+  verify("http://github.com/111/222", "http")
+  verify("http://github.com/111/222.git", "http.git")
+  verify("http://github.com/111/222#branch", "http#branch", "branch")
+  verify("http://github.com/111/222.git#branch", "http.git#branch", "branch")
 
   require('./lib/standard-tests')(verify, "github.com", "github")
 

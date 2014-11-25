@@ -77,7 +77,9 @@ var parseGitUrl = function (giturl) {
 
 var gitHosts = {
   github: {
-    "protocols": [ "git", "git+ssh", "git+https", "ssh", "https" ],
+    // First two are insecure and generally shouldn't be used any more, but
+    // they are still supported.
+    "protocols": [ "git", "http", "git+ssh", "git+https", "ssh", "https" ],
     "domain": "github.com",
     "pathmatch": /^[/]([^/]+)[/]([^/]+?)(?:[.]git)?$/,
     "treepath": "tree",
