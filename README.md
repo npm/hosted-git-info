@@ -8,7 +8,7 @@ particular file for direct access without git.
 
 ```javascript
 var hostedGitInfo = require("hosted-git-info")
-var info = hostedGitInfo("git@github.com:npm/hosted-git-info.git")
+var info = hostedGitInfo.fromUrl("git@github.com:npm/hosted-git-info.git")
 /* info looks like:
 {
   type: "github",
@@ -40,7 +40,7 @@ Given the path of a file relative to the repository, returns a URL for
 directly fetching it from the githost.  If no comittish was set then
 `master` will be used as the default.
 
-For example `hostedGitInfo("git@github.com:npm/hosted-git-info.git").file("v1.0.0")`
+For example `hostedGitInfo.fromUrl("git@github.com:npm/hosted-git-info.git").file("v1.0.0")`
 would return `https://raw.githubusercontent.com/npm/hosted-git-info/v1.0.0/package.json`
 
 * info.shortcut()
