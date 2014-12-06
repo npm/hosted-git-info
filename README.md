@@ -8,7 +8,7 @@ particular file for direct access without git.
 
 ```javascript
 var hostedGitInfo = require("hosted-git-info")
-var info = hostedGitInfo("git@github.com:npm/hosted-git-info.git")
+var info = hostedGitInfo.fromUrl("git@github.com:npm/hosted-git-info.git")
 /* info looks like:
 {
   type: "github",
