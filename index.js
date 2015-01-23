@@ -75,6 +75,14 @@ var parseGitUrl = function (giturl) {
   }
 }
 
+var gitHostDefaults = {
+  "sshtemplate": "git@{domain}:{user}/{project}.git{#comittish}",
+  "sshurltemplate": "git+ssh://git@{domain}/{user}/{project}.git{#comittish}",
+  "browsetemplate": "https://{domain}/{user}/{project}{/tree/comittish}",
+  "docstemplate": "https://{domain}/{user}/{project}{/tree/comittish}#readme",
+  "httpstemplate": "https://{domain}/{user}/{project}.git{#comittish}",
+  "filetemplate": "https://{domain}/{user}/{project}/raw/{comittish}/{path}"
+}
 var gitHosts = {
   github: {
     // First two are insecure and generally shouldn't be used any more, but
@@ -154,22 +162,22 @@ GitHost.prototype._fill = function (template, vars) {
 }
 
 GitHost.prototype.ssh = function () {
-  var sshtemplate = this.sshtemplate || "git@{domain}:{user}/{project}.git{#comittish}"
+  var sshtemplate = this.sshtemplate || gitHostDefaults.sshtemplate
   return this._fill(sshtemplate)
 }
 
 GitHost.prototype.sshurl = function () {
-  var sshurltemplate = this.sshurltemplate || "git+ssh://git@{domain}/{user}/{project}.git{#comittish}"
+  var sshurltemplate = this.sshurltemplate || gitHostDefaults.sshurltemplate
   return this._fill(sshurltemplate)
 }
 
 GitHost.prototype.browse = function () {
-  var browsetemplate = this.browsetemplate || "https://{domain}/{user}/{project}{/tree/comittish}"
+  var browsetemplate = this.browsetemplate || gitHostDefaults.browsetemplate
   return this._fill(browsetemplate)
 }
 
 GitHost.prototype.docs = function () {
-  var docstemplate = this.docstemplate || "https://{domain}/{user}/{project}{/tree/comittish}#readme"
+  var docstemplate = this.docstemplate || gitHostDefaults.docstemplate
   return this._fill(docstemplate)
 }
 
@@ -179,7 +187,7 @@ GitHost.prototype.bugs = function() {
 }
 
 GitHost.prototype.https = function () {
-  var httpstemplate = this.httpstemplate || "https://{domain}/{user}/{project}.git{#comittish}"
+  var httpstemplate = this.httpstemplate || gitHostDefaults.httpstemplate
   return this._fill(httpstemplate)
 }
 
@@ -189,7 +197,7 @@ GitHost.prototype.git = function () {
 }
 
 GitHost.prototype.file = function (P) {
-  var filetemplate = this.filetemplate || "https://{domain}/{user}/{project}/raw/{comittish}/{path}"
+  var filetemplate = this.filetemplate || gitHostDefaults.filetemplate
   return this._fill(filetemplate, {
     path: P.replace(/^[/]+/g, "")
   })
