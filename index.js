@@ -136,7 +136,7 @@ GitHost.prototype.path = function () {
 }
 
 GitHost.prototype._fill = function (template, vars) {
-  if (! template) throw new Error("BOOM")
+  if (!template) throw new Error("Tried to fill without template")
   if (!vars) vars = {}
   var self = this
   Object.keys(this).forEach(function(K){ if (self[K]!=null && vars[K]==null) vars[K] = self[K] })
