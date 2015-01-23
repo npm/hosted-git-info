@@ -104,7 +104,7 @@ var gitHosts = {
   gist: {
     "protocols": [ "git", "git+ssh", "git+https", "ssh", "https" ],
     "domain": "gist.github.com",
-    "pathmatch": /^[/](?:([^/]+)[/])?(\d+)(?:[.]git)?$/,
+    "pathmatch": /^[/](?:([^/]+)[/])?([a-z0-9]+)(?:[.]git)?$/,
     "filetemplate": "https://gist.githubusercontent.com/{user}/{project}/raw{/comittish}/{path}",
     "bugstemplate": "https://{domain}/{project}",
     "gittemplate": "git://{domain}/{project}.git{#comittish}",
