@@ -221,5 +221,5 @@ GitHost.prototype.getDefaultRepresentation = function () {
 }
 
 GitHost.prototype.toString = function () {
-  return this[this.default || 'sshurl']() || this.sshurl()
+  return (this[this.default] || this.sshurl)()
 }
