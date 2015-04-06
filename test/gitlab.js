@@ -14,7 +14,7 @@ test("fromUrl(gitlab url)", function (t) {
     t.is( hostinfo.docs(), "https://gitlab.com/111/222" + (branch ? "/tree/" + branch : "") + "#README", label + " -> docs" )
     t.is( hostinfo.ssh(), "git@gitlab.com:111/222.git" + hash, label + " -> ssh" )
     t.is( hostinfo.sshurl(), "git+ssh://git@gitlab.com/111/222.git" + hash, label + " -> sshurl" )
-    t.is( (""+hostinfo), "git+ssh://git@gitlab.com/111/222.git" + hash, label + " -> stringify" )
+    t.is( hostinfo.shortcut(), "gitlab:111/222" + hash, label + " -> shortcut" )
     t.is( hostinfo.file("C"), "https://gitlab.com/111/222/raw/"+(branch||"master")+"/C", label + " -> file" )
   }
 

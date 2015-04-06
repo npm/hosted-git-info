@@ -16,7 +16,7 @@ test("fromUrl(gist url)", function (t) {
     t.is( hostinfo.docs(), "https://gist.github.com/222" + (branch ? "/" + branch : ""), label + " -> docs" )
     t.is( hostinfo.ssh(), "git@gist.github.com:/222.git" + hash, label + " -> ssh" )
     t.is( hostinfo.sshurl(), "git+ssh://git@gist.github.com/222.git" + hash, label + " -> sshurl" )
-    t.is( (""+hostinfo), "git+ssh://git@gist.github.com/222.git" + hash, label + " -> stringify" )
+    t.is( hostinfo.shortcut(), "gist:222" + hash, label + " -> shortcut" )
     if (hostinfo.user) {
       t.is( hostinfo.file("C"), "https://gist.githubusercontent.com/111/222/raw/"+(branch?branch+"/":"")+"C", label + " -> file" )
     }

@@ -1,23 +1,30 @@
 "use strict"
 var url = require("url")
 
-var GitHost = exports = module.exports = function (type, user, project, comittish) {
-  this.type           = type
-  this.domain         = gitHosts[type].domain
-  this.filetemplate   = gitHosts[type].filetemplate
-  this.sshtemplate    = gitHosts[type].sshtemplate
-  this.sshurltemplate = gitHosts[type].sshurltemplate
-  this.browsetemplate = gitHosts[type].browsetemplate
-  this.docstemplate   = gitHosts[type].docstemplate
-  this.bugstemplate   = gitHosts[type].bugstemplate
-  this.gittemplate    = gitHosts[type].gittemplate
-  this.httpstemplate  = gitHosts[type].httpstemplate
-  this.treepath       = gitHosts[type].treepath
-  this.user           = user
-  this.project        = project
-  this.comittish      = comittish
+var GitHost = exports = module.exports = function (type, user, project, comittish, defaultType) {
+  this.type            = type
+  var gitHostInfo = this
+  Object.keys(gitHosts[type]).forEach(function (key) {
+    gitHostInfo[key] = gitHosts[type][key]
+  })
+  this.user            = user
+  this.project         = project
+  this.comittish       = comittish
+  this.default         = defaultType
 }
 GitHost.prototype = {}
+
+var protocolMap = {
+  "git+ssh": "sshurl",
+  "git+https": "https",
+  "ssh": "sshurl",
+  "git": "git"
+}
+
+function protocolToType (protocol) {
+  if (protocol.substr(-1) == ':') protocol = protocol.slice(0,-1)
+  return protocolMap[protocol] || protocol
+}
 
 exports.fromUrl = function (giturl) {
   if (giturl == null || giturl == "") return
@@ -27,17 +34,19 @@ exports.fromUrl = function (giturl) {
     var comittish = parsed.hash ? decodeURIComponent(parsed.hash.substr(1)) : null
     if (parsed.protocol == V + ":") {
       return new GitHost(V,
-        decodeURIComponent(parsed.host), decodeURIComponent(parsed.path.replace(/^[/](.*?)(?:[.]git)?$/, "$1")), comittish)
+        decodeURIComponent(parsed.host), decodeURIComponent(parsed.path.replace(/^[/](.*?)(?:[.]git)?$/, "$1")), comittish, "shortcut")
     }
     if (parsed.host != gitHost.domain) return
     if (! gitHost.protocols_re.test(parsed.protocol)) return
-    var matched = parsed.path.match(gitHost.pathmatch)
+    var pathmatch = gitHost.pathmatch || gitHostDefaults.pathmatch
+    var matched = parsed.path.match(pathmatch)
     if (! matched) return
     return new GitHost(
       V,
       matched[1]!=null && decodeURIComponent(matched[1]),
       matched[2]!=null && decodeURIComponent(matched[2]),
-      comittish)
+      comittish,
+      protocolToType(parsed.protocol))
   }).filter(function(V){ return V })
   if (matches.length != 1) return
   return matches[0]
@@ -81,7 +90,10 @@ var gitHostDefaults = {
   "browsetemplate": "https://{domain}/{user}/{project}{/tree/comittish}",
   "docstemplate": "https://{domain}/{user}/{project}{/tree/comittish}#readme",
   "httpstemplate": "https://{domain}/{user}/{project}.git{#comittish}",
-  "filetemplate": "https://{domain}/{user}/{project}/raw/{comittish}/{path}"
+  "filetemplate": "https://{domain}/{user}/{project}/raw/{comittish}/{path}",
+  "shortcuttemplate": "{type}:{user}/{project}{#comittish}",
+  "pathtemplate": "{user}/{project}{#comittish}",
+  "pathmatch": /^[/]([^/]+)[/]([^/]+?)(?:[.]git)?$/,
 }
 var gitHosts = {
   github: {
@@ -89,7 +101,6 @@ var gitHosts = {
     // they are still supported.
     "protocols": [ "git", "http", "git+ssh", "git+https", "ssh", "https" ],
     "domain": "github.com",
-    "pathmatch": /^[/]([^/]+)[/]([^/]+?)(?:[.]git)?$/,
     "treepath": "tree",
     "filetemplate": "https://raw.githubusercontent.com/{user}/{project}/{comittish}/{path}",
     "bugstemplate": "https://{domain}/{user}/{project}/issues",
@@ -98,13 +109,11 @@ var gitHosts = {
   bitbucket: {
     "protocols": [ "git+ssh", "git+https", "ssh", "https" ],
     "domain": "bitbucket.org",
-    "pathmatch": /^[/]([^/]+)[/]([^/]+?)(?:[.]git)?$/,
     "treepath": "src"
   },
   gitlab: {
     "protocols": [ "git+ssh", "git+https", "ssh", "https" ],
     "domain": "gitlab.com",
-    "pathmatch": /^[/]([^/]+)[/]([^/]+?)(?:[.]git)?$/,
     "treepath": "tree",
     "docstemplate": "https://{domain}/{user}/{project}{/tree/comittish}#README",
     "bugstemplate": "https://{domain}/{user}/{project}/issues"
@@ -121,7 +130,9 @@ var gitHosts = {
     "browsetemplate": "https://{domain}/{project}{/comittish}",
     "docstemplate": "https://{domain}/{project}{/comittish}",
     "httpstemplate": "https://{domain}/{project}.git{#comittish}",
-  },
+    "shortcuttemplate": "{type}:{project}{#comittish}",
+    "pathtemplate": "{project}{#comittish}"
+  }
 }
 
 Object.keys(gitHosts).forEach(function(host) {
@@ -131,20 +142,12 @@ Object.keys(gitHosts).forEach(function(host) {
     }).join("|") + "):$")
 })
 
-GitHost.prototype.shortcut = function () {
-  return this.type + ":" + this.path()
-}
-
 GitHost.prototype.hash = function () {
   return this.comittish ? "#" + this.comittish : ""
 }
 
-GitHost.prototype.path = function () {
-  return this.user + "/" + this.project + this.hash()
-}
-
 GitHost.prototype._fill = function (template, vars) {
-  if (!template) throw new Error("Tried to fill without template")
+  if (!template) return
   if (!vars) vars = {}
   var self = this
   Object.keys(this).forEach(function(K){ if (self[K]!=null && vars[K]==null) vars[K] = self[K] })
@@ -182,8 +185,8 @@ GitHost.prototype.docs = function () {
 }
 
 GitHost.prototype.bugs = function() {
-  if (! this.bugstemplate) return
-  return this._fill(this.bugstemplate)
+  var bugstemplate = this.bugstemplate || gitHostDefaults.bugstemplate
+  return this._fill(bugstemplate)
 }
 
 GitHost.prototype.https = function () {
@@ -192,8 +195,18 @@ GitHost.prototype.https = function () {
 }
 
 GitHost.prototype.git = function () {
-  if (! this.gittemplate) return
-  return this._fill(this.gittemplate)
+  var gittemplate = this.gittemplate || gitHostDefaults.gittemplate
+  return this._fill(gittemplate)
+}
+
+GitHost.prototype.shortcut = function () {
+  var shortcuttemplate = this.shortcuttemplate || gitHostDefaults.shortcuttemplate
+  return this._fill(shortcuttemplate)
+}
+
+GitHost.prototype.path = function () {
+  var pathtemplate = this.pathtemplate || gitHostDefaults.pathtemplate
+  return this._fill(pathtemplate)
 }
 
 GitHost.prototype.file = function (P) {
@@ -203,6 +216,10 @@ GitHost.prototype.file = function (P) {
   })
 }
 
+GitHost.prototype.getDefaultType = function () {
+  return this.default
+}
+
 GitHost.prototype.toString = function () {
-  return this[this.default||"sshurl"]()
+  return this[this.default||"sshurl"]() || this.sshurl()
 }

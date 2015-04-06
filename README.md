@@ -75,6 +75,23 @@ eg, `git@github.com:npm/hosted-git-info.git`
 
 eg, `npm/hosted-git-info`
 
+* info.getDefaultType()
+
+Returns the default output type. The default output type is based on the
+string you passed in to be parsed
+
+* info.toString()
+
+Uses the getDefaultType to call one of the other methods to get a URL for
+this resource. As such `hostedGitInfo.fromUrl(url).toString()` will give
+you a normalized version of the URL that still uses the same protocol.
+
+Shortcuts will still be returned as shortcuts, but the special case github
+form of `org/project` will be normalized to `github:org/project`.
+
+SSH connect strings will be normalized into `git+ssh` URLs.
+
+
 ## Supported hosts
 
 Currently this supports Github, Bitbucket and Gitlab. Pull requests for
