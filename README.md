@@ -75,14 +75,14 @@ eg, `git@github.com:npm/hosted-git-info.git`
 
 eg, `npm/hosted-git-info`
 
-* info.getDefaultType()
+* info.getDefaultRepresentation()
 
 Returns the default output type. The default output type is based on the
 string you passed in to be parsed
 
 * info.toString()
 
-Uses the getDefaultType to call one of the other methods to get a URL for
+Uses the getDefaultRepresentation to call one of the other methods to get a URL for
 this resource. As such `hostedGitInfo.fromUrl(url).toString()` will give
 you a normalized version of the URL that still uses the same protocol.
 

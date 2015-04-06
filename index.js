@@ -216,7 +216,7 @@ GitHost.prototype.file = function (P) {
   })
 }
 
-GitHost.prototype.getDefaultType = function () {
+GitHost.prototype.getDefaultRepresentation = function () {
   return this.default
 }
 
