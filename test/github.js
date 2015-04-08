@@ -8,7 +8,7 @@ test('fromUrl(github url)', function (t) {
     var hash = branch ? '#' + branch : ''
     t.ok(hostinfo, label)
     if (!hostinfo) return
-    t.is(hostinfo.https(), 'https://github.com/111/222.git' + hash, label + ' -> https')
+    t.is(hostinfo.https(), 'git+https://github.com/111/222.git' + hash, label + ' -> https')
     t.is(hostinfo.git(), 'git://github.com/111/222.git' + hash, label + ' -> git')
     t.is(hostinfo.browse(), 'https://github.com/111/222' + (branch ? '/tree/' + branch : ''), label + ' -> browse')
     t.is(hostinfo.bugs(), 'https://github.com/111/222/issues', label + ' -> bugs')

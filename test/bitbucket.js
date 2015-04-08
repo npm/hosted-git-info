@@ -8,7 +8,7 @@ test('fromUrl(bitbucket url)', function (t) {
     var hash = branch ? '#' + branch : ''
     t.ok(hostinfo, label)
     if (!hostinfo) return
-    t.is(hostinfo.https(), 'https://bitbucket.org/111/222.git' + hash, label + ' -> https')
+    t.is(hostinfo.https(), 'git+https://bitbucket.org/111/222.git' + hash, label + ' -> https')
     t.is(hostinfo.browse(), 'https://bitbucket.org/111/222' + (branch ? '/src/' + branch : ''), label + ' -> browse')
     t.is(hostinfo.docs(), 'https://bitbucket.org/111/222' + (branch ? '/src/' + branch : '') + '#readme', label + ' -> docs')
     t.is(hostinfo.ssh(), 'git@bitbucket.org:111/222.git' + hash, label + ' -> ssh')

@@ -8,7 +8,7 @@ test('fromUrl(gist url)', function (t) {
     var hash = branch ? '#' + branch : ''
     t.ok(hostinfo, label)
     if (!hostinfo) return
-    t.is(hostinfo.https(), 'https://gist.github.com/222.git' + hash, label + ' -> https')
+    t.is(hostinfo.https(), 'git+https://gist.github.com/222.git' + hash, label + ' -> https')
     t.is(hostinfo.git(), 'git://gist.github.com/222.git' + hash, label + ' -> git')
     t.is(hostinfo.browse(), 'https://gist.github.com/222' + (branch ? '/' + branch : ''), label + ' -> browse')
     t.is(hostinfo.bugs(), 'https://gist.github.com/222', label + ' -> bugs')
@@ -24,7 +24,7 @@ test('fromUrl(gist url)', function (t) {
   verify('git@gist.github.com:222.git', 'git@')
   var hostinfo = HostedGit.fromUrl('git@gist.github.com:/ef860c7z5e0de3179341.git')
   if (t.ok(hostinfo, 'git@hex')) {
-    t.is(hostinfo.https(), 'https://gist.github.com/ef860c7z5e0de3179341.git', 'git@hex -> https')
+    t.is(hostinfo.https(), 'git+https://gist.github.com/ef860c7z5e0de3179341.git', 'git@hex -> https')
   }
   verify('git@gist.github.com:/222.git', 'git@/')
   verify('git://gist.github.com/222', 'git')

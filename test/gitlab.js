@@ -8,7 +8,7 @@ test('fromUrl(gitlab url)', function (t) {
     var hash = branch ? '#' + branch : ''
     t.ok(hostinfo, label)
     if (!hostinfo) return
-    t.is(hostinfo.https(), 'https://gitlab.com/111/222.git' + hash, label + ' -> https')
+    t.is(hostinfo.https(), 'git+https://gitlab.com/111/222.git' + hash, label + ' -> https')
     t.is(hostinfo.browse(), 'https://gitlab.com/111/222' + (branch ? '/tree/' + branch : ''), label + ' -> browse')
     t.is(hostinfo.docs(), 'https://gitlab.com/111/222' + (branch ? '/tree/' + branch : '') + '#README', label + ' -> docs')
     t.is(hostinfo.ssh(), 'git@gitlab.com:111/222.git' + hash, label + ' -> ssh')

@@ -89,7 +89,7 @@ var gitHostDefaults = {
   'sshurltemplate': 'git+ssh://git@{domain}/{user}/{project}.git{#comittish}',
   'browsetemplate': 'https://{domain}/{user}/{project}{/tree/comittish}',
   'docstemplate': 'https://{domain}/{user}/{project}{/tree/comittish}#readme',
-  'httpstemplate': 'https://{domain}/{user}/{project}.git{#comittish}',
+  'httpstemplate': 'git+https://{domain}/{user}/{project}.git{#comittish}',
   'filetemplate': 'https://{domain}/{user}/{project}/raw/{comittish}/{path}',
   'shortcuttemplate': '{type}:{user}/{project}{#comittish}',
   'pathtemplate': '{user}/{project}{#comittish}',
@@ -129,7 +129,7 @@ var gitHosts = {
     'sshurltemplate': 'git+ssh://git@{domain}/{project}.git{#comittish}',
     'browsetemplate': 'https://{domain}/{project}{/comittish}',
     'docstemplate': 'https://{domain}/{project}{/comittish}',
-    'httpstemplate': 'https://{domain}/{project}.git{#comittish}',
+    'httpstemplate': 'git+https://{domain}/{project}.git{#comittish}',
     'shortcuttemplate': '{type}:{project}{#comittish}',
     'pathtemplate': '{project}{#comittish}'
   }

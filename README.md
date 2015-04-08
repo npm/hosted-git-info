@@ -61,7 +61,7 @@ eg, `https://github.com/npm/hosted-git-info/tree/v1.2.0#readme`
 
 * info.https()
 
-eg, `https://github.com/npm/hosted-git-info.git`
+eg, `git+https://github.com/npm/hosted-git-info.git`
 
 * info.sshurl()
 
