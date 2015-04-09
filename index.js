@@ -36,30 +36,30 @@ var authProtocols = {
 exports.fromUrl = function (giturl) {
   if (giturl == null || giturl === '') return
   var parsed = parseGitUrl(maybeGitHubShorthand(giturl) ? 'github:' + giturl : giturl)
-  var matches = Object.keys(gitHosts).map(function (V) {
-    var gitHost = gitHosts[V]
+  var matches = Object.keys(gitHosts).map(function (gitHostName) {
+    var gitHostInfo = gitHosts[gitHostName]
     var auth = null
     if (parsed.auth && authProtocols[parsed.protocol]) {
       auth = decodeURIComponent(parsed.auth)
     }
     var comittish = parsed.hash ? decodeURIComponent(parsed.hash.substr(1)) : null
-    if (parsed.protocol === V + ':') {
-      return new GitHost(V,
+    if (parsed.protocol === gitHostName + ':') {
+      return new GitHost(gitHostName,
         decodeURIComponent(parsed.host), auth, decodeURIComponent(parsed.path.replace(/^[/](.*?)(?:[.]git)?$/, '$1')), comittish, 'shortcut')
     }
-    if (parsed.host !== gitHost.domain) return
-    if (!gitHost.protocols_re.test(parsed.protocol)) return
-    var pathmatch = gitHost.pathmatch || gitHostDefaults.pathmatch
+    if (parsed.host !== gitHostInfo.domain) return
+    if (!gitHostInfo.protocols_re.test(parsed.protocol)) return
+    var pathmatch = gitHostInfo.pathmatch || gitHostDefaults.pathmatch
     var matched = parsed.path.match(pathmatch)
     if (!matched) return
     return new GitHost(
-      V,
+      gitHostName,
       matched[1] != null && decodeURIComponent(matched[1]),
       auth,
       matched[2] != null && decodeURIComponent(matched[2]),
       comittish,
       protocolToType(parsed.protocol))
-  }).filter(function (V) { return V })
+  }).filter(function (gitHostInfo) { return gitHostInfo })
   if (matches.length !== 1) return
   return matches[0]
 }
@@ -149,8 +149,8 @@ var gitHosts = {
 
 Object.keys(gitHosts).forEach(function (host) {
   gitHosts[host].protocols_re = RegExp('^(' +
-    gitHosts[host].protocols.map(function (P) {
-      return P.replace(/([\\+*{}()\[\]$^|])/g, '\\$1')
+    gitHosts[host].protocols.map(function (protocol) {
+      return protocol.replace(/([\\+*{}()\[\]$^|])/g, '\\$1')
     }).join('|') + '):$')
 })
 
@@ -162,18 +162,18 @@ GitHost.prototype._fill = function (template, vars) {
   if (!template) return
   if (!vars) vars = {}
   var self = this
-  Object.keys(this).forEach(function (K) { if (self[K] != null && vars[K] == null) vars[K] = self[K] })
+  Object.keys(this).forEach(function (key) { if (self[key] != null && vars[key] == null) vars[key] = self[key] })
   var rawAuth = vars.auth
   var rawComittish = vars.comittish
-  Object.keys(vars).forEach(function (K) { (K[0] !== '#') && (vars[K] = encodeURIComponent(vars[K])) })
+  Object.keys(vars).forEach(function (key) { (key[0] !== '#') && (vars[key] = encodeURIComponent(vars[key])) })
   vars['auth@'] = rawAuth ? rawAuth + '@' : ''
   vars['#comittish'] = rawComittish ? '#' + rawComittish : ''
   vars['/tree/comittish'] = vars.comittish ? '/' + vars.treepath + '/' + vars.comittish : ''
   vars['/comittish'] = vars.comittish ? '/' + vars.comittish : ''
   vars.comittish = vars.comittish || 'master'
   var res = template
-  Object.keys(vars).forEach(function (K) {
-    res = res.replace(new RegExp('[{]' + K + '[}]', 'g'), vars[K])
+  Object.keys(vars).forEach(function (key) {
+    res = res.replace(new RegExp('[{]' + key + '[}]', 'g'), vars[key])
   })
   return res
 }
