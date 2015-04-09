@@ -1,13 +1,14 @@
 'use strict'
 var url = require('url')
 
-var GitHost = exports = module.exports = function (type, user, project, comittish, defaultType) {
+var GitHost = exports = module.exports = function (type, user, auth, project, comittish, defaultType) {
   var gitHostInfo = this
   gitHostInfo.type = type
   Object.keys(gitHosts[type]).forEach(function (key) {
     gitHostInfo[key] = gitHosts[type][key]
   })
   gitHostInfo.user = user
+  gitHostInfo.auth = auth
   gitHostInfo.project = project
   gitHostInfo.comittish = comittish
   gitHostInfo.default = defaultType
@@ -31,10 +32,14 @@ exports.fromUrl = function (giturl) {
   var parsed = parseGitUrl(maybeGitHubShorthand(giturl) ? 'github:' + giturl : giturl)
   var matches = Object.keys(gitHosts).map(function (V) {
     var gitHost = gitHosts[V]
+    var auth = null
+    if (parsed.auth && (parsed.protocol === 'git:' || parsed.protocol === 'https:' || parsed.protocol === 'http:')) {
+      auth = decodeURIComponent(parsed.auth)
+    }
     var comittish = parsed.hash ? decodeURIComponent(parsed.hash.substr(1)) : null
     if (parsed.protocol === V + ':') {
       return new GitHost(V,
-        decodeURIComponent(parsed.host), decodeURIComponent(parsed.path.replace(/^[/](.*?)(?:[.]git)?$/, '$1')), comittish, 'shortcut')
+        decodeURIComponent(parsed.host), auth, decodeURIComponent(parsed.path.replace(/^[/](.*?)(?:[.]git)?$/, '$1')), comittish, 'shortcut')
     }
     if (parsed.host !== gitHost.domain) return
     if (!gitHost.protocols_re.test(parsed.protocol)) return
@@ -44,6 +49,7 @@ exports.fromUrl = function (giturl) {
     return new GitHost(
       V,
       matched[1] != null && decodeURIComponent(matched[1]),
+      auth,
       matched[2] != null && decodeURIComponent(matched[2]),
       comittish,
       protocolToType(parsed.protocol))
@@ -89,7 +95,7 @@ var gitHostDefaults = {
   'sshurltemplate': 'git+ssh://git@{domain}/{user}/{project}.git{#comittish}',
   'browsetemplate': 'https://{domain}/{user}/{project}{/tree/comittish}',
   'docstemplate': 'https://{domain}/{user}/{project}{/tree/comittish}#readme',
-  'httpstemplate': 'git+https://{domain}/{user}/{project}.git{#comittish}',
+  'httpstemplate': 'git+https://{auth@}{domain}/{user}/{project}.git{#comittish}',
   'filetemplate': 'https://{domain}/{user}/{project}/raw/{comittish}/{path}',
   'shortcuttemplate': '{type}:{user}/{project}{#comittish}',
   'pathtemplate': '{user}/{project}{#comittish}',
@@ -102,9 +108,9 @@ var gitHosts = {
     'protocols': [ 'git', 'http', 'git+ssh', 'git+https', 'ssh', 'https' ],
     'domain': 'github.com',
     'treepath': 'tree',
-    'filetemplate': 'https://raw.githubusercontent.com/{user}/{project}/{comittish}/{path}',
+    'filetemplate': 'https://{auth@}raw.githubusercontent.com/{user}/{project}/{comittish}/{path}',
     'bugstemplate': 'https://{domain}/{user}/{project}/issues',
-    'gittemplate': 'git://{domain}/{user}/{project}.git{#comittish}'
+    'gittemplate': 'git://{auth@}{domain}/{user}/{project}.git{#comittish}'
   },
   bitbucket: {
     'protocols': [ 'git+ssh', 'git+https', 'ssh', 'https' ],
@@ -151,8 +157,10 @@ GitHost.prototype._fill = function (template, vars) {
   if (!vars) vars = {}
   var self = this
   Object.keys(this).forEach(function (K) { if (self[K] != null && vars[K] == null) vars[K] = self[K] })
+  var rawAuth = vars.auth
   var rawComittish = vars.comittish
   Object.keys(vars).forEach(function (K) { (K[0] !== '#') && (vars[K] = encodeURIComponent(vars[K])) })
+  vars['auth@'] = rawAuth ? rawAuth + '@' : ''
   vars['#comittish'] = rawComittish ? '#' + rawComittish : ''
   vars['/tree/comittish'] = vars.comittish ? '/' + vars.treepath + '/' + vars.comittish : ''
   vars['/comittish'] = vars.comittish ? '/' + vars.comittish : ''
