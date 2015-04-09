@@ -27,13 +27,19 @@ function protocolToType (protocol) {
   return protocolMap[protocol] || protocol
 }
 
+var authProtocols = {
+  'git:': true,
+  'https:': true,
+  'http:': true
+}
+
 exports.fromUrl = function (giturl) {
   if (giturl == null || giturl === '') return
   var parsed = parseGitUrl(maybeGitHubShorthand(giturl) ? 'github:' + giturl : giturl)
   var matches = Object.keys(gitHosts).map(function (V) {
     var gitHost = gitHosts[V]
     var auth = null
-    if (parsed.auth && (parsed.protocol === 'git:' || parsed.protocol === 'https:' || parsed.protocol === 'http:')) {
+    if (parsed.auth && authProtocols[parsed.protocol]) {
       auth = decodeURIComponent(parsed.auth)
     }
     var comittish = parsed.hash ? decodeURIComponent(parsed.hash.substr(1)) : null
