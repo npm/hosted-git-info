@@ -1,7 +1,7 @@
 'use strict'
 var gitHosts = require('./git-host-info.js')
 
-var GitHost = module.exports = function (type, user, auth, project, comittish, defaultType) {
+var GitHost = module.exports = function (type, user, auth, project, comittish, defaultRepresentation) {
   var gitHostInfo = this
   gitHostInfo.type = type
   Object.keys(gitHosts[type]).forEach(function (key) {
@@ -11,7 +11,7 @@ var GitHost = module.exports = function (type, user, auth, project, comittish, d
   gitHostInfo.auth = auth
   gitHostInfo.project = project
   gitHostInfo.comittish = comittish
-  gitHostInfo.default = defaultType
+  gitHostInfo.default = defaultRepresentation
 }
 GitHost.prototype = {}
 
@@ -23,13 +23,19 @@ GitHost.prototype._fill = function (template, vars) {
   if (!template) return
   if (!vars) vars = {}
   var self = this
-  Object.keys(this).forEach(function (key) { if (self[key] != null && vars[key] == null) vars[key] = self[key] })
+  Object.keys(this).forEach(function (key) {
+    if (self[key] != null && vars[key] == null) vars[key] = self[key]
+  })
   var rawAuth = vars.auth
   var rawComittish = vars.comittish
-  Object.keys(vars).forEach(function (key) { (key[0] !== '#') && (vars[key] = encodeURIComponent(vars[key])) })
+  Object.keys(vars).forEach(function (key) {
+    vars[key] = encodeURIComponent(vars[key])
+  })
   vars['auth@'] = rawAuth ? rawAuth + '@' : ''
   vars['#comittish'] = rawComittish ? '#' + rawComittish : ''
-  vars['/tree/comittish'] = vars.comittish ? '/' + vars.treepath + '/' + vars.comittish : ''
+  vars['/tree/comittish'] = vars.comittish
+                          ? '/' + vars.treepath + '/' + vars.comittish
+                          : ''
   vars['/comittish'] = vars.comittish ? '/' + vars.comittish : ''
   vars.comittish = vars.comittish || 'master'
   var res = template
