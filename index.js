@@ -18,7 +18,9 @@ function protocolToRepresentation (protocol) {
 var authProtocols = {
   'git:': true,
   'https:': true,
-  'http:': true
+  'git+https:': true,
+  'http:': true,
+  'git+http:': true
 }
 
 module.exports.fromUrl = function (giturl) {
