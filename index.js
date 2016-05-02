@@ -26,7 +26,7 @@ var authProtocols = {
 module.exports.fromUrl = function (giturl) {
   if (giturl == null || giturl === '') return
   var url = fixupUnqualifiedGist(
-    isGitHubShorthand(giturl) ? 'github:' + giturl : giturl
+    isGitHubShorthand(giturl) ? 'git@github.com:' + giturl : giturl
   )
   var parsed = parseGitUrl(url)
   var matches = Object.keys(gitHosts).map(function (gitHostName) {
