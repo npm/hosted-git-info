@@ -38,3 +38,8 @@ test('fromUrl(github url)', function (t) {
 
   t.end()
 })
+
+test('github URL casing', function (t) {
+  t.is(HostedGit.fromUrl('Visionmedia/Expresss').browse(), 'https://github.com/Visionmedia/Expresss')
+  t.end()
+})
