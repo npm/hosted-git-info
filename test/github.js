@@ -17,6 +17,7 @@ test('fromUrl(github url)', function (t) {
     t.is(hostinfo.sshurl(), 'git+ssh://git@github.com/111/222.git' + hash, label + ' -> sshurl')
     t.is(hostinfo.shortcut(), 'github:111/222' + hash, label + ' -> shortcut')
     t.is(hostinfo.file('C'), 'https://raw.githubusercontent.com/111/222/' + (branch || 'master') + '/C', label + ' -> file')
+    t.is(hostinfo.tarball(), 'https://github.com/111/222/archive/' + (branch || 'master') + '.tar.gz', label + ' -> tarball')
   }
 
   // github shorturls

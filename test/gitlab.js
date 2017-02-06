@@ -15,6 +15,7 @@ test('fromUrl(gitlab url)', function (t) {
     t.is(hostinfo.sshurl(), 'git+ssh://git@gitlab.com/111/222.git' + hash, label + ' -> sshurl')
     t.is(hostinfo.shortcut(), 'gitlab:111/222' + hash, label + ' -> shortcut')
     t.is(hostinfo.file('C'), 'https://gitlab.com/111/222/raw/' + (branch || 'master') + '/C', label + ' -> file')
+    t.is(hostinfo.tarball(), 'https://gitlab.com/111/222/repository/archive.tar.gz?ref=' + (branch || 'master'), label + ' -> tarball')
   }
 
   require('./lib/standard-tests')(verify, 'gitlab.com', 'gitlab')
