@@ -20,10 +20,10 @@
   },
   "homepage": "https://github.com/npm/hosted-git-info",
   "scripts": {
-    "test": "standard && tap test/*.js"
+    "test": "standard && tap -j8 test/*.js"
   },
   "devDependencies": {
     "standard": "^3.3.2",
-    "tap": "^0.4.13"
+    "tap": "^10.0.2"
   }
 }
