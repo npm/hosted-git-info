@@ -18,6 +18,7 @@ test('fromUrl(gist url)', function (t) {
     t.is(hostinfo.shortcut(), 'gist:222' + hash, label + ' -> shortcut')
     if (hostinfo.user) {
       t.is(hostinfo.file('C'), 'https://gist.githubusercontent.com/111/222/raw/' + (branch ? branch + '/' : '') + 'C', label + ' -> file')
+      t.is(hostinfo.tarball(), 'https://gist.github.com/111/222/archive/' + (branch || 'master') + '.tar.gz', label + ' -> tarball')
     }
   }
 
