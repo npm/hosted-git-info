@@ -30,30 +30,33 @@ module.exports.fromUrl = function (giturl) {
   )
   var parsed = parseGitUrl(url)
   var matches = Object.keys(gitHosts).map(function (gitHostName) {
-    var gitHostInfo = gitHosts[gitHostName]
-    var auth = null
-    if (parsed.auth && authProtocols[parsed.protocol]) {
-      auth = decodeURIComponent(parsed.auth)
+    try {
+      var gitHostInfo = gitHosts[gitHostName]
+      var auth = null
+      if (parsed.auth && authProtocols[parsed.protocol]) {
+        auth = decodeURIComponent(parsed.auth)
+      }
+      var committish = parsed.hash ? decodeURIComponent(parsed.hash.substr(1)) : null
+      var user = null
+      var project = null
+      var defaultRepresentation = null
+      if (parsed.protocol === gitHostName + ':') {
+        user = decodeURIComponent(parsed.host)
+        project = parsed.path && decodeURIComponent(parsed.path.replace(/^[/](.*?)(?:[.]git)?$/, '$1'))
+        defaultRepresentation = 'shortcut'
+      } else {
+        if (parsed.host !== gitHostInfo.domain) return
+        if (!gitHostInfo.protocols_re.test(parsed.protocol)) return
+        var pathmatch = gitHostInfo.pathmatch
+        var matched = parsed.path.match(pathmatch)
+        if (!matched) return
+        if (matched[1] != null) user = decodeURIComponent(matched[1])
+        if (matched[2] != null) project = decodeURIComponent(matched[2])
+        defaultRepresentation = protocolToRepresentation(parsed.protocol)
+      }
+      return new GitHost(gitHostName, user, auth, project, committish, defaultRepresentation)
+    } catch (_) {
     }
-    var committish = parsed.hash ? decodeURIComponent(parsed.hash.substr(1)) : null
-    var user = null
-    var project = null
-    var defaultRepresentation = null
-    if (parsed.protocol === gitHostName + ':') {
-      user = decodeURIComponent(parsed.host)
-      project = parsed.path && decodeURIComponent(parsed.path.replace(/^[/](.*?)(?:[.]git)?$/, '$1'))
-      defaultRepresentation = 'shortcut'
-    } else {
-      if (parsed.host !== gitHostInfo.domain) return
-      if (!gitHostInfo.protocols_re.test(parsed.protocol)) return
-      var pathmatch = gitHostInfo.pathmatch
-      var matched = parsed.path.match(pathmatch)
-      if (!matched) return
-      if (matched[1] != null) user = decodeURIComponent(matched[1])
-      if (matched[2] != null) project = decodeURIComponent(matched[2])
-      defaultRepresentation = protocolToRepresentation(parsed.protocol)
-    }
-    return new GitHost(gitHostName, user, auth, project, committish, defaultRepresentation)
   }).filter(function (gitHostInfo) { return gitHostInfo })
   if (matches.length !== 1) return
   return matches[0]
