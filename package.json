@@ -25,5 +25,10 @@
   "devDependencies": {
     "standard": "^3.3.2",
     "tap": "^10.0.2"
-  }
+  },
+  "files": [
+    "index.js",
+    "git-host.js",
+    "git-host-info.js"
+  ]
 }
