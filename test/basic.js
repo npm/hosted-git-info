@@ -5,6 +5,7 @@ var test = require('tap').test
 test('basic', function (t) {
   t.is(HostedGit.fromUrl('https://google.com'), undefined, 'null on failure')
   t.is(HostedGit.fromUrl('https://github.com/abc/def').getDefaultRepresentation(), 'https', 'match https urls')
+  t.is(HostedGit.fromUrl('https://github.com/abc/def/').getDefaultRepresentation(), 'https', 'match URLs with a trailing slash')
   t.is(HostedGit.fromUrl('ssh://git@github.com/abc/def').getDefaultRepresentation(), 'sshurl', 'match ssh urls')
   t.is(HostedGit.fromUrl('git+ssh://git@github.com/abc/def').getDefaultRepresentation(), 'sshurl', 'match git+ssh urls')
   t.is(HostedGit.fromUrl('git+https://github.com/abc/def').getDefaultRepresentation(), 'https', 'match git+https urls')
