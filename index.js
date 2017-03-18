@@ -29,7 +29,7 @@ module.exports.fromUrl = function (giturl) {
     isGitHubShorthand(giturl) ? 'github:' + giturl : giturl
   )
   var parsed = parseGitUrl(url)
-  var shortcutMatch = url.match(new RegExp('^([^:]+):([^/]+)[/](.+)$'))
+  var shortcutMatch = url.match(new RegExp('^([^:]+):(?:(?:[^@:]+(?:[^@]+)?@)?([^/]*))[/](.+?)(?:[.]git)?($|#)'))
   var matches = Object.keys(gitHosts).map(function (gitHostName) {
     try {
       var gitHostInfo = gitHosts[gitHostName]
@@ -42,7 +42,7 @@ module.exports.fromUrl = function (giturl) {
       var project = null
       var defaultRepresentation = null
       if (shortcutMatch && shortcutMatch[1] === gitHostName) {
-        user = decodeURIComponent(shortcutMatch[2])
+        user = shortcutMatch[2] && decodeURIComponent(shortcutMatch[2])
         project = decodeURIComponent(shortcutMatch[3])
         defaultRepresentation = 'shortcut'
       } else {

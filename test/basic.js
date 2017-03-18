@@ -20,6 +20,8 @@ test('basic', function (t) {
 
   t.is(HostedGit.fromUrl('dEf/AbC').https(), 'git+https://github.com/dEf/AbC.git', 'mixed case shortcut')
   t.is(HostedGit.fromUrl('gitlab:dEf/AbC').https(), 'git+https://gitlab.com/dEf/AbC.git', 'mixed case prefixed shortcut')
+  t.is(HostedGit.fromUrl('gitlab:dEf/AbC.git').https(), 'git+https://gitlab.com/dEf/AbC.git', 'mixed case prefixed shortcut')
   t.is(HostedGit.fromUrl('git://github.com/dEf/AbC.git').https(), 'git+https://github.com/dEf/AbC.git', 'mixed case url')
+  t.is(HostedGit.fromUrl('gist:123').https(), 'git+https://gist.github.com/123.git', 'non-user shortcut')
   t.end()
 })
