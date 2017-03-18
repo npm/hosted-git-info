@@ -32,7 +32,25 @@ If it does match, the returned object has properties of:
 * info.user -- The name of the user/org on the git host
 * info.project -- The name of the project on the git host
 
-And methods of:
+## Version Contract
+
+The major version will be bumped any time…
+
+* The constructor stops accepting URLs that it previously accepted.
+* A method is removed.
+* A method no longer accepts the number and type of arguments it previously accepted.
+* A method can return a different type than it currently returns.
+
+Implications:
+
+* I do not consider the specific format of the urls returned from, say
+  `.https()` to be a part of the contract.  The contract is that it will
+  return a string that can be used to fetch the repo via HTTPS.  But what
+  that string looks like, specifically, can change.
+* Dropping support for a hosted git provider would constitute a breaking
+  change.
+
+## Methods
 
 * info.file(path)
 
