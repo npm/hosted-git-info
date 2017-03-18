@@ -48,6 +48,7 @@ module.exports.fromUrl = function (giturl) {
       } else {
         if (parsed.host !== gitHostInfo.domain) return
         if (!gitHostInfo.protocols_re.test(parsed.protocol)) return
+        if (!parsed.path) return
         var pathmatch = gitHostInfo.pathmatch
         var matched = parsed.path.match(pathmatch)
         if (!matched) return
@@ -56,7 +57,8 @@ module.exports.fromUrl = function (giturl) {
         defaultRepresentation = protocolToRepresentation(parsed.protocol)
       }
       return new GitHost(gitHostName, user, auth, project, committish, defaultRepresentation)
-    } catch (_) {
+    } catch (ex) {
+      if (!(ex instanceof URIError)) throw ex
     }
   }).filter(function (gitHostInfo) { return gitHostInfo })
   if (matches.length !== 1) return
