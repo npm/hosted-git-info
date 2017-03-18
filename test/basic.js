@@ -17,5 +17,9 @@ test('basic', function (t) {
   t.is(HostedGit.fromUrl('git://nothosted.com'), undefined, 'non-hosted empty URLs get undefined response')
   t.is(HostedGit.fromUrl('git://github.com/balderdashy/waterline-%s.git'), undefined, 'invalid URLs get undefined response')
   t.is(HostedGit.fromUrl('git://github.com'), undefined, 'Invalid hosted URLs get undefined response')
+
+  t.is(HostedGit.fromUrl('dEf/AbC').https(), 'git+https://github.com/dEf/AbC.git', 'mixed case shortcut')
+  t.is(HostedGit.fromUrl('gitlab:dEf/AbC').https(), 'git+https://gitlab.com/dEf/AbC.git', 'mixed case prefixed shortcut')
+  t.is(HostedGit.fromUrl('git://github.com/dEf/AbC.git').https(), 'git+https://github.com/dEf/AbC.git', 'mixed case url')
   t.end()
 })
