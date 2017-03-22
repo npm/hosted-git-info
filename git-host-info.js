@@ -63,6 +63,6 @@ Object.keys(gitHosts).forEach(function (name) {
   })
   gitHosts[name].protocols_re = RegExp('^(' +
     gitHosts[name].protocols.map(function (protocol) {
-      return protocol.replace(/([\\+*{}()\[\]$^|])/g, '\\$1')
+      return protocol.replace(/([\\+*{}()[\]$^|])/g, '\\$1')
     }).join('|') + '):$')
 })
