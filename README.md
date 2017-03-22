@@ -38,7 +38,7 @@ The major version will be bumped any time…
 
 * The constructor stops accepting URLs that it previously accepted.
 * A method is removed.
-* A method no longer accepts the number and type of arguments it previously accepted.
+* A method can no longer accept the number and type of arguments it previously accepted.
 * A method can return a different type than it currently returns.
 
 Implications:
