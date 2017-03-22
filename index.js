@@ -23,7 +23,7 @@ var authProtocols = {
   'git+http:': true
 }
 
-module.exports.fromUrl = function (giturl) {
+module.exports.fromUrl = function (giturl, opts) {
   if (giturl == null || giturl === '') return
   var url = fixupUnqualifiedGist(
     isGitHubShorthand(giturl) ? 'github:' + giturl : giturl
@@ -56,7 +56,7 @@ module.exports.fromUrl = function (giturl) {
         if (matched[2] != null) project = decodeURIComponent(matched[2])
         defaultRepresentation = protocolToRepresentation(parsed.protocol)
       }
-      return new GitHost(gitHostName, user, auth, project, committish, defaultRepresentation)
+      return new GitHost(gitHostName, user, auth, project, committish, defaultRepresentation, opts)
     } catch (ex) {
       if (!(ex instanceof URIError)) throw ex
     }
@@ -89,7 +89,7 @@ function fixupUnqualifiedGist (giturl) {
 
 function parseGitUrl (giturl) {
   if (typeof giturl !== 'string') giturl = '' + giturl
-  var matched = giturl.match(/^([^@]+)@([^:]+):[/]?((?:[^/]+[/])?[^/]+?)(?:[.]git)?(#.*)?$/)
+  var matched = giturl.match(/^([^@]+)@([^:/]+):[/]?((?:[^/]+[/])?[^/]+?)(?:[.]git)?(#.*)?$/)
   if (!matched) return url.parse(giturl)
   return {
     protocol: 'git+ssh:',
