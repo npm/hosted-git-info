@@ -23,5 +23,7 @@ test('basic', function (t) {
   t.is(HostedGit.fromUrl('gitlab:dEf/AbC.git').https(), 'git+https://gitlab.com/dEf/AbC.git', 'mixed case prefixed shortcut')
   t.is(HostedGit.fromUrl('git://github.com/dEf/AbC.git').https(), 'git+https://github.com/dEf/AbC.git', 'mixed case url')
   t.is(HostedGit.fromUrl('gist:123').https(), 'git+https://gist.github.com/123.git', 'non-user shortcut')
+
+  t.is(HostedGit.fromUrl('git+https://github.com:foo/repo.git#master').https(), 'git+https://github.com/foo/repo.git#master', 'scp style urls are upgraded')
   t.end()
 })
