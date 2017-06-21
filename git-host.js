@@ -1,6 +1,6 @@
 'use strict'
 var gitHosts = require('./git-host-info.js')
-var extend = Object.assign || require('util')._extend
+var extend = Object.assign
 
 var GitHost = module.exports = function (type, user, auth, project, committish, defaultRepresentation, opts) {
   var gitHostInfo = this
