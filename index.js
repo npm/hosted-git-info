@@ -1,5 +1,5 @@
 'use strict'
-var url = require('url')
+var url = require('./reduced-url')
 var gitHosts = require('./git-host-info.js')
 var GitHost = module.exports = require('./git-host.js')
 
