@@ -1,6 +1,5 @@
 'use strict'
 var gitHosts = require('./git-host-info.js')
-var extend = Object.assign
 
 var GitHost = module.exports = function (type, user, auth, project, committish, defaultRepresentation, opts) {
   var gitHostInfo = this
@@ -23,8 +22,8 @@ GitHost.prototype.hash = function () {
 
 GitHost.prototype._fill = function (template, opts) {
   if (!template) return
-  var vars = extend({}, opts)
-  opts = extend(extend({}, this.opts), opts)
+  var vars = Object.assign({}, opts)
+  opts = Object.assign({}, this.opts, opts)
   var self = this
   Object.keys(this).forEach(function (key) {
     if (self[key] != null && vars[key] == null) vars[key] = self[key]
@@ -100,7 +99,7 @@ GitHost.prototype.tarball = function (opts) {
 }
 
 GitHost.prototype.file = function (P, opts) {
-  return this._fill(this.filetemplate, extend({
+  return this._fill(this.filetemplate, Object.assign({
     path: P.replace(/^[/]+/g, '')
   }, opts))
 }
