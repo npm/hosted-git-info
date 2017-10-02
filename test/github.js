@@ -11,6 +11,7 @@ test('fromUrl(github url)', function (t) {
     t.is(hostinfo.https(), 'git+https://github.com/111/222.git' + hash, label + ' -> https')
     t.is(hostinfo.git(), 'git://github.com/111/222.git' + hash, label + ' -> git')
     t.is(hostinfo.browse(), 'https://github.com/111/222' + (branch ? '/tree/' + branch : ''), label + ' -> browse')
+    t.is(hostinfo.browse('C'), 'https://github.com/111/222/tree/' + (branch || 'master') + '/C', label + ' -> browse(file)')
     t.is(hostinfo.bugs(), 'https://github.com/111/222/issues', label + ' -> bugs')
     t.is(hostinfo.docs(), 'https://github.com/111/222' + (branch ? '/tree/' + branch : '') + '#readme', label + ' -> docs')
     t.is(hostinfo.ssh(), 'git@github.com:111/222.git' + hash, label + ' -> ssh')

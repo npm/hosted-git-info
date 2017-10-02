@@ -10,6 +10,7 @@ test('fromUrl(gitlab url)', function (t) {
     if (!hostinfo) return
     t.is(hostinfo.https(), 'git+https://gitlab.com/111/222.git' + hash, label + ' -> https')
     t.is(hostinfo.browse(), 'https://gitlab.com/111/222' + (branch ? '/tree/' + branch : ''), label + ' -> browse')
+    t.is(hostinfo.browse('C'), 'https://gitlab.com/111/222/tree/' + (branch || 'master') + '/C', label + ' -> browse(file)')
     t.is(hostinfo.docs(), 'https://gitlab.com/111/222' + (branch ? '/tree/' + branch : '') + '#README', label + ' -> docs')
     t.is(hostinfo.ssh(), 'git@gitlab.com:111/222.git' + hash, label + ' -> ssh')
     t.is(hostinfo.sshurl(), 'git+ssh://git@gitlab.com/111/222.git' + hash, label + ' -> sshurl')

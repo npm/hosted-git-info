@@ -67,8 +67,14 @@ GitHost.prototype.sshurl = function (opts) {
   return this._fill(this.sshurltemplate, opts)
 }
 
-GitHost.prototype.browse = function (opts) {
-  return this._fill(this.browsetemplate, opts)
+GitHost.prototype.browse = function (P, opts) {
+  if (typeof P === 'string') {
+    return this._fill(this.browsefiletemplate, extend({
+      path: this.browsepathformat(P)
+    }, opts))
+  } else {
+    return this._fill(this.browsetemplate, P)
+  }
 }
 
 GitHost.prototype.docs = function (opts) {

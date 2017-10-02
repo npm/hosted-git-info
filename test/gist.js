@@ -11,6 +11,7 @@ test('fromUrl(gist url)', function (t) {
     t.is(hostinfo.https(), 'git+https://gist.github.com/222.git' + hash, label + ' -> https')
     t.is(hostinfo.git(), 'git://gist.github.com/222.git' + hash, label + ' -> git')
     t.is(hostinfo.browse(), 'https://gist.github.com/222' + (branch ? '/' + branch : ''), label + ' -> browse')
+    t.is(hostinfo.browse('C'), 'https://gist.github.com/222' + (branch ? '/' + branch : '') + '#file-C', label + ' -> browse(file)')
     t.is(hostinfo.bugs(), 'https://gist.github.com/222', label + ' -> bugs')
     t.is(hostinfo.docs(), 'https://gist.github.com/222' + (branch ? '/' + branch : ''), label + ' -> docs')
     t.is(hostinfo.ssh(), 'git@gist.github.com:/222.git' + hash, label + ' -> ssh')
