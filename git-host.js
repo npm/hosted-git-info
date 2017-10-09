@@ -24,6 +24,7 @@ GitHost.prototype.hash = function () {
 GitHost.prototype._fill = function (template, opts) {
   if (!template) return
   var vars = extend({}, opts)
+  vars.path = vars.path ? vars.path.replace(/^[/]+/g, '') : ''
   opts = extend(extend({}, this.opts), opts)
   var self = this
   Object.keys(this).forEach(function (key) {
@@ -31,10 +32,16 @@ GitHost.prototype._fill = function (template, opts) {
   })
   var rawAuth = vars.auth
   var rawComittish = vars.committish
+  var rawFragment = vars.fragment
+  var rawPath = vars.path
   Object.keys(vars).forEach(function (key) {
     vars[key] = encodeURIComponent(vars[key])
   })
   vars['auth@'] = rawAuth ? rawAuth + '@' : ''
+  vars['#fragment'] = rawFragment ? '#' + this.hashformat(rawFragment) : ''
+  vars.fragment = vars.fragment ? vars.fragment : ''
+  vars['#path'] = rawPath ? '#' + this.hashformat(rawPath) : ''
+  vars['/path'] = vars.path ? '/' + vars.path : ''
   if (opts.noCommittish) {
     vars['#committish'] = ''
     vars['/tree/committish'] = ''
@@ -67,10 +74,15 @@ GitHost.prototype.sshurl = function (opts) {
   return this._fill(this.sshurltemplate, opts)
 }
 
-GitHost.prototype.browse = function (P, opts) {
+GitHost.prototype.browse = function (P, F, opts) {
   if (typeof P === 'string') {
+    if (typeof F !== 'string') {
+      opts = F
+      F = null
+    }
     return this._fill(this.browsefiletemplate, extend({
-      path: this.browsepathformat(P)
+      fragment: F,
+      path: P
     }, opts))
   } else {
     return this._fill(this.browsetemplate, P)
@@ -106,9 +118,7 @@ GitHost.prototype.tarball = function (opts) {
 }
 
 GitHost.prototype.file = function (P, opts) {
-  return this._fill(this.filetemplate, extend({
-    path: P.replace(/^[/]+/g, '')
-  }, opts))
+  return this._fill(this.filetemplate, extend({ path: P }, opts))
 }
 
 GitHost.prototype.getDefaultRepresentation = function () {

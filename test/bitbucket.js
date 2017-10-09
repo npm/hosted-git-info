@@ -10,7 +10,8 @@ test('fromUrl(bitbucket url)', function (t) {
     if (!hostinfo) return
     t.is(hostinfo.https(), 'git+https://bitbucket.org/111/222.git' + hash, label + ' -> https')
     t.is(hostinfo.browse(), 'https://bitbucket.org/111/222' + (branch ? '/src/' + branch : ''), label + ' -> browse')
-    t.is(hostinfo.browse('C'), 'https://bitbucket.org/111/222/src/' + (branch || 'master') + '/C', label + ' -> browse(file)')
+    t.is(hostinfo.browse('C'), 'https://bitbucket.org/111/222/src/' + (branch || 'master') + '/C', label + ' -> browse(path)')
+    t.is(hostinfo.browse('C', 'A'), 'https://bitbucket.org/111/222/src/' + (branch || 'master') + '/C#a', label + ' -> browse(path, fragment)')
     t.is(hostinfo.docs(), 'https://bitbucket.org/111/222' + (branch ? '/src/' + branch : '') + '#readme', label + ' -> docs')
     t.is(hostinfo.ssh(), 'git@bitbucket.org:111/222.git' + hash, label + ' -> ssh')
     t.is(hostinfo.sshurl(), 'git+ssh://git@bitbucket.org/111/222.git' + hash, label + ' -> sshurl')
