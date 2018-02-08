@@ -41,6 +41,15 @@ function fromUrl (giturl, opts) {
     isGitHubShorthand(giturl) ? 'github:' + giturl : giturl
   )
   var parsed = parseGitUrl(url)
+
+  var knownDomains = Object.keys(gitHosts).map(function (githost) {
+    return gitHosts[githost].domain
+  })
+  var originalHost = parsed.host
+  if (parsed.host && knownDomains.indexOf(parsed.host) === -1) {
+    parsed.host = '*'
+  }
+
   var shortcutMatch = url.match(new RegExp('^([^:]+):(?:(?:[^@:]+(?:[^@]+)?@)?([^/]*))[/](.+?)(?:[.]git)?($|#)'))
   var matches = Object.keys(gitHosts).map(function (gitHostName) {
     try {
@@ -68,7 +77,15 @@ function fromUrl (giturl, opts) {
         if (matched[2] != null) project = decodeURIComponent(matched[2])
         defaultRepresentation = protocolToRepresentation(parsed.protocol)
       }
-      return new GitHost(gitHostName, user, auth, project, committish, defaultRepresentation, opts)
+      var githost = new GitHost(gitHostName, user, auth, project, committish, defaultRepresentation, opts)
+      if (githost.domain === '*') {
+        githost.domain = originalHost
+        if (githost.domain && githost.user && githost.project) {
+          return githost
+        }
+        return
+      }
+      return githost
     } catch (ex) {
       if (!(ex instanceof URIError)) throw ex
     }

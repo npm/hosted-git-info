@@ -20,8 +20,10 @@ module.exports = function (verify, domain, shortname) {
   verify('git+ssh://git@' + domain + '/111/222#branch', 'ssh url#branch', 'branch')
   verify('git+ssh://git@' + domain + '/111/222.git#branch', 'ssh url.git#branch', 'branch')
 
-  verify(shortname + ':111/222', 'shortcut')
-  verify(shortname + ':111/222.git', 'shortcut.git')
-  verify(shortname + ':111/222#branch', 'shortcut#branch', 'branch')
-  verify(shortname + ':111/222.git#branch', 'shortcut.git#branch', 'branch')
+  if (shortname !== 'generic') {
+    verify(shortname + ':111/222', 'shortcut')
+    verify(shortname + ':111/222.git', 'shortcut.git')
+    verify(shortname + ':111/222#branch', 'shortcut#branch', 'branch')
+    verify(shortname + ':111/222.git#branch', 'shortcut.git#branch', 'branch')
+  }
 }

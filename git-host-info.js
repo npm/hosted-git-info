@@ -45,6 +45,16 @@ var gitHosts = module.exports = {
     'hashformat': function (fragment) {
       return 'file-' + formatHashFragment(fragment)
     }
+  },
+  generic: {
+    'protocols': [ 'git', 'http', 'git+ssh', 'git+https', 'ssh', 'https' ],
+    'domain': '*',
+    'treepath': 'tree',
+    'sshtemplate': 'git@{domain}:{user}/{project}.git{#committish}',
+    'sshurltemplate': 'git+ssh://git@{domain}/{user}/{project}.git{#committish}',
+    'httpstemplate': 'git+https://{auth@}{domain}/{user}/{project}.git{#committish}',
+    'gittemplate': 'git://{auth@}{domain}/{user}/{project}.git{#committish}',
+    'pathmatch': /^[/]([^/]+)[/]([^/]+?)(?:[.]git|[/])?$/
   }
 }
 
@@ -64,7 +74,7 @@ var gitHostDefaults = {
 
 Object.keys(gitHosts).forEach(function (name) {
   Object.keys(gitHostDefaults).forEach(function (key) {
-    if (gitHosts[name][key]) return
+    if (gitHosts[name][key] || name === 'generic') return
     gitHosts[name][key] = gitHostDefaults[key]
   })
   gitHosts[name].protocols_re = RegExp('^(' +
