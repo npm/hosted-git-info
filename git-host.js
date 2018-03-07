@@ -79,7 +79,7 @@ GitHost.prototype.browse = function (P, F, opts) {
       opts = F
       F = null
     }
-    return this._fill(this.browsefiletemplate, extend({
+    return this._fill(this.browsefiletemplate, Object.assign({
       fragment: F,
       path: P
     }, opts))
