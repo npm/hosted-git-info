@@ -11,6 +11,8 @@ test('HTTPS GitHub URL with embedded auth -- generally not a good idea', functio
     t.is(hostinfo.https(), 'git+https://user:pass@github.com/111/222.git' + hash, label + ' -> https')
     t.is(hostinfo.git(), 'git://user:pass@github.com/111/222.git' + hash, label + ' -> git')
     t.is(hostinfo.browse(), 'https://github.com/111/222' + (branch ? '/tree/' + branch : ''), label + ' -> browse')
+    t.is(hostinfo.browse('C'), 'https://github.com/111/222/tree/' + (branch || 'master') + '/C', label + ' -> browse(path)')
+    t.is(hostinfo.browse('C', 'A'), 'https://github.com/111/222/tree/' + (branch || 'master') + '/C#a', label + ' -> browse(path, fragment)')
     t.is(hostinfo.bugs(), 'https://github.com/111/222/issues', label + ' -> bugs')
     t.is(hostinfo.docs(), 'https://github.com/111/222' + (branch ? '/tree/' + branch : '') + '#readme', label + ' -> docs')
     t.is(hostinfo.ssh(), 'git@github.com:111/222.git' + hash, label + ' -> ssh')
