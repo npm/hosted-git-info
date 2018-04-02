@@ -129,5 +129,8 @@ SSH connect strings will be normalized into `git+ssh` URLs.
 
 ## Supported hosts
 
-Currently this supports Github, Bitbucket and Gitlab. Pull requests for
-additional hosts welcome.
+Github, Bitbucket and Gitlab are fully supported. For URLs to hosts that
+include at least a username and project name, the type 'generic' is returned
+which is a best-effort guess that should support most self-hosted servers.
+
+Pull requests for additional hosts welcome.
