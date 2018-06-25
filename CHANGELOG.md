@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.6.1"></a>
+## [2.6.1](https://github.com/npm/hosted-git-info/compare/v2.6.0...v2.6.1) (2018-06-25)
+
+### Bug Fixes
+
+* **Revert:** "compat: remove Object.assign fallback ([#25](https://github.com/npm/hosted-git-info/issues/25))" ([cce5a62](https://github.com/npm/hosted-git-info/commit/cce5a62))
+* **Revert:** "git-host: fix forgotten extend()" ([a815ec9](https://github.com/npm/hosted-git-info/commit/a815ec9))
+
 <a name="2.6.0"></a>
 # [2.6.0](https://github.com/npm/hosted-git-info/compare/v2.5.0...v2.6.0) (2018-03-07)
 
