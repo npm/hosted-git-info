@@ -10,7 +10,7 @@ var gitHosts = module.exports = {
     'filetemplate': 'https://{auth@}raw.githubusercontent.com/{user}/{project}/{committish}/{path}',
     'bugstemplate': 'https://{domain}/{user}/{project}/issues',
     'gittemplate': 'git://{auth@}{domain}/{user}/{project}.git{#committish}',
-    'tarballtemplate': 'https://{domain}/{user}/{project}/archive/{committish}.tar.gz'
+    'tarballtemplate': 'https://codeload.{domain}/{user}/{project}/tar.gz/{committish}'
   },
   bitbucket: {
     'protocols': [ 'git+ssh', 'git+https', 'ssh', 'https' ],
