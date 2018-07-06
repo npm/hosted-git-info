@@ -13,9 +13,6 @@
     "bitbucket",
     "gitlab"
   ],
-  "engines": {
-    "node": ">=4"
-  },
   "author": "Rebecca Turner <me@re-becca.org> (http://re-becca.org)",
   "license": "ISC",
   "bugs": {
