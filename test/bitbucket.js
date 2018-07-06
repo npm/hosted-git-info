@@ -21,6 +21,7 @@ test('fromUrl(bitbucket url)', function (t) {
   }
 
   require('./lib/standard-tests')(verify, 'bitbucket.org', 'bitbucket')
+  require('./lib/standard-tests')(verify, 'www.bitbucket.org', 'bitbucket')
 
   t.end()
 })

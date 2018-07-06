@@ -39,5 +39,7 @@ test('fromUrl(github url)', function (t) {
 
   require('./lib/standard-tests')(verify, 'github.com', 'github')
 
+  require('./lib/standard-tests')(verify, 'www.github.com', 'github')
+
   t.end()
 })

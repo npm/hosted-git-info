@@ -21,6 +21,7 @@ test('fromUrl(gitlab url)', function (t) {
   }
 
   require('./lib/standard-tests')(verify, 'gitlab.com', 'gitlab')
+  require('./lib/standard-tests')(verify, 'www.gitlab.com', 'gitlab')
 
   t.end()
 })
