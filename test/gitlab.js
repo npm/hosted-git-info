@@ -12,7 +12,7 @@ test('fromUrl(gitlab url)', function (t) {
     t.is(hostinfo.browse(), 'https://gitlab.com/111/222' + (branch ? '/tree/' + branch : ''), label + ' -> browse')
     t.is(hostinfo.browse('C'), 'https://gitlab.com/111/222/tree/' + (branch || 'master') + '/C', label + ' -> browse(path)')
     t.is(hostinfo.browse('C', 'A'), 'https://gitlab.com/111/222/tree/' + (branch || 'master') + '/C#a', label + ' -> browse(path, fragment)')
-    t.is(hostinfo.docs(), 'https://gitlab.com/111/222' + (branch ? '/tree/' + branch : '') + '#README', label + ' -> docs')
+    t.is(hostinfo.docs(), 'https://gitlab.com/111/222' + (branch ? '/tree/' + branch : '') + '#readme', label + ' -> docs')
     t.is(hostinfo.ssh(), 'git@gitlab.com:111/222.git' + hash, label + ' -> ssh')
     t.is(hostinfo.sshurl(), 'git+ssh://git@gitlab.com/111/222.git' + hash, label + ' -> sshurl')
     t.is(hostinfo.shortcut(), 'gitlab:111/222' + hash, label + ' -> shortcut')
