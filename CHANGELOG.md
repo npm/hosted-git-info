@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.7.1"></a>
+## [2.7.1](https://github.com/npm/hosted-git-info/compare/v2.7.0...v2.7.1) (2018-07-07)
+
+
+### Bug Fixes
+
+* **index:** Guard against non-string types ([5bc580d](https://github.com/npm/hosted-git-info/commit/5bc580d))
+* **parse:** Crash on strings that parse to having no host ([c931482](https://github.com/npm/hosted-git-info/commit/c931482)), closes [#35](https://github.com/npm/hosted-git-info/issues/35)
+
+
+
 <a name="2.7.0"></a>
 # [2.7.0](https://github.com/npm/hosted-git-info/compare/v2.6.1...v2.7.0) (2018-07-06)
 
