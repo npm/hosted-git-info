@@ -25,5 +25,12 @@ test('basic', function (t) {
   t.is(HostedGit.fromUrl('gist:123').https(), 'git+https://gist.github.com/123.git', 'non-user shortcut')
 
   t.is(HostedGit.fromUrl('git+https://github.com:foo/repo.git#master').https(), 'git+https://github.com/foo/repo.git#master', 'scp style urls are upgraded')
+
+  t.is(HostedGit.fromUrl(''), undefined, 'empty strings are not hosted')
+  t.is(HostedGit.fromUrl(null), undefined, 'null is not hosted')
+  t.is(HostedGit.fromUrl(), undefined, 'no value is not hosted')
+  t.is(HostedGit.fromUrl('git+file:///foo/bar'), undefined, 'url that has no host')
+  t.is(HostedGit.fromUrl('github.com/abc/def/'), undefined, 'forgot the protocol')
+  t.is(HostedGit.fromUrl('completely-invalid'), undefined, 'not a url is not hosted')
   t.end()
 })
