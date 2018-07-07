@@ -26,6 +26,7 @@ var authProtocols = {
 var cache = {}
 
 module.exports.fromUrl = function (giturl, opts) {
+  if (typeof giturl !== 'string') return
   var key = giturl + JSON.stringify(opts || {})
 
   if (!(key in cache)) {
