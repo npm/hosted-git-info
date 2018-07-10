@@ -2,6 +2,8 @@
 var url = require('url')
 var gitHosts = require('./git-host-info.js')
 var GitHost = module.exports = require('./git-host.js')
+var LRU = require('lru-cache')
+var cache = new LRU({max: 1000})
 
 var protocolToRepresentationMap = {
   'git+ssh:': 'sshurl',
@@ -22,17 +24,15 @@ var authProtocols = {
   'git+http:': true
 }
 
-var cache = {}
-
 module.exports.fromUrl = function (giturl, opts) {
   if (typeof giturl !== 'string') return
   var key = giturl + JSON.stringify(opts || {})
 
-  if (!(key in cache)) {
-    cache[key] = fromUrl(giturl, opts)
+  if (!cache.has(key)) {
+    cache.set(key, fromUrl(giturl, opts))
   }
 
-  return cache[key]
+  return cache.get(key)
 }
 
 function fromUrl (giturl, opts) {
