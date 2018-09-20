@@ -59,8 +59,9 @@ function fromUrl (giturl, opts) {
         project = decodeURIComponent(shortcutMatch[3])
         defaultRepresentation = 'shortcut'
       } else {
-        if (parsed.host && parsed.host !== gitHostInfo.domain && parsed.host.replace(/^www[.]/, '') !== gitHostInfo.domain) return
-        if (!gitHostInfo.protocols_re.test(parsed.protocol)) return
+        if (gitHostInfo.domain && parsed.host && parsed.host !== gitHostInfo.domain && parsed.host.replace(/^www[.]/, '') !== gitHostInfo.domain) return
+        if (gitHostInfo.domainpattern && parsed.host && parsed.host.indexOf(gitHostInfo.domainpattern) < 0 && parsed.host.replace(/^www[.]/, '').indexOf(gitHostInfo.domainpattern) < 0) return
+        else gitHostInfo.domain = parsed.host.replace(/^www[.]/, '')        if (!gitHostInfo.protocols_re.test(parsed.protocol)) return
         if (!parsed.path) return
         var pathmatch = gitHostInfo.pathmatch
         var matched = parsed.path.match(pathmatch)

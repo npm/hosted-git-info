@@ -44,7 +44,16 @@ var gitHosts = module.exports = {
     'hashformat': function (fragment) {
       return 'file-' + formatHashFragment(fragment)
     }
-  }
+  },
+  githubenterprise: {
+    'protocols': [ 'git', 'http', 'git+ssh', 'git+https', 'ssh', 'https' ],
+    'domainpattern': 'github',
+    'treepath': 'tree',
+    'filetemplate': 'https://{auth@}{domain}/raw/{user}/{project}/{committish}/{path}',
+    'bugstemplate': 'https://{domain}/{user}/{project}/issues',
+    'gittemplate': 'git://{auth@}{domain}/{user}/{project}.git{#committish}',
+    'tarballtemplate': 'https://{domain}/{user}/{project}/archive/{committish}.tar.gz'
+  },
 }
 
 var gitHostDefaults = {
