@@ -53,7 +53,7 @@ var gitHosts = module.exports = {
     'bugstemplate': 'https://{domain}/{user}/{project}/issues',
     'gittemplate': 'git://{auth@}{domain}/{user}/{project}.git{#committish}',
     'tarballtemplate': 'https://{domain}/{user}/{project}/archive/{committish}.tar.gz'
-  },
+  }
 }
 
 var gitHostDefaults = {
