@@ -32,7 +32,7 @@ GitHost.prototype._fill = function (template, opts) {
     if (self[key] != null && vars[key] == null) vars[key] = self[key]
   })
   var rawAuth = vars.auth
-  var rawComittish = vars.committish
+  var rawcommittish = vars.committish
   var rawFragment = vars.fragment
   var rawPath = vars.path
   Object.keys(vars).forEach(function (key) {
@@ -46,10 +46,10 @@ GitHost.prototype._fill = function (template, opts) {
   if (opts.noCommittish) {
     vars['#committish'] = ''
     vars['/tree/committish'] = ''
-    vars['/comittish'] = ''
-    vars.comittish = ''
+    vars['/committish'] = ''
+    vars.committish = ''
   } else {
-    vars['#committish'] = rawComittish ? '#' + rawComittish : ''
+    vars['#committish'] = rawcommittish ? '#' + rawcommittish : ''
     vars['/tree/committish'] = vars.committish
       ? '/' + vars.treepath + '/' + vars.committish
       : ''
