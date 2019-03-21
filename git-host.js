@@ -36,7 +36,14 @@ GitHost.prototype._fill = function (template, opts) {
   var rawFragment = vars.fragment
   var rawPath = vars.path
   Object.keys(vars).forEach(function (key) {
-    vars[key] = encodeURIComponent(vars[key])
+    var value = vars[key]
+    if (key === 'path' && typeof value === 'string') {
+      vars[key] = value.split('/').map(function (pathComponent) {
+        return encodeURIComponent(pathComponent)
+      }).join('/')
+    } else {
+      vars[key] = encodeURIComponent(value)
+    }
   })
   vars['auth@'] = rawAuth ? rawAuth + '@' : ''
   vars['#fragment'] = rawFragment ? '#' + this.hashformat(rawFragment) : ''
