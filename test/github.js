@@ -13,8 +13,11 @@ test('fromUrl(github url)', function (t) {
     t.is(hostinfo.https(), 'git+https://github.com/111/222.git' + hash, label + ' -> https')
     t.is(hostinfo.git(), 'git://github.com/111/222.git' + hash, label + ' -> git')
     t.is(hostinfo.browse(), 'https://github.com/111/222' + treebranch, label + ' -> browse')
+    t.is(hostinfo.browse(''), 'https://github.com/111/222/tree/' + (branch || 'master') + '/', label + ' -> browse("")')
     t.is(hostinfo.browse('C'), 'https://github.com/111/222/tree/' + (branch || 'master') + '/C', label + ' -> browse(path)')
+    t.is(hostinfo.browse('C/D'), 'https://github.com/111/222/tree/' + (branch || 'master') + '/C/D', label + ' -> browse(path)')
     t.is(hostinfo.browse('C', 'A'), 'https://github.com/111/222/tree/' + (branch || 'master') + '/C#a', label + ' -> browse(path, fragment)')
+    t.is(hostinfo.browse('C/D', 'A'), 'https://github.com/111/222/tree/' + (branch || 'master') + '/C/D#a', label + ' -> browse(path, fragment)')
     t.is(hostinfo.bugs(), 'https://github.com/111/222/issues', label + ' -> bugs')
     t.is(hostinfo.docs(), 'https://github.com/111/222' + treebranch + '#readme', label + ' -> docs')
     t.is(hostinfo.ssh(), 'git@github.com:111/222.git' + hash, label + ' -> ssh')
@@ -24,7 +27,9 @@ test('fromUrl(github url)', function (t) {
     t.is(hostinfo.hash(), hash, ' -> hash')
     t.is(hostinfo.path({ noCommittish: true }), '111/222', ' -> path (no committish)')
     t.is(hostinfo.shortcut(), 'github:111/222' + hash, label + ' -> shortcut')
+    t.is(hostinfo.file(''), 'https://raw.githubusercontent.com/111/222/' + (branch || 'master') + '/', label + ' -> file')
     t.is(hostinfo.file('C'), 'https://raw.githubusercontent.com/111/222/' + (branch || 'master') + '/C', label + ' -> file')
+    t.is(hostinfo.file('C/D'), 'https://raw.githubusercontent.com/111/222/' + (branch || 'master') + '/C/D', label + ' -> file')
     t.is(hostinfo.tarball(), 'https://codeload.github.com/111/222/tar.gz/' + (branch || 'master'), label + ' -> tarball')
   }
 
