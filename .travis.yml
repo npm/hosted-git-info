@@ -5,3 +5,9 @@ node_js:
   - "8"
   - "6"
   - "4"
+script: |
+  if [ $TRAVIS_NODE_VERSION == "4" ]; then
+    ./node_modules/.bin/tap --no-esm test;
+  else
+    npm test;
+  fi
