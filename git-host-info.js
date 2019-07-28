@@ -23,6 +23,7 @@ var gitHosts = module.exports = {
     'domain': 'gitlab.com',
     'treepath': 'tree',
     'bugstemplate': 'https://{domain}/{user}/{project}/issues',
+    'httpstemplate': 'git+https://{auth@}{domain}/{user}/{projectPath}.git{#committish}',
     'tarballtemplate': 'https://{domain}/{user}/{project}/repository/archive.tar.gz?ref={committish}'
   },
   gist: {

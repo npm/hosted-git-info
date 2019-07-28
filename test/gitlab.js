@@ -23,5 +23,11 @@ test('fromUrl(gitlab url)', function (t) {
   require('./lib/standard-tests')(verify, 'gitlab.com', 'gitlab')
   require('./lib/standard-tests')(verify, 'www.gitlab.com', 'gitlab')
 
+  t.is(
+    HostedGit.fromUrl('gitlab:group/sub group1/subgroup2/repo').https(),
+    'git+https://gitlab.com/group/sub%20group1/subgroup2/repo.git',
+    'subgroups are delimited with slashes and url encoded (shortcut -> https)'
+  )
+
   t.end()
 })
