@@ -36,6 +36,7 @@ GitHost.prototype._fill = function (template, opts) {
   var rawcommittish = vars.committish
   var rawFragment = vars.fragment
   var rawPath = vars.path
+  var rawProject = vars.project
   Object.keys(vars).forEach(function (key) {
     vars[key] = encodeURIComponent(vars[key])
   })
@@ -44,6 +45,7 @@ GitHost.prototype._fill = function (template, opts) {
   vars.fragment = vars.fragment ? vars.fragment : ''
   vars['#path'] = rawPath ? '#' + this.hashformat(rawPath) : ''
   vars['/path'] = vars.path ? '/' + vars.path : ''
+  vars.projectPath = rawProject.split('/').map(encodeURIComponent).join('/')
   if (opts.noCommittish) {
     vars['#committish'] = ''
     vars['/tree/committish'] = ''
