@@ -24,7 +24,8 @@ var gitHosts = module.exports = {
     'treepath': 'tree',
     'bugstemplate': 'https://{domain}/{user}/{project}/issues',
     'httpstemplate': 'git+https://{auth@}{domain}/{user}/{projectPath}.git{#committish}',
-    'tarballtemplate': 'https://{domain}/{user}/{project}/repository/archive.tar.gz?ref={committish}'
+    'tarballtemplate': 'https://{domain}/{user}/{project}/repository/archive.tar.gz?ref={committish}',
+    'pathmatch': /^[/]([^/]+)[/](.+?)(?:[.]git|[/])?$/
   },
   gist: {
     'protocols': [ 'git', 'git+ssh', 'git+https', 'ssh', 'https' ],

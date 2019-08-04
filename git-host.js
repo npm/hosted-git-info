@@ -52,7 +52,7 @@ GitHost.prototype._fill = function (template, opts) {
   var rawProject = vars.project
   Object.keys(vars).forEach(function (key) {
     var value = vars[key]
-    if (key === 'path' && typeof value === 'string') {
+    if ((key === 'path' || key === 'project') && typeof value === 'string') {
       vars[key] = value.split('/').map(function (pathComponent) {
         return encodeURIComponent(pathComponent)
       }).join('/')

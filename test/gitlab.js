@@ -28,6 +28,15 @@ test('fromUrl(gitlab url)', function (t) {
   require('./lib/standard-tests')(verify, 'gitlab.com', 'gitlab')
   require('./lib/standard-tests')(verify, 'www.gitlab.com', 'gitlab')
 
+  const subsShort = HostedGit.fromUrl('gitlab:adpt/starters/hello-node')
+  const subsFull = HostedGit.fromUrl('git+https://gitlab.com/adpt/starters/hello-node.git')
+  t.ok(subsShort)
+  t.equal(subsShort.https(), 'git+https://gitlab.com/adpt/starters/hello-node.git')
+  t.equal(subsShort.ssh(), 'git@gitlab.com:adpt/starters/hello-node.git')
+  t.ok(subsFull)
+  t.equal(subsFull.https(), 'git+https://gitlab.com/adpt/starters/hello-node.git')
+  t.equal(subsFull.ssh(), 'git@gitlab.com:adpt/starters/hello-node.git')
+
   t.is(
     HostedGit.fromUrl('gitlab:group/sub group1/subgroup2/repo').https(),
     'git+https://gitlab.com/group/sub%20group1/subgroup2/repo.git',
