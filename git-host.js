@@ -1,8 +1,21 @@
 'use strict'
 var gitHosts = require('./git-host-info.js')
 /* eslint-disable node/no-deprecated-api */
+
+// copy-pasta util._extend from node's source, to avoid pulling
+// the whole util module into peoples' webpack bundles.
 /* istanbul ignore next */
-var extend = Object.assign || require('util')._extend
+var extend = Object.assign || function _extend (target, source) {
+  // Don't do anything if source isn't an object
+  if (source === null || typeof source !== 'object') return target
+
+  const keys = Object.keys(source)
+  let i = keys.length
+  while (i--) {
+    target[keys[i]] = source[keys[i]]
+  }
+  return target
+}
 
 var GitHost = module.exports = function (type, user, auth, project, committish, defaultRepresentation, opts) {
   var gitHostInfo = this
