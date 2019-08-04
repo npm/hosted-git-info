@@ -24,7 +24,7 @@
     "postrelease": "npm publish && git push --follow-tags",
     "pretest": "standard",
     "release": "standard-version -s",
-    "test": "tap -J --100 test/*.js"
+    "test": "tap -J --100 --no-esm test/*.js"
   },
   "dependencies": {
     "lru-cache": "^5.1.1"
