@@ -6,15 +6,14 @@ var LRU = require('lru-cache')
 var cache = new LRU({max: 1000})
 
 var protocolToRepresentationMap = {
-  'git+ssh': 'sshurl',
-  'git+https': 'https',
-  'ssh': 'sshurl',
-  'git': 'git'
+  'git+ssh:': 'sshurl',
+  'git+https:': 'https',
+  'ssh:': 'sshurl',
+  'git:': 'git'
 }
 
 function protocolToRepresentation (protocol) {
-  if (protocol.substr(-1) === ':') protocol = protocol.slice(0, -1)
-  return protocolToRepresentationMap[protocol] || protocol
+  return protocolToRepresentationMap[protocol] || protocol.slice(0, -1)
 }
 
 var authProtocols = {
@@ -65,13 +64,17 @@ function fromUrl (giturl, opts) {
         var pathmatch = gitHostInfo.pathmatch
         var matched = parsed.path.match(pathmatch)
         if (!matched) return
-        if (matched[1] != null) user = decodeURIComponent(matched[1].replace(/^:/, ''))
-        if (matched[2] != null) project = decodeURIComponent(matched[2])
+        if (matched[1] !== null && matched[1] !== undefined) {
+          user = decodeURIComponent(matched[1].replace(/^:/, ''))
+        }
+        project = decodeURIComponent(matched[2])
         defaultRepresentation = protocolToRepresentation(parsed.protocol)
       }
       return new GitHost(gitHostName, user, auth, project, committish, defaultRepresentation, opts)
     } catch (ex) {
-      if (!(ex instanceof URIError)) throw ex
+      /* istanbul ignore else */
+      if (ex instanceof URIError) {
+      } else throw ex
     }
   }).filter(function (gitHostInfo) { return gitHostInfo })
   if (matches.length !== 1) return
@@ -101,7 +104,6 @@ function fixupUnqualifiedGist (giturl) {
 }
 
 function parseGitUrl (giturl) {
-  if (typeof giturl !== 'string') giturl = '' + giturl
   var matched = giturl.match(/^([^@]+)@([^:/]+):[/]?((?:[^/]+[/])?[^/]+?)(?:[.]git)?(#.*)?$/)
   if (!matched) return url.parse(giturl)
   return {

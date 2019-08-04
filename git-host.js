@@ -1,6 +1,7 @@
 'use strict'
 var gitHosts = require('./git-host-info.js')
 /* eslint-disable node/no-deprecated-api */
+/* istanbul ignore next */
 var extend = Object.assign || require('util')._extend
 
 var GitHost = module.exports = function (type, user, auth, project, committish, defaultRepresentation, opts) {
@@ -127,5 +128,6 @@ GitHost.prototype.getDefaultRepresentation = function () {
 }
 
 GitHost.prototype.toString = function (opts) {
-  return (this[this.default] || this.sshurl).call(this, opts)
+  const method = this.default || /* istanbul ignore next */ 'sshurl'
+  return this[method](opts)
 }
