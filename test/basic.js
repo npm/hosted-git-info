@@ -3,6 +3,9 @@ var HostedGit = require('../index')
 var test = require('tap').test
 
 test('basic', function (t) {
+  const h = HostedGit.fromUrl('github:user/project')
+  t.is(h.constructor, HostedGit)
+  t.is(h.constructor.name, 'GitHost')
   t.is(HostedGit.fromUrl('https://google.com'), undefined, 'null on failure')
   t.is(HostedGit.fromUrl('https://github.com/abc/def').getDefaultRepresentation(), 'https', 'match https urls')
   t.is(HostedGit.fromUrl('https://github.com/abc/def/').getDefaultRepresentation(), 'https', 'match URLs with a trailing slash')

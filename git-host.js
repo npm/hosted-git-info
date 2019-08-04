@@ -17,7 +17,8 @@ var extend = Object.assign || function _extend (target, source) {
   return target
 }
 
-var GitHost = module.exports = function (type, user, auth, project, committish, defaultRepresentation, opts) {
+module.exports = GitHost
+function GitHost (type, user, auth, project, committish, defaultRepresentation, opts) {
   var gitHostInfo = this
   gitHostInfo.type = type
   Object.keys(gitHosts[type]).forEach(function (key) {
@@ -30,7 +31,6 @@ var GitHost = module.exports = function (type, user, auth, project, committish, 
   gitHostInfo.default = defaultRepresentation
   gitHostInfo.opts = opts || {}
 }
-GitHost.prototype = {}
 
 GitHost.prototype.hash = function () {
   return this.committish ? '#' + this.committish : ''
