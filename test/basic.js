@@ -35,5 +35,7 @@ test('basic', function (t) {
   t.is(HostedGit.fromUrl('git+file:///foo/bar'), undefined, 'url that has no host')
   t.is(HostedGit.fromUrl('github.com/abc/def/'), undefined, 'forgot the protocol')
   t.is(HostedGit.fromUrl('completely-invalid'), undefined, 'not a url is not hosted')
+
+  t.is(HostedGit.fromUrl('http://github.com/foo/bar').toString(), 'git+ssh://git@github.com/foo/bar.git', 'github http protocol use git+ssh urls')
   t.end()
 })

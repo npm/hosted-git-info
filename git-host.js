@@ -151,6 +151,6 @@ GitHost.prototype.getDefaultRepresentation = function () {
 }
 
 GitHost.prototype.toString = function (opts) {
-  const method = this.default || /* istanbul ignore next */ 'sshurl'
-  return this[method](opts)
+  if (this.default && typeof this[this.default] === 'function') return this[this.default](opts)
+  return this.sshurl(opts)
 }
