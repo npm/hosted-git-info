@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.8.1"></a>
+## [2.8.1](https://github.com/npm/hosted-git-info/compare/v2.8.0...v2.8.1) (2019-08-05)
+
+
+### Bug Fixes
+
+* ignore noCommittish on tarball url generation ([5d4a8d7](https://github.com/npm/hosted-git-info/commit/5d4a8d7))
+* use gist tarball url that works for anonymous gists ([1692435](https://github.com/npm/hosted-git-info/commit/1692435))
+
+
+
 <a name="2.8.0"></a>
 # [2.8.0](https://github.com/npm/hosted-git-info/compare/v2.7.1...v2.8.0) (2019-08-05)
 
