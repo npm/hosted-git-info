@@ -25,7 +25,7 @@ test('fromUrl(gist url)', function (t) {
       t.is(hostinfo.file(''), 'https://gist.githubusercontent.com/111/' + proj + '/raw/' + (branch ? branch + '/' : ''), label + ' -> file')
       t.is(hostinfo.file('C'), 'https://gist.githubusercontent.com/111/' + proj + '/raw/' + (branch ? branch + '/' : '') + 'C', label + ' -> file')
       t.is(hostinfo.file('C/D'), 'https://gist.githubusercontent.com/111/' + proj + '/raw/' + (branch ? branch + '/' : '') + 'C/D', label + ' -> file')
-      t.is(hostinfo.tarball(), 'https://gist.github.com/111/' + proj + '/archive/' + (branch || 'master') + '.tar.gz', label + ' -> tarball')
+      t.is(hostinfo.tarball(), 'https://codeload.github.com/gist/' + proj + '/tar.gz/' + (branch || 'master'), label + ' -> tarball')
     }
   }
 

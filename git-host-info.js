@@ -42,7 +42,7 @@ var gitHosts = module.exports = {
     'httpstemplate': 'git+https://{domain}/{project}.git{#committish}',
     'shortcuttemplate': '{type}:{project}{#committish}',
     'pathtemplate': '{project}{#committish}',
-    'tarballtemplate': 'https://{domain}/{user}/{project}/archive/{committish}.tar.gz',
+    'tarballtemplate': 'https://codeload.github.com/gist/{project}/tar.gz/{committish}',
     'hashformat': function (fragment) {
       return 'file-' + formatHashFragment(fragment)
     }
