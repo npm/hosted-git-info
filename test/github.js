@@ -31,6 +31,7 @@ test('fromUrl(github url)', function (t) {
     t.is(hostinfo.file('C'), 'https://raw.githubusercontent.com/111/222/' + (branch || 'master') + '/C', label + ' -> file')
     t.is(hostinfo.file('C/D'), 'https://raw.githubusercontent.com/111/222/' + (branch || 'master') + '/C/D', label + ' -> file')
     t.is(hostinfo.tarball(), 'https://codeload.github.com/111/222/tar.gz/' + (branch || 'master'), label + ' -> tarball')
+    t.is(hostinfo.tarball({ noCommittish: true }), 'https://codeload.github.com/111/222/tar.gz/' + (branch || 'master'), label + ' -> tarball')
   }
 
   // github shorturls

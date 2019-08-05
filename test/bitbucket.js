@@ -23,6 +23,7 @@ test('fromUrl(bitbucket url)', function (t) {
     t.is(hostinfo.file('C'), 'https://bitbucket.org/111/222/raw/' + (branch || 'master') + '/C', label + ' -> file')
     t.is(hostinfo.file('C/D'), 'https://bitbucket.org/111/222/raw/' + (branch || 'master') + '/C/D', label + ' -> file')
     t.is(hostinfo.tarball(), 'https://bitbucket.org/111/222/get/' + (branch || 'master') + '.tar.gz', label + ' -> tarball')
+    t.is(hostinfo.tarball({ noCommittish: true }), 'https://bitbucket.org/111/222/get/' + (branch || 'master') + '.tar.gz', label + ' -> tarball')
   }
 
   require('./lib/standard-tests')(verify, 'bitbucket.org', 'bitbucket')

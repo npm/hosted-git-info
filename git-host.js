@@ -137,7 +137,8 @@ GitHost.prototype.path = function (opts) {
   return this._fill(this.pathtemplate, opts)
 }
 
-GitHost.prototype.tarball = function (opts) {
+GitHost.prototype.tarball = function (opts_) {
+  var opts = extend({}, opts_, { noCommittish: false })
   return this._fill(this.tarballtemplate, opts)
 }
 

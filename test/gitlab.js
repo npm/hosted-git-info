@@ -23,6 +23,7 @@ test('fromUrl(gitlab url)', function (t) {
     t.is(hostinfo.file('C'), 'https://gitlab.com/111/222/raw/' + (branch || 'master') + '/C', label + ' -> file')
     t.is(hostinfo.file('C/D'), 'https://gitlab.com/111/222/raw/' + (branch || 'master') + '/C/D', label + ' -> file')
     t.is(hostinfo.tarball(), 'https://gitlab.com/111/222/repository/archive.tar.gz?ref=' + (branch || 'master'), label + ' -> tarball')
+    t.is(hostinfo.tarball({ noCommittish: true }), 'https://gitlab.com/111/222/repository/archive.tar.gz?ref=' + (branch || 'master'), label + ' -> tarball')
   }
 
   require('./lib/standard-tests')(verify, 'gitlab.com', 'gitlab')
