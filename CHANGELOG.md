@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.8.2"></a>
+## [2.8.2](https://github.com/npm/hosted-git-info/compare/v2.8.1...v2.8.2) (2019-08-05)
+
+
+### Bug Fixes
+
+* http protocol use sshurl by default ([3b1d629](https://github.com/npm/hosted-git-info/commit/3b1d629)), closes [#48](https://github.com/npm/hosted-git-info/issues/48)
+
+
+
 <a name="2.8.1"></a>
 ## [2.8.1](https://github.com/npm/hosted-git-info/compare/v2.8.0...v2.8.1) (2019-08-05)
 
