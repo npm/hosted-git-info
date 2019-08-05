@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.8.0"></a>
+# [2.8.0](https://github.com/npm/hosted-git-info/compare/v2.7.1...v2.8.0) (2019-08-05)
+
+
+### Bug Fixes
+
+* Allow slashes in gitlab project section ([bbcf7b2](https://github.com/npm/hosted-git-info/commit/bbcf7b2)), closes [#46](https://github.com/npm/hosted-git-info/issues/46) [#43](https://github.com/npm/hosted-git-info/issues/43)
+* **git-host:** disallow URI-encoded slash (%2F) in `path` ([3776fa5](https://github.com/npm/hosted-git-info/commit/3776fa5)), closes [#44](https://github.com/npm/hosted-git-info/issues/44)
+* **gitlab:** Do not URL encode slashes in project name for GitLab https URL ([cbf04f9](https://github.com/npm/hosted-git-info/commit/cbf04f9)), closes [#47](https://github.com/npm/hosted-git-info/issues/47)
+* do not allow invalid gist urls ([d5cf830](https://github.com/npm/hosted-git-info/commit/d5cf830))
+* **cache:** Switch to lru-cache to save ourselves from unlimited memory consumption ([e518222](https://github.com/npm/hosted-git-info/commit/e518222)), closes [#38](https://github.com/npm/hosted-git-info/issues/38)
+
+
+### Features
+
+* give these objects a name ([60abaea](https://github.com/npm/hosted-git-info/commit/60abaea))
+
+
+
 <a name="2.7.1"></a>
 ## [2.7.1](https://github.com/npm/hosted-git-info/compare/v2.7.0...v2.7.1) (2018-07-07)
 
