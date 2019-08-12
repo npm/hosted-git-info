@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="3.0.0"></a>
+# [3.0.0](https://github.com/npm/hosted-git-info/compare/v2.8.3...v3.0.0) (2019-08-12)
+
+
+### Bug Fixes
+
+* **cache:** Switch to lru-cache to save ourselves from unlimited memory consumption ([37c2891](https://github.com/npm/hosted-git-info/commit/37c2891)), closes [#38](https://github.com/npm/hosted-git-info/issues/38)
+
+
+### BREAKING CHANGES
+
+* **cache:** Drop support for node 0.x
+
+
+
 <a name="2.8.3"></a>
 ## [2.8.3](https://github.com/npm/hosted-git-info/compare/v2.8.2...v2.8.3) (2019-08-12)
 
