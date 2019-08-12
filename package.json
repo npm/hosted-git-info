@@ -21,7 +21,7 @@
   "homepage": "https://github.com/npm/hosted-git-info",
   "scripts": {
     "prerelease": "npm t",
-    "postrelease": "npm publish && git push --follow-tags",
+    "postrelease": "npm publish --tag=ancient-legacy-fixes && git push --follow-tags",
     "pretest": "standard",
     "release": "standard-version -s",
     "test": "tap -J --100 --no-esm test/*.js"
