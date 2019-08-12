@@ -26,9 +26,6 @@
     "release": "standard-version -s",
     "test": "tap -J --100 --no-esm test/*.js"
   },
-  "dependencies": {
-    "lru-cache": "^5.1.1"
-  },
   "devDependencies": {
     "standard": "^11.0.1",
     "standard-version": "^4.4.0",
