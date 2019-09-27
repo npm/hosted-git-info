@@ -2,49 +2,252 @@
 var HostedGit = require('../index')
 var test = require('tap').test
 
-test('fromUrl(gist url)', function (t) {
-  var proj = new Array(33).join('2')
-  function verify (host, label, branch) {
+var showLabel = function (label, fn) { return label + ' -> ' + fn }
+
+var testFixtures = function (t, params, fixtures) {
+  for (var i = 0; i < fixtures.length; ++i) {
+    var fixture = fixtures[i]
+    var host = fixture.host(params)
     var hostinfo = HostedGit.fromUrl(host)
-    var hash = branch ? '#' + branch : ''
-    t.ok(hostinfo, label)
-    if (!hostinfo) return
-    t.is(hostinfo.https(), 'git+https://gist.github.com/' + proj + '.git' + hash, label + ' -> https')
-    t.is(hostinfo.git(), 'git://gist.github.com/' + proj + '.git' + hash, label + ' -> git')
-    t.is(hostinfo.browse(), 'https://gist.github.com/' + proj + (branch ? '/' + branch : ''), label + ' -> browse')
-    t.is(hostinfo.browse('C'), 'https://gist.github.com/' + proj + (branch ? '/' + branch : '') + '#file-c', label + ' -> browse(path)')
-    t.is(hostinfo.browse('C/D'), 'https://gist.github.com/' + proj + (branch ? '/' + branch : '') + '#file-cd', label + ' -> browse(path)')
-    t.is(hostinfo.browse('C', 'A'), 'https://gist.github.com/' + proj + (branch ? '/' + branch : '') + '#file-c', label + ' -> browse(path, fragment)')
-    t.is(hostinfo.browse('C/D', 'A'), 'https://gist.github.com/' + proj + (branch ? '/' + branch : '') + '#file-cd', label + ' -> browse(path)')
-    t.is(hostinfo.bugs(), 'https://gist.github.com/' + proj, label + ' -> bugs')
-    t.is(hostinfo.docs(), 'https://gist.github.com/' + proj + (branch ? '/' + branch : ''), label + ' -> docs')
-    t.is(hostinfo.ssh(), 'git@gist.github.com:/' + proj + '.git' + hash, label + ' -> ssh')
-    t.is(hostinfo.sshurl(), 'git+ssh://git@gist.github.com/' + proj + '.git' + hash, label + ' -> sshurl')
-    t.is(hostinfo.shortcut(), 'gist:' + proj + hash, label + ' -> shortcut')
-    if (hostinfo.user) {
-      t.is(hostinfo.file(''), 'https://gist.githubusercontent.com/111/' + proj + '/raw/' + (branch ? branch + '/' : ''), label + ' -> file')
-      t.is(hostinfo.file('C'), 'https://gist.githubusercontent.com/111/' + proj + '/raw/' + (branch ? branch + '/' : '') + 'C', label + ' -> file')
-      t.is(hostinfo.file('C/D'), 'https://gist.githubusercontent.com/111/' + proj + '/raw/' + (branch ? branch + '/' : '') + 'C/D', label + ' -> file')
-      t.is(hostinfo.tarball(), 'https://codeload.github.com/gist/' + proj + '/tar.gz/' + (branch || 'master'), label + ' -> tarball')
-      t.is(hostinfo.tarball({ noCommittish: true }), 'https://codeload.github.com/gist/' + proj + '/tar.gz/' + (branch || 'master'), label + ' -> tarball')
+
+    // INFO: from Url should return `undefined` from fixture input
+    if (fixture.isUndefined) {
+      t.test('input results in undefined', function (tt) {
+        tt.is(hostinfo, undefined)
+        tt.end()
+      })
+      break
     }
+
+    t.test('hostinfo.https', function (tt) {
+      var expected = function (url, hasBranch) {
+        return (hasBranch)
+          ? url + '#' + params.branch
+          : url
+      }
+      tt.is(
+        hostinfo.https(),
+        expected('git+https://gist.github.com/a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2.git', fixture.hasBranch),
+        showLabel(fixture.label, 'https')
+      )
+      tt.is(
+        hostinfo.https({ noCommittish: true }),
+        // INFO: not using `expected` because with `{noCommittish: true}` the output is always the same
+        'git+https://gist.github.com/a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2.git',
+        showLabel(fixture.label, 'https({ noCommittish: true })')
+      )
+      tt.is(
+        hostinfo.https({ noGitPlus: true }),
+        expected('https://gist.github.com/a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2.git', fixture.hasBranch),
+        showLabel(fixture.label, 'https({ noGitPlus: true })')
+      )
+      tt.end()
+    })
+    t.test('hostinfo.git', function (tt) {
+      var expected = function (url, hasBranch) {
+        return (hasBranch)
+          ? url + '#' + params.branch
+          : url
+      }
+      tt.is(
+        hostinfo.git(),
+        expected('git://gist.github.com/a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2.git', fixture.hasBranch),
+        showLabel(fixture.label, 'git')
+      )
+      tt.is(
+        hostinfo.git({ noCommittish: true }),
+        // INFO: not using `expected` because with `{noCommittish: true}` the output is always the same
+        'git://gist.github.com/a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2.git',
+        showLabel(fixture.label, 'git({ noCommittish: true })')
+      )
+      tt.is(
+        hostinfo.git({ noGitPlus: true }),
+        expected('git://gist.github.com/a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2.git', fixture.hasBranch),
+        showLabel(fixture.label, 'git({ noGitPlus: true })')
+      )
+      tt.end()
+    })
+    t.test('hostinfo.browse', function (tt) {
+      var expected = function (url, hasBranch) {
+        return (hasBranch)
+          ? url + '/' + params.branch
+          : url
+      }
+      tt.is(
+        hostinfo.browse(),
+        expected('https://gist.github.com/a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2', fixture.hasBranch),
+        showLabel(fixture.label, 'browse')
+      )
+      tt.is(
+        hostinfo.browse('C'),
+        expected('https://gist.github.com/a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2', fixture.hasBranch) + '#file-c',
+        showLabel(fixture.label, "browse('C')")
+      )
+      tt.is(
+        hostinfo.browse('C/D'),
+        expected('https://gist.github.com/a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2', fixture.hasBranch) + '#file-cd',
+        showLabel(fixture.label, "browse('C/D')")
+      )
+      tt.is(
+        hostinfo.browse('C', 'A'),
+        expected('https://gist.github.com/a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2', fixture.hasBranch) + '#file-c',
+        showLabel(fixture.label, "browse('C', 'A')")
+      )
+      tt.is(
+        hostinfo.browse('C/D', 'A'),
+        expected('https://gist.github.com/a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2', fixture.hasBranch) + '#file-cd',
+        showLabel(fixture.label, "browse('C/D', 'A')")
+      )
+      tt.end()
+    })
+    t.test('hostinfo.bugs', function (tt) {
+      tt.is(
+        hostinfo.bugs(),
+        'https://gist.github.com/a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2',
+        showLabel(fixture.label, 'bugs')
+      )
+      tt.end()
+    })
+    t.test('hostinfo.docs', function (tt) {
+      var expected = function (url, hasBranch) {
+        return (hasBranch)
+          ? url + '/' + params.branch
+          : url
+      }
+      tt.is(
+        hostinfo.docs(),
+        expected('https://gist.github.com/a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2', fixture.hasBranch),
+        showLabel(fixture.label, 'docs')
+      )
+      tt.end()
+    })
+    t.test('hostinfo.ssh', function (tt) {
+      var expected = function (url, hasBranch) {
+        return (hasBranch)
+          ? url + '#' + params.branch
+          : url
+      }
+      tt.is(
+        hostinfo.ssh(),
+        expected('git@gist.github.com:/a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2.git', fixture.hasBranch),
+        showLabel(fixture.label, 'ssh')
+      )
+      tt.end()
+    })
+    t.test('hostinfo.sshurl', function (tt) {
+      var expected = function (url, hasBranch) {
+        return (hasBranch)
+          ? url + '#' + params.branch
+          : url
+      }
+      tt.is(
+        hostinfo.sshurl(),
+        expected('git+ssh://git@gist.github.com/a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2.git', fixture.hasBranch),
+        showLabel(fixture.label, 'sshurl')
+      )
+      tt.end()
+    })
+    t.test('hostinfo.shortcut', function (tt) {
+      var expected = function (url, hasBranch) {
+        return (hasBranch)
+          ? url + '#' + params.branch
+          : url
+      }
+      tt.is(
+        hostinfo.shortcut(),
+        expected('gist:a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2', fixture.hasBranch),
+        showLabel(fixture.label, 'shortcut')
+      )
+      tt.end()
+    })
+    if (hostinfo.user) {
+      t.test('hostinfo.file', function (tt) {
+        var expected = function (url, hasBranch) {
+          return (hasBranch)
+            ? url + params.branch + '/'
+            : url
+        }
+        tt.is(
+          hostinfo.file(),
+          expected('https://gist.githubusercontent.com/some-owner/a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2/raw/', fixture.hasBranch),
+          showLabel(fixture.label, 'file')
+        )
+        tt.is(
+          hostinfo.file(''),
+          expected('https://gist.githubusercontent.com/some-owner/a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2/raw/', fixture.hasBranch),
+          showLabel(fixture.label, "file('')")
+        )
+        tt.is(
+          hostinfo.file('C'),
+          expected('https://gist.githubusercontent.com/some-owner/a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2/raw/', fixture.hasBranch) + 'C',
+          showLabel(fixture.label, "file('C')")
+        )
+        tt.is(
+          hostinfo.file('C/D'),
+          expected('https://gist.githubusercontent.com/some-owner/a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2/raw/', fixture.hasBranch) + 'C/D',
+          showLabel(fixture.label, "file('C/D')")
+        )
+        tt.is(
+          hostinfo.file('C', 'A'),
+          expected('https://gist.githubusercontent.com/some-owner/a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2/raw/', fixture.hasBranch) + 'C',
+          showLabel(fixture.label, "file('C', 'A')")
+        )
+        tt.end()
+      })
+      t.test('hostinfo.tarball', function (tt) {
+        var expected = function (url, hasBranch) {
+          return (hasBranch)
+            ? url.replace(/master/gi, params.branch)
+            : url
+        }
+        tt.is(
+          hostinfo.tarball(),
+          expected('https://codeload.github.com/gist/a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2/tar.gz/master', fixture.hasBranch),
+          showLabel(fixture.label, 'tarball')
+        )
+        tt.is(
+          hostinfo.tarball({ noCommittish: true }),
+          expected('https://codeload.github.com/gist/a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2/tar.gz/master', fixture.hasBranch),
+          showLabel(fixture.label, 'tarball({ noCommittish: true })')
+        )
+        tt.end()
+      })
+    }
+
+    t.test('hostinfo.toString', function (tt) {
+      var expected = function (url, hasBranch) {
+        return (hasBranch)
+          ? url + '#' + params.branch
+          : url
+      }
+      tt.is(
+        hostinfo.toString(),
+        expected('git+https://gist.github.com/a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2.git', fixture.hasBranch),
+        showLabel(fixture.label, 'toString')
+      )
+      tt.end()
+    })
   }
+}
 
-  verify('git@gist.github.com:' + proj + '.git', 'git@')
-  var hostinfo = HostedGit.fromUrl('git@gist.github.com:/c2b12db30a49324325a3781302668408.git')
-  if (t.ok(hostinfo, 'git@hex')) {
-    t.is(hostinfo.https(), 'git+https://gist.github.com/c2b12db30a49324325a3781302668408.git', 'git@hex -> https')
-  }
-  verify('git@gist.github.com:/' + proj + '.git', 'git@/')
-  verify('git://gist.github.com/' + proj, 'git')
-  verify('git://gist.github.com/' + proj + '.git', 'git.git')
-  verify('git://gist.github.com/' + proj + '#branch', 'git#branch', 'branch')
-  verify('git://gist.github.com/' + proj + '.git#branch', 'git.git#branch', 'branch')
+test('fromUrl(gist url)', function (t) {
+  var fixtures = require('./fixtures')
+  var gistFixtures = require('./fixtures/gist')
+  var collectedFixtures = [].concat(fixtures, gistFixtures)
 
-  require('./lib/standard-tests')(verify, 'gist.github.com', 'gist', proj)
+  t.test('main fixtures', function (tt) {
+    var params = {
+      domain: 'gist.github.com',
+      shortname: 'github',
+      label: 'github',
+      owner: 'some-owner',
+      project: new Array(17).join('a2'),
+      branch: 'feature-branch'
+    }
 
-  verify(HostedGit.fromUrl('gist:111/' + proj).toString(), 'round-tripped shortcut')
-  verify('gist:' + proj, 'shortened shortcut')
+    testFixtures(tt, params, collectedFixtures)
+    tt.end()
+  })
 
   t.end()
 })
