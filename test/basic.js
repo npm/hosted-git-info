@@ -4,6 +4,7 @@ var test = require('tap').test
 
 test('basic', function (t) {
   const h = HostedGit.fromUrl('github:user/project')
+  t.equal(h._fill(), undefined)
   t.is(h.constructor, HostedGit)
   t.is(h.constructor.name, 'GitHost')
   t.is(HostedGit.fromUrl('https://google.com'), undefined, 'null on failure')
