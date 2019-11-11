@@ -27,6 +27,13 @@ var gitHosts = module.exports = {
     'tarballtemplate': 'https://{domain}/{user}/{project}/repository/archive.tar.gz?ref={committish}',
     'pathmatch': /^[/]([^/]+)[/]((?!.*(\/-\/|\/repository\/archive\.tar\.gz\?=.*|\/repository\/[^/]+\/archive.tar.gz$)).*?)(?:[.]git|[/])?$/
   },
+  sourcehut: {
+    'protocols': [ 'git+ssh', 'git+https', 'ssh', 'https' ],
+    'domain': 'git.sr.ht',
+    'treepath': 'tree',
+    'tarballtemplate': 'https://{domain}/{user}/{project}/archive/{committish}.tar.gz',
+    'filetemplate': 'https://{domain}/{user}/{project}/blob/{committish}/{path}'
+  },
   gist: {
     'protocols': [ 'git', 'git+ssh', 'git+https', 'ssh', 'https' ],
     'domain': 'gist.github.com',
