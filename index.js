@@ -110,7 +110,8 @@ function parseGitUrl (giturl) {
     var legacy = url.parse(giturl)
     if (legacy.auth) {
       var whatwg = new url.URL(giturl)
-      legacy.auth = whatwg.username + ':' + whatwg.password
+      legacy.auth = whatwg.username || ''
+      if (whatwg.password) legacy.auth += ':' + whatwg.password
     }
     return legacy
   }
