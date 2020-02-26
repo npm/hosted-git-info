@@ -37,6 +37,8 @@ test('basic', function (t) {
   t.is(HostedGit.fromUrl('github.com/abc/def/'), undefined, 'forgot the protocol')
   t.is(HostedGit.fromUrl('completely-invalid'), undefined, 'not a url is not hosted')
 
+  t.is(HostedGit.fromUrl('git+ssh://git@git.unlucky.com:RND/electron-tools/some-tool#2.0.1'), undefined, 'properly ignores non-hosted scp style urls')
+
   t.is(HostedGit.fromUrl('http://github.com/foo/bar').toString(), 'git+ssh://git@github.com/foo/bar.git', 'github http protocol use git+ssh urls')
   t.end()
 })
