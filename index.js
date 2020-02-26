@@ -108,7 +108,9 @@ function parseGitUrl (giturl) {
   var matched = giturl.match(/^([^@]+)@([^:/]+):[/]?((?:[^/]+[/])?[^/]+?)(?:[.]git)?(#.*)?$/)
   if (!matched) {
     var legacy = url.parse(giturl)
-    if (legacy.auth) {
+    // If we don't have url.URL, then sorry, this is just not fixable.
+    // This affects Node <= 6.12.
+    if (legacy.auth && typeof url.URL === 'function') {
       // git urls can be in the form of scp-style/ssh-connect strings, like
       // git+ssh://user@host.com:some/path, which the legacy url parser
       // supports, but WhatWG url.URL class does not.  However, the legacy
