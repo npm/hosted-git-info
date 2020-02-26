@@ -109,9 +109,8 @@ function parseGitUrl (giturl) {
   if (!matched) {
     var legacy = url.parse(giturl)
     if (legacy.auth) {
-      var whatwg = new url.URL(giturl)
-      legacy.auth = whatwg.username || ''
-      if (whatwg.password) legacy.auth += ':' + whatwg.password
+      // Replace the url decoded username:password with the url encoded username:password from the original url
+      legacy.auth = giturl.match(new RegExp('^[^/]+//([^@]+)@'))[1]
     }
     return legacy
   }
