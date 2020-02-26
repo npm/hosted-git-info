@@ -22,7 +22,7 @@
   "scripts": {
     "prerelease": "npm t",
     "postrelease": "npm publish --tag=ancient-legacy-fixes && git push --follow-tags",
-    "pretest": "standard",
+    "posttest": "standard",
     "release": "standard-version -s",
     "test:coverage": "tap --coverage-report=html -J --100 --no-esm test/*.js",
     "test": "tap -J --100 --no-esm test/*.js"
