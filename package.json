@@ -39,5 +39,8 @@
     "index.js",
     "git-host.js",
     "git-host-info.js"
-  ]
+  ],
+  "engines": {
+    "node": ">=10"
+  }
 }
