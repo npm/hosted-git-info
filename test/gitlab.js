@@ -17,7 +17,7 @@ var testFixtures = function (t, params, fixtures) {
         tt.is(hostinfo, undefined)
         tt.end()
       })
-      break
+      continue
     }
 
     t.test('hostinfo.https', function (tt) {
