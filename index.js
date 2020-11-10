@@ -2,8 +2,8 @@
 var url = require('url')
 var gitHosts = require('./git-host-info.js')
 var GitHost = module.exports = require('./git-host.js')
-var LRU = require('lru-cache')
-var cache = new LRU({max: 1000})
+var LRU = require('quick-lru')
+var cache = new LRU({maxSize: 1000})
 
 var protocolToRepresentationMap = {
   'git+ssh:': 'sshurl',

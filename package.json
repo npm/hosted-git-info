@@ -28,7 +28,7 @@
     "test": "tap -J --100 --no-esm test/*.js"
   },
   "dependencies": {
-    "lru-cache": "^6.0.0"
+    "quick-lru": "^5.1.1"
   },
   "devDependencies": {
     "standard": "^11.0.1",
