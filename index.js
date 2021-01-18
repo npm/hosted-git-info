@@ -121,7 +121,14 @@ function parseGitUrl (giturl) {
       const authmatch = giturl.match(/[^@]+@[^:/]+/)
       /* istanbul ignore else - this should be impossible */
       if (authmatch) {
-        var whatwg = new url.URL(authmatch[0])
+        var whatwg
+        try {
+          whatwg = new url.URL(authmatch[0])
+        } catch (e) {
+          /* istanbul ignore if - this should be impossible */
+          if (e.name !== 'TypeError') throw e
+          whatwg = {}
+        }
         legacy.auth = whatwg.username || ''
         if (whatwg.password) legacy.auth += ':' + whatwg.password
       }
