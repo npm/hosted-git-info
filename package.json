@@ -1,7 +1,7 @@
 {
   "name": "hosted-git-info",
   "version": "3.0.8",
-  "description": "Provides metadata and conversions from repository urls for Github, Bitbucket and Gitlab",
+  "description": "Provides metadata and conversions from repository urls for GitHub, Bitbucket and GitLab",
   "main": "index.js",
   "repository": {
     "type": "git",
