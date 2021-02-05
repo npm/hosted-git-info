@@ -1,4 +1,3 @@
-'use strict'
 const HostedGit = require('../index')
 const t = require('tap')
 
@@ -7,12 +6,17 @@ const invalid = [
   'user@foo/bar',
   'user:password@foo/bar',
   ':password@foo/bar',
+  // foo/bar shorthand but with a space in it
+  'foo/ bar',
   // git@github.com style, but omitting the username
   'github.com:foo/bar',
+  'github.com/foo/bar',
   // invalid URI encoding
   'github:foo%0N/bar',
   // missing path
-  'git+ssh://git@github.com:'
+  'git+ssh://git@github.com:',
+  // a deep url to something we don't know
+  'https://github.com/foo/bar/issues'
 ]
 
 // assigning the constructor here is hacky, but the only way to make assertions that compare
@@ -170,7 +174,12 @@ const valid = {
   'https://user:password@github.com/foo/bar.git': { ...defaults, default: 'https', auth: 'user:password' },
   'https://user:password@github.com/foo/bar.git#branch': { ...defaults, default: 'https', auth: 'user:password', committish: 'branch' },
   'https://:password@github.com/foo/bar.git': { ...defaults, default: 'https', auth: ':password' },
-  'https://:password@github.com/foo/bar.git#branch': { ...defaults, default: 'https', auth: ':password', committish: 'branch' }
+  'https://:password@github.com/foo/bar.git#branch': { ...defaults, default: 'https', auth: ':password', committish: 'branch' },
+
+  // inputs that are not quite proper but we accept anyway
+  'https://www.github.com/foo/bar': { ...defaults, default: 'https' },
+  'foo/bar#branch with space': { ...defaults, default: 'shortcut', committish: 'branch with space' },
+  'https://github.com/foo/bar/tree/branch': { ...defaults, default: 'https', committish: 'branch' }
 }
 
 t.test('valid urls parse properly', t => {

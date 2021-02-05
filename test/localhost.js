@@ -2,17 +2,16 @@
 // which do various things with these git shortcuts.
 const ghi = require('../git-host-info.js')
 ghi.localhost = {
-  protocols: [ 'git' ],
-  domain: 'localhost:12345',
-  gittemplate: 'git://{domain}/{user}{#committish}',
-  treepath: 'not-implemented',
-  tarballtemplate: 'http://localhost:18000/repo-HEAD.tgz',
-  shortcuttemplate: '{type}:{user}/x{#committish}',
-  pathtemplate: '/{user}{#committish}',
-  pathmatch: /^\/(\w+)\/(\w+)/,
-  hashformat: h => h,
-  protocols_re: /^(git):$/
+  protocols: ['git:'],
+  domain: 'localhost',
+  extract: (url) => {
+    const [, user, project] = url.pathname.split('/')
+    return { user, project, committish: url.hash.slice(1) }
+  }
 }
+
+ghi.byShortcut['localhost:'] = 'localhost'
+ghi.byDomain.localhost = 'localhost'
 
 const HostedGit = require('../')
 const t = require('tap')

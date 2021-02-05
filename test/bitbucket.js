@@ -4,7 +4,11 @@ const t = require('tap')
 
 const invalid = [
   // invalid protocol
-  'git://bitbucket.org/foo/bar'
+  'git://bitbucket.org/foo/bar',
+  // url to get a tarball
+  'https://bitbucket.org/foo/bar/get/archive.tar.gz',
+  // missing project
+  'https://bitbucket.org/foo'
 ]
 
 // assigning the constructor here is hacky, but the only way to make assertions that compare
@@ -186,10 +190,10 @@ t.test('string methods populate correctly', t => {
   t.equal(parsed.tarball(), 'https://bitbucket.org/foo/bar/get/master.tar.gz')
   t.equal(parsed.file(), 'https://bitbucket.org/foo/bar/raw/master/')
   t.equal(parsed.file('/lib/index.js'), 'https://bitbucket.org/foo/bar/raw/master/lib/index.js')
+  t.equal(parsed.bugs(), 'https://bitbucket.org/foo/bar/issues')
 
   t.equal(parsed.docs({ committish: 'fix/bug' }), 'https://bitbucket.org/foo/bar/src/fix%2Fbug#readme', 'allows overriding options')
 
-  t.same(parsed.bugs(), null, 'bugs() returns null')
   t.same(parsed.git(), null, 'git() returns null')
 
   const extra = HostedGit.fromUrl('https://user@bitbucket.org/foo/bar#fix/bug')
