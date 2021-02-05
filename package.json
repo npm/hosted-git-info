@@ -24,6 +24,7 @@
     "postrelease": "npm publish && git push --follow-tags",
     "posttest": "standard",
     "release": "standard-version -s",
+    "snap": "TAP_SNAPSHOT=1 tap",
     "test:coverage": "tap --coverage-report=html",
     "test": "tap"
   },
@@ -31,13 +32,9 @@
     "lru-cache": "^6.0.0"
   },
   "devDependencies": {
-    "standard": "^11.0.1",
-    "standard-version": "^4.4.0",
+    "standard": "^16.0.3",
+    "standard-version": "^9.1.0",
     "tap": "^14.11.0"
-  },
-  "tap": {
-    "check-coverage": true,
-    "esm": false
   },
   "files": [
     "index.js",
@@ -46,5 +43,10 @@
   ],
   "engines": {
     "node": ">=10"
+  },
+  "tap": {
+    "color": 1,
+    "coverage": true,
+    "esm": false
   }
 }

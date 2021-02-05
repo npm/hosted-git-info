@@ -3,16 +3,10 @@ const HostedGit = require('../index')
 const t = require('tap')
 
 const invalid = [
-  // TODO these should work, but do not unless auth is specified (which is ignored)
-  'git+ssh://gist.github.com:feedbeef',
-  'git+ssh://gist.github.com:feedbeef#branch',
-  'git+ssh://gist.github.com:feedbeef.git',
-  'git+ssh://gist.github.com:feedbeef.git#branch',
-
-  'ssh://gist.github.com:feedbeef',
-  'ssh://gist.github.com:feedbeef#branch',
-  'ssh://gist.github.com:feedbeef.git',
-  'ssh://gist.github.com:feedbeef.git#branch'
+  // raw urls that are wrong anyway but for some reason are in the wild
+  'https://gist.github.com/foo/feedbeef/raw/fix%2Fbug/',
+  // missing both user and project
+  'https://gist.github.com/'
 ]
 
 // user defaults to null for all inputs that do not specify one
@@ -24,43 +18,41 @@ const valid = {
   // shortcuts
   //
   // NOTE auth is accepted but ignored
-  // NOTE when user is unspecified it is set to an empty string rather than null
-  // NOTE the committish is currently ignored if the shortcut does not include a slash
-  'gist:feedbeef': { ...defaults, default: 'shortcut', user: '' },
-  'gist:feedbeef#branch': { ...defaults, default: 'shortcut', user: '', committish: null },
-  'gist:user@feedbeef': { ...defaults, default: 'shortcut', user: '', auth: null },
-  'gist:user@feedbeef#branch': { ...defaults, default: 'shortcut', user: '', auth: null, committish: null },
-  'gist:user:password@feedbeef': { ...defaults, default: 'shortcut', user: '', auth: null },
-  'gist:user:password@feedbeef#branch': { ...defaults, default: 'shortcut', user: '', auth: null, committish: null },
-  'gist::password@feedbeef': { ...defaults, default: 'shortcut', user: '', auth: null },
-  'gist::password@feedbeef#branch': { ...defaults, default: 'shortcut', user: '', auth: null, committish: null },
+  'gist:feedbeef': { ...defaults, default: 'shortcut' },
+  'gist:feedbeef#branch': { ...defaults, default: 'shortcut', committish: 'branch' },
+  'gist:user@feedbeef': { ...defaults, default: 'shortcut', auth: null },
+  'gist:user@feedbeef#branch': { ...defaults, default: 'shortcut', auth: null, committish: 'branch' },
+  'gist:user:password@feedbeef': { ...defaults, default: 'shortcut', auth: null },
+  'gist:user:password@feedbeef#branch': { ...defaults, default: 'shortcut', auth: null, committish: 'branch' },
+  'gist::password@feedbeef': { ...defaults, default: 'shortcut', auth: null },
+  'gist::password@feedbeef#branch': { ...defaults, default: 'shortcut', auth: null, committish: 'branch' },
 
-  'gist:feedbeef.git': { ...defaults, default: 'shortcut', user: '' },
-  'gist:feedbeef.git#branch': { ...defaults, default: 'shortcut', user: '', committish: null },
-  'gist:user@feedbeef.git': { ...defaults, default: 'shortcut', user: '', auth: null },
-  'gist:user@feedbeef.git#branch': { ...defaults, default: 'shortcut', user: '', auth: null, committish: null },
-  'gist:user:password@feedbeef.git': { ...defaults, default: 'shortcut', user: '', auth: null },
-  'gist:user:password@feedbeef.git#branch': { ...defaults, default: 'shortcut', user: '', auth: null, committish: null },
-  'gist::password@feedbeef.git': { ...defaults, default: 'shortcut', user: '', auth: null },
-  'gist::password@feedbeef.git#branch': { ...defaults, default: 'shortcut', user: '', auth: null, committish: null },
+  'gist:feedbeef.git': { ...defaults, default: 'shortcut' },
+  'gist:feedbeef.git#branch': { ...defaults, default: 'shortcut', committish: 'branch' },
+  'gist:user@feedbeef.git': { ...defaults, default: 'shortcut', auth: null },
+  'gist:user@feedbeef.git#branch': { ...defaults, default: 'shortcut', auth: null, committish: 'branch' },
+  'gist:user:password@feedbeef.git': { ...defaults, default: 'shortcut', auth: null },
+  'gist:user:password@feedbeef.git#branch': { ...defaults, default: 'shortcut', auth: null, committish: 'branch' },
+  'gist::password@feedbeef.git': { ...defaults, default: 'shortcut', auth: null },
+  'gist::password@feedbeef.git#branch': { ...defaults, default: 'shortcut', auth: null, committish: 'branch' },
 
-  'gist:/feedbeef': { ...defaults, default: 'shortcut', user: '' },
-  'gist:/feedbeef#branch': { ...defaults, default: 'shortcut', user: '', committish: 'branch' },
-  'gist:user@/feedbeef': { ...defaults, default: 'shortcut', user: '', auth: null },
-  'gist:user@/feedbeef#branch': { ...defaults, default: 'shortcut', user: '', auth: null, committish: 'branch' },
-  'gist:user:password@/feedbeef': { ...defaults, default: 'shortcut', user: '', auth: null },
-  'gist:user:password@/feedbeef#branch': { ...defaults, default: 'shortcut', user: '', auth: null, committish: 'branch' },
-  'gist::password@/feedbeef': { ...defaults, default: 'shortcut', user: '', auth: null },
-  'gist::password@/feedbeef#branch': { ...defaults, default: 'shortcut', user: '', auth: null, committish: 'branch' },
+  'gist:/feedbeef': { ...defaults, default: 'shortcut' },
+  'gist:/feedbeef#branch': { ...defaults, default: 'shortcut', committish: 'branch' },
+  'gist:user@/feedbeef': { ...defaults, default: 'shortcut', auth: null },
+  'gist:user@/feedbeef#branch': { ...defaults, default: 'shortcut', auth: null, committish: 'branch' },
+  'gist:user:password@/feedbeef': { ...defaults, default: 'shortcut', auth: null },
+  'gist:user:password@/feedbeef#branch': { ...defaults, default: 'shortcut', auth: null, committish: 'branch' },
+  'gist::password@/feedbeef': { ...defaults, default: 'shortcut', auth: null },
+  'gist::password@/feedbeef#branch': { ...defaults, default: 'shortcut', auth: null, committish: 'branch' },
 
-  'gist:/feedbeef.git': { ...defaults, default: 'shortcut', user: '' },
-  'gist:/feedbeef.git#branch': { ...defaults, default: 'shortcut', user: '', committish: 'branch' },
-  'gist:user@/feedbeef.git': { ...defaults, default: 'shortcut', user: '', auth: null },
-  'gist:user@/feedbeef.git#branch': { ...defaults, default: 'shortcut', user: '', auth: null, committish: 'branch' },
-  'gist:user:password@/feedbeef.git': { ...defaults, default: 'shortcut', user: '', auth: null },
-  'gist:user:password@/feedbeef.git#branch': { ...defaults, default: 'shortcut', user: '', auth: null, committish: 'branch' },
-  'gist::password@/feedbeef.git': { ...defaults, default: 'shortcut', user: '', auth: null },
-  'gist::password@/feedbeef.git#branch': { ...defaults, default: 'shortcut', user: '', auth: null, committish: 'branch' },
+  'gist:/feedbeef.git': { ...defaults, default: 'shortcut' },
+  'gist:/feedbeef.git#branch': { ...defaults, default: 'shortcut', committish: 'branch' },
+  'gist:user@/feedbeef.git': { ...defaults, default: 'shortcut', auth: null },
+  'gist:user@/feedbeef.git#branch': { ...defaults, default: 'shortcut', auth: null, committish: 'branch' },
+  'gist:user:password@/feedbeef.git': { ...defaults, default: 'shortcut', auth: null },
+  'gist:user:password@/feedbeef.git#branch': { ...defaults, default: 'shortcut', auth: null, committish: 'branch' },
+  'gist::password@/feedbeef.git': { ...defaults, default: 'shortcut', auth: null },
+  'gist::password@/feedbeef.git#branch': { ...defaults, default: 'shortcut', auth: null, committish: 'branch' },
 
   'gist:foo/feedbeef': { ...defaults, default: 'shortcut', user: 'foo' },
   'gist:foo/feedbeef#branch': { ...defaults, default: 'shortcut', user: 'foo', committish: 'branch' },
@@ -162,6 +154,8 @@ const valid = {
   //
   // NOTE auth is accepted but ignored
   // NOTE see TODO at list of invalids, some inputs fail and shouldn't
+  'git+ssh://gist.github.com:feedbeef': { ...defaults, default: 'sshurl', auth: null },
+  'git+ssh://gist.github.com:feedbeef#branch': { ...defaults, default: 'sshurl', auth: null, committish: 'branch' },
   'git+ssh://user@gist.github.com:feedbeef': { ...defaults, default: 'sshurl', auth: null },
   'git+ssh://user@gist.github.com:feedbeef#branch': { ...defaults, default: 'sshurl', auth: null, committish: 'branch' },
   'git+ssh://user:password@gist.github.com:feedbeef': { ...defaults, default: 'sshurl', auth: null },
@@ -169,6 +163,8 @@ const valid = {
   'git+ssh://:password@gist.github.com:feedbeef': { ...defaults, default: 'sshurl', auth: null },
   'git+ssh://:password@gist.github.com:feedbeef#branch': { ...defaults, default: 'sshurl', auth: null, committish: 'branch' },
 
+  'git+ssh://gist.github.com:feedbeef.git': { ...defaults, default: 'sshurl', auth: null },
+  'git+ssh://gist.github.com:feedbeef.git#branch': { ...defaults, default: 'sshurl', auth: null, committish: 'branch' },
   'git+ssh://user@gist.github.com:feedbeef.git': { ...defaults, default: 'sshurl', auth: null },
   'git+ssh://user@gist.github.com:feedbeef.git#branch': { ...defaults, default: 'sshurl', auth: null, committish: 'branch' },
   'git+ssh://user:password@gist.github.com:feedbeef.git': { ...defaults, default: 'sshurl', auth: null },
@@ -197,7 +193,8 @@ const valid = {
   // ssh urls
   //
   // NOTE auth is accepted but ignored
-  // NOTE see TODO at list of invalids, some inputs fail and shouldn't
+  'ssh://gist.github.com:feedbeef': { ...defaults, default: 'sshurl', auth: null },
+  'ssh://gist.github.com:feedbeef#branch': { ...defaults, default: 'sshurl', auth: null, committish: 'branch' },
   'ssh://user@gist.github.com:feedbeef': { ...defaults, default: 'sshurl', auth: null },
   'ssh://user@gist.github.com:feedbeef#branch': { ...defaults, default: 'sshurl', auth: null, committish: 'branch' },
   'ssh://user:password@gist.github.com:feedbeef': { ...defaults, default: 'sshurl', auth: null },
@@ -205,6 +202,8 @@ const valid = {
   'ssh://:password@gist.github.com:feedbeef': { ...defaults, default: 'sshurl', auth: null },
   'ssh://:password@gist.github.com:feedbeef#branch': { ...defaults, default: 'sshurl', auth: null, committish: 'branch' },
 
+  'ssh://gist.github.com:feedbeef.git': { ...defaults, default: 'sshurl', auth: null },
+  'ssh://gist.github.com:feedbeef.git#branch': { ...defaults, default: 'sshurl', auth: null, committish: 'branch' },
   'ssh://user@gist.github.com:feedbeef.git': { ...defaults, default: 'sshurl', auth: null },
   'ssh://user@gist.github.com:feedbeef.git#branch': { ...defaults, default: 'sshurl', auth: null, committish: 'branch' },
   'ssh://user:password@gist.github.com:feedbeef.git': { ...defaults, default: 'sshurl', auth: null },
@@ -343,7 +342,7 @@ t.test('string methods populate correctly', t => {
   const parsed = HostedGit.fromUrl('git+ssh://gist.github.com/foo/feedbeef')
   t.equal(parsed.getDefaultRepresentation(), parsed.default)
   t.equal(parsed.hash(), '', 'hash() returns empty string when committish is unset')
-  t.equal(parsed.ssh(), 'git@gist.github.com:/feedbeef.git')
+  t.equal(parsed.ssh(), 'git@gist.github.com:feedbeef.git')
   t.equal(parsed.sshurl(), 'git+ssh://git@gist.github.com/feedbeef.git')
   t.equal(parsed.browse(), 'https://gist.github.com/feedbeef')
   t.equal(parsed.browse('/lib/index.js'), 'https://gist.github.com/feedbeef#file-libindex-js')
@@ -358,13 +357,13 @@ t.test('string methods populate correctly', t => {
   t.equal(parsed.git(), 'git://gist.github.com/feedbeef.git')
   t.equal(parsed.bugs(), 'https://gist.github.com/feedbeef')
 
-  t.equal(parsed.ssh({ committish: 'fix/bug' }), 'git@gist.github.com:/feedbeef.git#fix/bug', 'allows overriding options')
+  t.equal(parsed.ssh({ committish: 'fix/bug' }), 'git@gist.github.com:feedbeef.git#fix/bug', 'allows overriding options')
 
   const extra = HostedGit.fromUrl('https://user@gist.github.com/foo/feedbeef#fix/bug')
   t.equal(extra.hash(), '#fix/bug')
   t.equal(extra.https(), 'git+https://gist.github.com/feedbeef.git#fix/bug')
   t.equal(extra.shortcut(), 'gist:feedbeef#fix/bug')
-  t.equal(extra.ssh(), 'git@gist.github.com:/feedbeef.git#fix/bug')
+  t.equal(extra.ssh(), 'git@gist.github.com:feedbeef.git#fix/bug')
   t.equal(extra.sshurl(), 'git+ssh://git@gist.github.com/feedbeef.git#fix/bug')
   t.equal(extra.browse(), 'https://gist.github.com/feedbeef/fix%2Fbug')
   t.equal(extra.browse('/lib/index.js'), 'https://gist.github.com/feedbeef/fix%2Fbug#file-libindex-js')
