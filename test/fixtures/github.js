@@ -1,7 +1,7 @@
 'use strict'
 
 module.exports = [
-  // Github Shorturls
+  // GitHub Shorturls
   {
     host: function (p) { return p.owner + '/' + p.project },
     label: 'github-short'
