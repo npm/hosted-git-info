@@ -1,293 +1,212 @@
 'use strict'
-var HostedGit = require('../index')
-var test = require('tap').test
+const HostedGit = require('../index')
+const t = require('tap')
 
-var showLabel = function (label, fn) { return label + ' -> ' + fn }
+const invalid = [
+  // invalid protocol
+  'git://bitbucket.org/foo/bar'
+]
 
-var testFixtures = function (t, params, fixtures) {
-  for (var i = 0; i < fixtures.length; ++i) {
-    var fixture = fixtures[i]
+// assigning the constructor here is hacky, but the only way to make assertions that compare
+// a subset of properties to a found object pass as you would expect
+const GitHost = require('../git-host')
+const defaults = { constructor: GitHost, type: 'bitbucket', user: 'foo', project: 'bar' }
 
-    var host = fixture.host(params)
-    var hostinfo = HostedGit.fromUrl(host)
+const valid = {
+  // shortucts
+  //
+  // NOTE auth is accepted but ignored
+  'bitbucket:foo/bar': { ...defaults, default: 'shortcut' },
+  'bitbucket:foo/bar#branch': { ...defaults, default: 'shortcut', committish: 'branch' },
+  'bitbucket:user@foo/bar': { ...defaults, default: 'shortcut', auth: null },
+  'bitbucket:user@foo/bar#branch': { ...defaults, default: 'shortcut', auth: null, committish: 'branch' },
+  'bitbucket:user:password@foo/bar': { ...defaults, default: 'shortcut', auth: null },
+  'bitbucket:user:password@foo/bar#branch': { ...defaults, default: 'shortcut', auth: null, committish: 'branch' },
+  'bitbucket::password@foo/bar': { ...defaults, default: 'shortcut', auth: null },
+  'bitbucket::password@foo/bar#branch': { ...defaults, default: 'shortcut', auth: null, committish: 'branch' },
 
-    // INFO: fromUrl should return `undefined` from fixture input
-    if (fixture.isUndefined) {
-      t.test('input results in undefined', function (tt) {
-        tt.is(hostinfo, undefined)
-        tt.end()
-      })
-      break
-    }
+  'bitbucket:foo/bar.git': { ...defaults, default: 'shortcut' },
+  'bitbucket:foo/bar.git#branch': { ...defaults, default: 'shortcut', committish: 'branch' },
+  'bitbucket:user@foo/bar.git': { ...defaults, default: 'shortcut', auth: null },
+  'bitbucket:user@foo/bar.git#branch': { ...defaults, default: 'shortcut', auth: null, committish: 'branch' },
+  'bitbucket:user:password@foo/bar.git': { ...defaults, default: 'shortcut', auth: null },
+  'bitbucket:user:password@foo/bar.git#branch': { ...defaults, default: 'shortcut', auth: null, committish: 'branch' },
+  'bitbucket::password@foo/bar.git': { ...defaults, default: 'shortcut', auth: null },
+  'bitbucket::password@foo/bar.git#branch': { ...defaults, default: 'shortcut', auth: null, committish: 'branch' },
 
-    t.test('hostinfo.https', function (tt) {
-      var expected = function (url, hasBranch) {
-        return (hasBranch)
-          ? url + '#' + params.branch
-          : url
-      }
-      tt.is(
-        hostinfo.https(),
-        expected('git+https://bitbucket.org/some-owner/some-repo.git', fixture.hasBranch, fixture.hasGroup),
-        showLabel(fixture.label, 'https')
-      )
-      // INFO: not using `expected` because with `{noCommittish: true}` the output is always the same
-      tt.is(
-        hostinfo.https({ noCommittish: true }),
-        'git+https://bitbucket.org/some-owner/some-repo.git',
-        showLabel(fixture.label, 'https({ noCommittish: true })')
-      )
-      tt.is(
-        hostinfo.https({ noGitPlus: true }),
-        expected('https://bitbucket.org/some-owner/some-repo.git', fixture.hasBranch),
-        showLabel(fixture.label, 'https({ noGitPlus: true })')
-      )
-      tt.end()
-    })
-    t.test('hostinfo.browse', function (tt) {
-      var expected = function (url, hasBranch) {
-        if (hasBranch) {
-          if (url.indexOf('master') === -1) {
-            return url + '/src/' + params.branch
-          } else {
-            return url.replace(/master/gi, params.branch)
-          }
-        }
-        return url
-      }
-      tt.is(
-        hostinfo.browse(),
-        expected('https://bitbucket.org/some-owner/some-repo', fixture.hasBranch),
-        showLabel(fixture.label, 'browse')
-      )
-      tt.is(
-        hostinfo.browse(''),
-        expected('https://bitbucket.org/some-owner/some-repo/src/master/', fixture.hasBranch),
-        showLabel(fixture.label, "browse('')")
-      )
-      tt.is(
-        hostinfo.browse('C'),
-        expected('https://bitbucket.org/some-owner/some-repo/src/master/C', fixture.hasBranch),
-        showLabel(fixture.label, "browse('C')")
-      )
-      tt.is(
-        hostinfo.browse('C/D'),
-        expected('https://bitbucket.org/some-owner/some-repo/src/master/C/D', fixture.hasBranch),
-        showLabel(fixture.label, "browse('C/D')")
-      )
-      tt.is(
-        hostinfo.browse('C', 'A'),
-        expected('https://bitbucket.org/some-owner/some-repo/src/master/C#a', fixture.hasBranch),
-        showLabel(fixture.label, "browse('C', 'A')")
-      )
-      tt.is(
-        hostinfo.browse('C/D', 'A'),
-        expected('https://bitbucket.org/some-owner/some-repo/src/master/C/D#a', fixture.hasBranch),
-        showLabel(fixture.label, "browse('C/D', 'A')")
-      )
-      tt.end()
-    })
-    t.test('hostinfo.docs', function (tt) {
-      var expected = function (url, hasBranch) {
-        if (hasBranch) {
-          var splitUrl = url.split('#')
-          return splitUrl[0] + '/src/' + params.branch + '#' + splitUrl[1]
-        }
-        return url
-      }
-      tt.is(
-        hostinfo.docs(),
-        expected('https://bitbucket.org/some-owner/some-repo#readme', fixture.hasBranch),
-        showLabel(fixture.label, 'docs')
-      )
-      tt.is(
-        hostinfo.docs({ noCommittish: true }),
-        // INFO: not using `expected` because with `{noCommittish: true}` the output is always the same
-        'https://bitbucket.org/some-owner/some-repo#readme',
-        showLabel(fixture.label, 'docs({ noCommittish: true })')
-      )
-      tt.is(
-        hostinfo.docs({ noGitPlus: true }),
-        expected('https://bitbucket.org/some-owner/some-repo#readme', fixture.hasBranch),
-        showLabel(fixture.label, 'docs({ noGitPlus: true })')
-      )
-      tt.end()
-    })
-    t.test('hostinfo.ssh', function (tt) {
-      var expected = function (url, hasBranch) {
-        return (hasBranch)
-          ? url + '#' + params.branch
-          : url
-      }
-      tt.is(
-        hostinfo.ssh(),
-        expected('git@bitbucket.org:some-owner/some-repo.git', fixture.hasBranch),
-        showLabel(fixture.label, 'ssh')
-      )
-      tt.is(
-        hostinfo.ssh({ noCommittish: true }),
-        // INFO: not using `expected` because with `{noCommittish: true}` the output is always the same
-        'git@bitbucket.org:some-owner/some-repo.git',
-        showLabel(fixture.label, 'ssh({ noCommittish: true })')
-      )
-      tt.is(
-        hostinfo.ssh({ noGitPlus: true }),
-        expected('git@bitbucket.org:some-owner/some-repo.git', fixture.hasBranch),
-        showLabel(fixture.label, 'ssh({ noGitPlus: true })')
-      )
-      tt.end()
-    })
-    t.test('hostinfo.sshurl', function (tt) {
-      var expected = function (url, hasBranch) {
-        return (hasBranch)
-          ? url + '#' + params.branch
-          : url
-      }
-      tt.is(
-        hostinfo.sshurl(),
-        expected('git+ssh://git@bitbucket.org/some-owner/some-repo.git', fixture.hasBranch),
-        showLabel(fixture.label, 'sshurl')
-      )
-      tt.is(
-        hostinfo.sshurl({ noCommittish: true }),
-        // INFO: not using `expected` because with `{noCommittish: true}` the output is always the same
-        'git+ssh://git@bitbucket.org/some-owner/some-repo.git',
-        showLabel(fixture.label, 'sshurl({ noCommittish: true })')
-      )
-      tt.is(
-        hostinfo.sshurl({ noGitPlus: true }),
-        expected('ssh://git@bitbucket.org/some-owner/some-repo.git', fixture.hasBranch),
-        showLabel(fixture.label, 'sshurl({ noGitPlus: true })')
-      )
-      tt.end()
-    })
-    t.test('hostinfo.shortcut', function (tt) {
-      var expected = function (url, hasBranch) {
-        return (hasBranch)
-          ? url + '#' + params.branch
-          : url
-      }
-      tt.is(
-        hostinfo.shortcut(),
-        expected('bitbucket:some-owner/some-repo', fixture.hasBranch),
-        showLabel(fixture.label, 'shortcut')
-      )
-      tt.is(
-        hostinfo.shortcut({ noCommittish: true }),
-        // INFO: not using `expected` because with `{noCommittish: true}` the output is always the same
-        'bitbucket:some-owner/some-repo',
-        showLabel(fixture.label, 'shortcut({ noCommittish: true })')
-      )
-      tt.is(
-        hostinfo.shortcut({ noGitPlus: true }),
-        expected('bitbucket:some-owner/some-repo', fixture.hasBranch),
-        showLabel(fixture.label, 'shortcut({ noGitPlus: true })')
-      )
-      tt.end()
-    })
-    t.test('hostinfo.file', function (tt) {
-      var expected = function (url, hasBranch) {
-        return (hasBranch)
-          ? url.replace(/master/gi, params.branch)
-          : url
-      }
-      tt.is(
-        hostinfo.file(),
-        expected('https://bitbucket.org/some-owner/some-repo/raw/master/', fixture.hasBranch),
-        showLabel(fixture.label, 'file')
-      )
-      tt.is(
-        hostinfo.file('C'),
-        expected('https://bitbucket.org/some-owner/some-repo/raw/master/C', fixture.hasBranch),
-        showLabel(fixture.label, "file('C')")
-      )
-      tt.is(
-        hostinfo.file('C/D'),
-        expected('https://bitbucket.org/some-owner/some-repo/raw/master/C/D', fixture.hasBranch),
-        showLabel(fixture.label, "file('C/D')")
-      )
-      tt.end()
-    })
-    t.test('hostinfo.tarball', function (tt) {
-      var expected = function (url, hasBranch) {
-        return (hasBranch)
-          ? url.replace(/master/gi, params.branch)
-          : url
-      }
-      tt.is(
-        hostinfo.tarball(),
-        expected('https://bitbucket.org/some-owner/some-repo/get/master.tar.gz', fixture.hasBranch),
-        showLabel(fixture.label, 'tarball')
-      )
-      tt.is(
-        hostinfo.tarball({ noCommittish: true }),
-        expected('https://bitbucket.org/some-owner/some-repo/get/master.tar.gz', fixture.hasBranch),
-        showLabel(fixture.label, 'tarball({ noCommittish: true })')
-      )
-      tt.is(
-        hostinfo.tarball({ noGitPlus: true }),
-        expected('https://bitbucket.org/some-owner/some-repo/get/master.tar.gz', fixture.hasBranch),
-        showLabel(fixture.label, 'tarball({ noGitPlus: true })')
-      )
-      tt.end()
-    })
-  }
+  // no-protocol git+ssh
+  //
+  // NOTE auth is accepted but ignored
+  'git@bitbucket.org:foo/bar': { ...defaults, default: 'sshurl', auth: null },
+  'git@bitbucket.org:foo/bar#branch': { ...defaults, default: 'sshurl', auth: null, committish: 'branch' },
+  'user@bitbucket.org:foo/bar': { ...defaults, default: 'sshurl', auth: null },
+  'user@bitbucket.org:foo/bar#branch': { ...defaults, default: 'sshurl', auth: null, committish: 'branch' },
+  'user:password@bitbucket.org:foo/bar': { ...defaults, default: 'sshurl', auth: null },
+  'user:password@bitbucket.org:foo/bar#branch': { ...defaults, default: 'sshurl', auth: null, committish: 'branch' },
+  ':password@bitbucket.org:foo/bar': { ...defaults, default: 'sshurl', auth: null },
+  ':password@bitbucket.org:foo/bar#branch': { ...defaults, default: 'sshurl', auth: null, committish: 'branch' },
+
+  'git@bitbucket.org:foo/bar.git': { ...defaults, default: 'sshurl', auth: null },
+  'git@bitbucket.org:foo/bar.git#branch': { ...defaults, default: 'sshurl', auth: null, committish: 'branch' },
+  'user@bitbucket.org:foo/bar.git': { ...defaults, default: 'sshurl', auth: null },
+  'user@bitbucket.org:foo/bar.git#branch': { ...defaults, default: 'sshurl', auth: null, committish: 'branch' },
+  'user:password@bitbucket.org:foo/bar.git': { ...defaults, default: 'sshurl', auth: null },
+  'user:password@bitbucket.org:foo/bar.git#branch': { ...defaults, default: 'sshurl', auth: null, committish: 'branch' },
+  ':password@bitbucket.org:foo/bar.git': { ...defaults, default: 'sshurl', auth: null },
+  ':password@bitbucket.org:foo/bar.git#branch': { ...defaults, default: 'sshurl', auth: null, committish: 'branch' },
+
+  // git+ssh urls
+  //
+  // NOTE auth is accepted but ignored
+  'git+ssh://bitbucket.org:foo/bar': { ...defaults, default: 'sshurl' },
+  'git+ssh://bitbucket.org:foo/bar#branch': { ...defaults, default: 'sshurl', committish: 'branch' },
+  'git+ssh://user@bitbucket.org:foo/bar': { ...defaults, default: 'sshurl', auth: null },
+  'git+ssh://user@bitbucket.org:foo/bar#branch': { ...defaults, default: 'sshurl', auth: null, committish: 'branch' },
+  'git+ssh://user:password@bitbucket.org:foo/bar': { ...defaults, default: 'sshurl', auth: null },
+  'git+ssh://user:password@bitbucket.org:foo/bar#branch': { ...defaults, default: 'sshurl', auth: null, committish: 'branch' },
+  'git+ssh://:password@bitbucket.org:foo/bar': { ...defaults, default: 'sshurl', auth: null },
+  'git+ssh://:password@bitbucket.org:foo/bar#branch': { ...defaults, default: 'sshurl', auth: null, committish: 'branch' },
+
+  'git+ssh://bitbucket.org:foo/bar.git': { ...defaults, default: 'sshurl' },
+  'git+ssh://bitbucket.org:foo/bar.git#branch': { ...defaults, default: 'sshurl', committish: 'branch' },
+  'git+ssh://user@bitbucket.org:foo/bar.git': { ...defaults, default: 'sshurl', auth: null },
+  'git+ssh://user@bitbucket.org:foo/bar.git#branch': { ...defaults, default: 'sshurl', auth: null, committish: 'branch' },
+  'git+ssh://user:password@bitbucket.org:foo/bar.git': { ...defaults, default: 'sshurl', auth: null },
+  'git+ssh://user:password@bitbucket.org:foo/bar.git#branch': { ...defaults, default: 'sshurl', auth: null, committish: 'branch' },
+  'git+ssh://:password@bitbucket.org:foo/bar.git': { ...defaults, default: 'sshurl', auth: null },
+  'git+ssh://:password@bitbucket.org:foo/bar.git#branch': { ...defaults, default: 'sshurl', auth: null, committish: 'branch' },
+
+  // ssh urls
+  //
+  // NOTE auth is accepted but ignored
+  'ssh://bitbucket.org:foo/bar': { ...defaults, default: 'sshurl' },
+  'ssh://bitbucket.org:foo/bar#branch': { ...defaults, default: 'sshurl', committish: 'branch' },
+  'ssh://user@bitbucket.org:foo/bar': { ...defaults, default: 'sshurl', auth: null },
+  'ssh://user@bitbucket.org:foo/bar#branch': { ...defaults, default: 'sshurl', auth: null, committish: 'branch' },
+  'ssh://user:password@bitbucket.org:foo/bar': { ...defaults, default: 'sshurl', auth: null },
+  'ssh://user:password@bitbucket.org:foo/bar#branch': { ...defaults, default: 'sshurl', auth: null, committish: 'branch' },
+  'ssh://:password@bitbucket.org:foo/bar': { ...defaults, default: 'sshurl', auth: null },
+  'ssh://:password@bitbucket.org:foo/bar#branch': { ...defaults, default: 'sshurl', auth: null, committish: 'branch' },
+
+  'ssh://bitbucket.org:foo/bar.git': { ...defaults, default: 'sshurl' },
+  'ssh://bitbucket.org:foo/bar.git#branch': { ...defaults, default: 'sshurl', committish: 'branch' },
+  'ssh://user@bitbucket.org:foo/bar.git': { ...defaults, default: 'sshurl', auth: null },
+  'ssh://user@bitbucket.org:foo/bar.git#branch': { ...defaults, default: 'sshurl', auth: null, committish: 'branch' },
+  'ssh://user:password@bitbucket.org:foo/bar.git': { ...defaults, default: 'sshurl', auth: null },
+  'ssh://user:password@bitbucket.org:foo/bar.git#branch': { ...defaults, default: 'sshurl', auth: null, committish: 'branch' },
+  'ssh://:password@bitbucket.org:foo/bar.git': { ...defaults, default: 'sshurl', auth: null },
+  'ssh://:password@bitbucket.org:foo/bar.git#branch': { ...defaults, default: 'sshurl', auth: null, committish: 'branch' },
+
+  // git+https urls
+  //
+  // NOTE auth is accepted and respected
+  'git+https://bitbucket.org/foo/bar': { ...defaults, default: 'https' },
+  'git+https://bitbucket.org/foo/bar#branch': { ...defaults, default: 'https', committish: 'branch' },
+  'git+https://user@bitbucket.org/foo/bar': { ...defaults, default: 'https', auth: 'user' },
+  'git+https://user@bitbucket.org/foo/bar#branch': { ...defaults, default: 'https', auth: 'user', committish: 'branch' },
+  'git+https://user:password@bitbucket.org/foo/bar': { ...defaults, default: 'https', auth: 'user:password' },
+  'git+https://user:password@bitbucket.org/foo/bar#branch': { ...defaults, default: 'https', auth: 'user:password', committish: 'branch' },
+  'git+https://:password@bitbucket.org/foo/bar': { ...defaults, default: 'https', auth: ':password' },
+  'git+https://:password@bitbucket.org/foo/bar#branch': { ...defaults, default: 'https', auth: ':password', committish: 'branch' },
+
+  'git+https://bitbucket.org/foo/bar.git': { ...defaults, default: 'https' },
+  'git+https://bitbucket.org/foo/bar.git#branch': { ...defaults, default: 'https', committish: 'branch' },
+  'git+https://user@bitbucket.org/foo/bar.git': { ...defaults, default: 'https', auth: 'user' },
+  'git+https://user@bitbucket.org/foo/bar.git#branch': { ...defaults, default: 'https', auth: 'user', committish: 'branch' },
+  'git+https://user:password@bitbucket.org/foo/bar.git': { ...defaults, default: 'https', auth: 'user:password' },
+  'git+https://user:password@bitbucket.org/foo/bar.git#branch': { ...defaults, default: 'https', auth: 'user:password', committish: 'branch' },
+  'git+https://:password@bitbucket.org/foo/bar.git': { ...defaults, default: 'https', auth: ':password' },
+  'git+https://:password@bitbucket.org/foo/bar.git#branch': { ...defaults, default: 'https', auth: ':password', committish: 'branch' },
+
+  // https urls
+  //
+  // NOTE auth is accepted and respected
+  'https://bitbucket.org/foo/bar': { ...defaults, default: 'https' },
+  'https://bitbucket.org/foo/bar#branch': { ...defaults, default: 'https', committish: 'branch' },
+  'https://user@bitbucket.org/foo/bar': { ...defaults, default: 'https', auth: 'user' },
+  'https://user@bitbucket.org/foo/bar#branch': { ...defaults, default: 'https', auth: 'user', committish: 'branch' },
+  'https://user:password@bitbucket.org/foo/bar': { ...defaults, default: 'https', auth: 'user:password' },
+  'https://user:password@bitbucket.org/foo/bar#branch': { ...defaults, default: 'https', auth: 'user:password', committish: 'branch' },
+  'https://:password@bitbucket.org/foo/bar': { ...defaults, default: 'https', auth: ':password' },
+  'https://:password@bitbucket.org/foo/bar#branch': { ...defaults, default: 'https', auth: ':password', committish: 'branch' },
+
+  'https://bitbucket.org/foo/bar.git': { ...defaults, default: 'https' },
+  'https://bitbucket.org/foo/bar.git#branch': { ...defaults, default: 'https', committish: 'branch' },
+  'https://user@bitbucket.org/foo/bar.git': { ...defaults, default: 'https', auth: 'user' },
+  'https://user@bitbucket.org/foo/bar.git#branch': { ...defaults, default: 'https', auth: 'user', committish: 'branch' },
+  'https://user:password@bitbucket.org/foo/bar.git': { ...defaults, default: 'https', auth: 'user:password' },
+  'https://user:password@bitbucket.org/foo/bar.git#branch': { ...defaults, default: 'https', auth: 'user:password', committish: 'branch' },
+  'https://:password@bitbucket.org/foo/bar.git': { ...defaults, default: 'https', auth: ':password' },
+  'https://:password@bitbucket.org/foo/bar.git#branch': { ...defaults, default: 'https', auth: ':password', committish: 'branch' }
 }
 
-test('fromUrl(bitbucket url)', function (t) {
-  var fixtures = require('./fixtures/bitbucket')
-  // var gitlabFixtures = require('./fixtures/bitbucket')
-  // var collectedFixtures = [].concat(fixtures, gitlabFixtures)
+t.test('valid urls parse properly', t => {
+  t.plan(Object.keys(valid).length)
+  for (const [url, result] of Object.entries(valid)) {
+    t.hasStrict(HostedGit.fromUrl(url), result, `${url} parses`)
+  }
+})
 
-  t.test('domain: bitbucket.org', function (tt) {
-    var params = {
-      domain: 'bitbucket.org',
-      shortname: 'bitbucket',
-      label: 'bitbucket',
-      owner: 'some-owner',
-      project: 'some-repo',
-      branch: 'feature-branch'
-    }
-    testFixtures(tt, params, fixtures)
-    tt.end()
-  })
+t.test('invalid urls return undefined', t => {
+  t.plan(invalid.length)
+  for (const url of invalid) {
+    t.equal(HostedGit.fromUrl(url), undefined, `${url} returns undefined`)
+  }
+})
 
-  t.test('domain: www.bitbucket.org', function (tt) {
-    var params = {
-      domain: 'www.bitbucket.org',
-      shortname: 'bitbucket',
-      label: 'bitbucket',
-      owner: 'some-owner',
-      project: 'some-repo',
-      branch: 'feature-branch'
-    }
-    testFixtures(tt, params, fixtures)
-    tt.end()
-  })
+t.test('toString respects defaults', t => {
+  const sshurl = HostedGit.fromUrl('git+ssh://bitbucket.org/foo/bar')
+  t.equal(sshurl.default, 'sshurl', 'got the right default')
+  t.equal(sshurl.toString(), sshurl.sshurl(), 'toString calls sshurl')
 
-  t.test('Bitbucket HTTPS URLs with embedded auth', function (tt) {
-    tt.is(
-      HostedGit.fromUrl('https://user:pass@bitbucket.org/user/repo.git').toString(),
-      'git+https://user:pass@bitbucket.org/user/repo.git',
-      'credentials were included in URL'
-    )
-    tt.is(
-      HostedGit.fromUrl('https://user:pass@bitbucket.org/user/repo').toString(),
-      'git+https://user:pass@bitbucket.org/user/repo.git',
-      'credentials were included in URL'
-    )
-    tt.is(
-      HostedGit.fromUrl('git+https://user:pass@bitbucket.org/user/repo.git').toString(),
-      'git+https://user:pass@bitbucket.org/user/repo.git',
-      'credentials were included in URL'
-    )
-    tt.is(
-      HostedGit.fromUrl('git+https://user:pass@bitbucket.org/user/repo').toString(),
-      'git+https://user:pass@bitbucket.org/user/repo.git',
-      'credentials were included in URL'
-    )
-    tt.end()
-  })
+  const https = HostedGit.fromUrl('https://bitbucket.org/foo/bar')
+  t.equal(https.default, 'https', 'got the right default')
+  t.equal(https.toString(), https.https(), 'toString calls https')
+
+  const shortcut = HostedGit.fromUrl('bitbucket:foo/bar')
+  t.equal(shortcut.default, 'shortcut', 'got the right default')
+  t.equal(shortcut.toString(), shortcut.shortcut(), 'toString calls shortcut')
+
+  t.end()
+})
+
+t.test('string methods populate correctly', t => {
+  const parsed = HostedGit.fromUrl('git+ssh://bitbucket.org/foo/bar')
+  t.equal(parsed.getDefaultRepresentation(), parsed.default, 'getDefaultRepresentation()')
+  t.equal(parsed.hash(), '', 'hash() returns empty string when committish is unset')
+  t.equal(parsed.ssh(), 'git@bitbucket.org:foo/bar.git')
+  t.equal(parsed.sshurl(), 'git+ssh://git@bitbucket.org/foo/bar.git')
+  t.equal(parsed.browse(), 'https://bitbucket.org/foo/bar')
+  t.equal(parsed.browse('/lib/index.js'), 'https://bitbucket.org/foo/bar/src/master/lib/index.js')
+  t.equal(parsed.browse('/lib/index.js', 'L100'), 'https://bitbucket.org/foo/bar/src/master/lib/index.js#l100')
+  t.equal(parsed.docs(), 'https://bitbucket.org/foo/bar#readme')
+  t.equal(parsed.https(), 'git+https://bitbucket.org/foo/bar.git')
+  t.equal(parsed.shortcut(), 'bitbucket:foo/bar')
+  t.equal(parsed.path(), 'foo/bar')
+  t.equal(parsed.tarball(), 'https://bitbucket.org/foo/bar/get/master.tar.gz')
+  t.equal(parsed.file(), 'https://bitbucket.org/foo/bar/raw/master/')
+  t.equal(parsed.file('/lib/index.js'), 'https://bitbucket.org/foo/bar/raw/master/lib/index.js')
+
+  t.equal(parsed.docs({ committish: 'fix/bug' }), 'https://bitbucket.org/foo/bar/src/fix%2Fbug#readme', 'allows overriding options')
+
+  t.same(parsed.bugs(), null, 'bugs() returns null')
+  t.same(parsed.git(), null, 'git() returns null')
+
+  const extra = HostedGit.fromUrl('https://user@bitbucket.org/foo/bar#fix/bug')
+  t.equal(extra.hash(), '#fix/bug')
+  t.equal(extra.https(), 'git+https://user@bitbucket.org/foo/bar.git#fix/bug')
+  t.equal(extra.shortcut(), 'bitbucket:foo/bar#fix/bug')
+  t.equal(extra.ssh(), 'git@bitbucket.org:foo/bar.git#fix/bug')
+  t.equal(extra.sshurl(), 'git+ssh://git@bitbucket.org/foo/bar.git#fix/bug')
+  t.equal(extra.browse(), 'https://bitbucket.org/foo/bar/src/fix%2Fbug')
+  t.equal(extra.browse('/lib/index.js'), 'https://bitbucket.org/foo/bar/src/fix%2Fbug/lib/index.js')
+  t.equal(extra.browse('/lib/index.js', 'L200'), 'https://bitbucket.org/foo/bar/src/fix%2Fbug/lib/index.js#l200')
+  t.equal(extra.docs(), 'https://bitbucket.org/foo/bar/src/fix%2Fbug#readme')
+  t.equal(extra.file(), 'https://bitbucket.org/foo/bar/raw/fix%2Fbug/')
+  t.equal(extra.file('/lib/index.js'), 'https://bitbucket.org/foo/bar/raw/fix%2Fbug/lib/index.js')
+
+  t.equal(extra.sshurl({ noCommittish: true }), 'git+ssh://git@bitbucket.org/foo/bar.git', 'noCommittish drops committish from urls')
+  t.equal(extra.sshurl({ noGitPlus: true }), 'ssh://git@bitbucket.org/foo/bar.git#fix/bug', 'noGitPlus drops git+ prefix from urls')
 
   t.end()
 })
