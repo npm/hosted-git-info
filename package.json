@@ -24,7 +24,7 @@
     "postrelease": "npm publish && git push --follow-tags",
     "posttest": "standard",
     "release": "standard-version -s",
-    "snap": "TAP_SNAPSHOT=1 tap",
+    "snap": "tap",
     "test:coverage": "tap --coverage-report=html",
     "test": "tap"
   },
