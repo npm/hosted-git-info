@@ -8,6 +8,8 @@ const invalid = [
   ':password@foo/bar',
   // foo/bar shorthand but with a space in it
   'foo/ bar',
+  // string that ends with a slash, probably a directory
+  'foo/bar/',
   // git@github.com style, but omitting the username
   'github.com:foo/bar',
   'github.com/foo/bar',
@@ -179,7 +181,8 @@ const valid = {
   // inputs that are not quite proper but we accept anyway
   'https://www.github.com/foo/bar': { ...defaults, default: 'https' },
   'foo/bar#branch with space': { ...defaults, default: 'shortcut', committish: 'branch with space' },
-  'https://github.com/foo/bar/tree/branch': { ...defaults, default: 'https', committish: 'branch' }
+  'https://github.com/foo/bar/tree/branch': { ...defaults, default: 'https', committish: 'branch' },
+  'user..blerg--/..foo-js# . . . . . some . tags / / /': { ...defaults, default: 'shortcut', user: 'user..blerg--', project: '..foo-js', committish: ' . . . . . some . tags / / /' }
 }
 
 t.test('valid urls parse properly', t => {
