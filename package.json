@@ -20,13 +20,13 @@
   },
   "homepage": "https://github.com/npm/hosted-git-info",
   "scripts": {
-    "prerelease": "npm t",
-    "postrelease": "npm publish && git push --follow-tags",
     "posttest": "standard",
-    "release": "standard-version -s",
+    "postversion": "npm publish",
+    "prepublishOnly": "git push origin --follow-tags",
+    "preversion": "npm test",
     "snap": "tap",
-    "test:coverage": "tap --coverage-report=html",
-    "test": "tap"
+    "test": "tap",
+    "test:coverage": "tap --coverage-report=html"
   },
   "dependencies": {
     "lru-cache": "^6.0.0"
