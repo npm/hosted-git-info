@@ -1,337 +1,253 @@
 'use strict'
-var HostedGit = require('../index')
-var test = require('tap').test
+const HostedGit = require('../index')
+const t = require('tap')
 
-var showLabel = function (label, fn) { return label + ' -> ' + fn }
+const invalid = [
+  // foo/bar shorthand but specifying auth
+  'user@foo/bar',
+  'user:password@foo/bar',
+  ':password@foo/bar',
+  // git@github.com style, but omitting the username
+  'github.com:foo/bar',
+  // invalid URI encoding
+  'github:foo%0N/bar',
+  // missing path
+  'git+ssh://git@github.com:'
+]
 
-var testFixtures = function (t, params, fixtures) {
-  for (var i = 0; i < fixtures.length; ++i) {
-    var fixture = fixtures[i]
-    var host = fixture.host(params)
-    var hostinfo = HostedGit.fromUrl(host)
+// assigning the constructor here is hacky, but the only way to make assertions that compare
+// a subset of properties to a found object pass as you would expect
+const GitHost = require('../git-host')
+const defaults = { constructor: GitHost, type: 'github', user: 'foo', project: 'bar' }
+const valid = {
+  // extreme shorthand
+  //
+  // NOTE these do not accept auth at all
+  'foo/bar': { ...defaults, default: 'shortcut' },
+  'foo/bar#branch': { ...defaults, default: 'shortcut', committish: 'branch' },
 
-    // INFO: from Url should return `undefined` from fixture input
-    if (fixture.isUndefined) {
-      t.test('input results in undefined', function (tt) {
-        tt.is(hostinfo, undefined)
-        tt.end()
-      })
-      break
-    }
+  'foo/bar.git': { ...defaults, default: 'shortcut' },
+  'foo/bar.git#branch': { ...defaults, default: 'shortcut', committish: 'branch' },
 
-    t.test('hostinfo.https', function (tt) {
-      var expected = function (url, hasBranch) {
-        return (hasBranch)
-          ? url + '#' + params.branch
-          : url
-      }
-      tt.is(
-        hostinfo.https(),
-        expected('git+https://github.com/some-owner/some-repo.git', fixture.hasBranch),
-        showLabel(fixture.label, 'https')
-      )
-      tt.end()
-    })
-    t.test('hostinfo.git', function (tt) {
-      var expected = function (url, hasBranch) {
-        return (hasBranch)
-          ? url + '#' + params.branch
-          : url
-      }
-      tt.is(
-        hostinfo.git(),
-        expected('git://github.com/some-owner/some-repo.git', fixture.hasBranch),
-        showLabel(fixture.label, 'git')
-      )
-      tt.end()
-    })
-    t.test('hostinfo.browse', function (tt) {
-      var expected = function (url, hasBranch) {
-        if (hasBranch) {
-          if (url.indexOf('master') === -1) {
-            return url + '/tree/' + params.branch
-          } else {
-            return url.replace(/master/gi, params.branch)
-          }
-        }
-        return url
-      }
-      tt.is(
-        hostinfo.browse(),
-        expected('https://github.com/some-owner/some-repo', fixture.hasBranch),
-        showLabel(fixture.label, 'browse')
-      )
-      tt.is(
-        hostinfo.browse(''),
-        expected('https://github.com/some-owner/some-repo/tree/master/', fixture.hasBranch),
-        showLabel(fixture.label, "browse('')")
-      )
-      tt.is(
-        hostinfo.browse('C'),
-        expected('https://github.com/some-owner/some-repo/tree/master/C', fixture.hasBranch),
-        showLabel(fixture.label, "browse('C')")
-      )
-      tt.is(
-        hostinfo.browse('C/D'),
-        expected('https://github.com/some-owner/some-repo/tree/master/C/D', fixture.hasBranch),
-        showLabel(fixture.label, "browse('C/D')")
-      )
-      tt.is(
-        hostinfo.browse('C', 'A'),
-        expected('https://github.com/some-owner/some-repo/tree/master/C#a', fixture.hasBranch),
-        showLabel(fixture.label, "browse('C', 'A')")
-      )
-      tt.is(
-        hostinfo.browse('C/D', 'A'),
-        expected('https://github.com/some-owner/some-repo/tree/master/C/D#a', fixture.hasBranch),
-        showLabel(fixture.label, "browse('C/D', 'A')")
-      )
-      tt.end()
-    })
-    t.test('hostinfo.bugs', function (tt) {
-      tt.is(
-        hostinfo.bugs(),
-        'https://github.com/some-owner/some-repo/issues',
-        showLabel(fixture.label, 'bugs')
-      )
-      tt.end()
-    })
-    t.test('hostinfo.docs', function (tt) {
-      var expected = function (url, hasBranch) {
-        if (hasBranch) {
-          var splitUrl = url.split('#')
-          return splitUrl[0] + '/tree/' + params.branch + '#' + splitUrl[1]
-        }
-        return url
-      }
-      tt.is(
-        hostinfo.docs(),
-        expected('https://github.com/some-owner/some-repo#readme', fixture.hasBranch),
-        showLabel(fixture.label, 'docs')
-      )
-      tt.end()
-    })
-    t.test('hostinfo.ssh', function (tt) {
-      var expected = function (url, hasBranch) {
-        return (hasBranch)
-          ? url + '#' + params.branch
-          : url
-      }
-      tt.is(hostinfo.ssh(), expected('git@github.com:some-owner/some-repo.git', fixture.hasBranch), showLabel(fixture.label, 'ssh'))
-      tt.end()
-    })
-    t.test('hostinfo.sshurl', function (tt) {
-      var expected = function (url, hasBranch) {
-        return (hasBranch)
-          ? url + '#' + params.branch
-          : url
-      }
-      tt.is(
-        hostinfo.sshurl(),
-        expected('git+ssh://git@github.com/some-owner/some-repo.git', fixture.hasBranch),
-        showLabel(fixture.label, 'sshurl')
-      )
-      tt.is(
-        hostinfo.sshurl({ noGitPlus: true }),
-        expected('ssh://git@github.com/some-owner/some-repo.git', fixture.hasBranch),
-        showLabel(fixture.label, 'sshurl({ noGitPlus: true })')
-      )
-      tt.is(
-        hostinfo.sshurl({ noGitPlus: false }),
-        expected('git+ssh://git@github.com/some-owner/some-repo.git', fixture.hasBranch),
-        showLabel(fixture.label, 'sshurl({ noGitPlus: false })')
-      )
-      tt.end()
-    })
-    t.test('hostinfo.path', function (tt) {
-      var expected = function (url, hasBranch) {
-        return (hasBranch)
-          ? url + '#' + params.branch
-          : url
-      }
-      tt.is(
-        hostinfo.path(),
-        expected('some-owner/some-repo', fixture.hasBranch),
-        showLabel(fixture.label, 'path')
-      )
-      tt.is(
-        hostinfo.path({ noCommittish: true }),
-        // INFO: not using `expected` because with `{noCommittish: true}` the output is always the same
-        'some-owner/some-repo',
-        showLabel(fixture.label, 'path({ noCommittish: true })')
-      )
-      tt.end()
-    })
-    t.test('hostinfo.hash', function (tt) {
-      var expected = function (url, hasBranch) {
-        return (hasBranch)
-          ? url + '#' + params.branch
-          : url
-      }
-      tt.is(
-        hostinfo.hash(),
-        expected('', fixture.hasBranch),
-        showLabel(fixture.label, 'hash')
-      )
-      tt.end()
-    })
-    t.test('hostinfo.shortcut', function (tt) {
-      var expected = function (url, hasBranch) {
-        return (hasBranch)
-          ? url + '#' + params.branch
-          : url
-      }
-      tt.is(
-        hostinfo.shortcut(),
-        expected('github:some-owner/some-repo', fixture.hasBranch),
-        showLabel(fixture.label, 'shortcut')
-      )
-      tt.is(
-        hostinfo.shortcut({ noCommittish: true }),
-        // INFO: not using `expected` because with `{noCommittish: true}` the output is always the same
-        'github:some-owner/some-repo',
-        showLabel(fixture.label, 'shortcut({ noCommittish: true })')
-      )
-      tt.is(
-        hostinfo.shortcut({ noCommittish: false }),
-        expected('github:some-owner/some-repo', fixture.hasBranch),
-        showLabel(fixture.label, 'shortcut({ noCommittish: false })')
-      )
-      tt.is(
-        hostinfo.shortcut({ noGitPlus: true }),
-        expected('github:some-owner/some-repo', fixture.hasBranch),
-        showLabel(fixture.label, 'shortcut({ noGitPlus: true })')
-      )
-      tt.is(
-        hostinfo.shortcut({ noGitPlus: false }),
-        expected('github:some-owner/some-repo', fixture.hasBranch),
-        showLabel(fixture.label, 'shortcut({ noGitPlus: false })')
-      )
-      tt.end()
-    })
-    t.test('hostinfo.file', function (tt) {
-      var expected = function (url, hasBranch) {
-        return (hasBranch)
-          ? url.replace(/master/gi, params.branch)
-          : url
-      }
-      tt.is(
-        hostinfo.file(''),
-        expected('https://raw.githubusercontent.com/some-owner/some-repo/master/', fixture.hasBranch),
-        showLabel(fixture.label, 'file')
-      )
-      tt.is(
-        hostinfo.file('C'),
-        expected('https://raw.githubusercontent.com/some-owner/some-repo/master/C', fixture.hasBranch),
-        showLabel(fixture.label, "file('C')")
-      )
-      // NOTE: This seems weird, don't think you'd ever pass the `opts` param with `.file()`
-      tt.is(
-        hostinfo.file('C', { noCommittish: true }),
-        'https://raw.githubusercontent.com/some-owner/some-repo//C',
-        showLabel(fixture.label, "file('C', { noCommittish: true })")
-      )
-      tt.is(
-        hostinfo.file('C/D'),
-        expected('https://raw.githubusercontent.com/some-owner/some-repo/master/C/D', fixture.hasBranch),
-        showLabel(fixture.label, "file('C/D'")
-      )
-      tt.end()
-    })
-    t.test('hostinfo.tarball', function (tt) {
-      var expected = function (url, hasBranch) {
-        return (hasBranch)
-          ? url.replace(/master/gi, params.branch)
-          : url
-      }
-      tt.is(
-        hostinfo.tarball(),
-        expected('https://codeload.github.com/some-owner/some-repo/tar.gz/master', fixture.hasBranch),
-        showLabel(fixture.label, 'tarball')
-      )
-      tt.is(
-        hostinfo.tarball({ noCommittish: true }),
-        expected('https://codeload.github.com/some-owner/some-repo/tar.gz/master', fixture.hasBranch),
-        showLabel(fixture.label, 'tarball({ noCommittish: true })')
-      )
-      tt.end()
-    })
-  }
+  // shortcuts
+  //
+  // NOTE auth is accepted but ignored
+  'github:foo/bar': { ...defaults, default: 'shortcut' },
+  'github:foo/bar#branch': { ...defaults, default: 'shortcut', committish: 'branch' },
+  'github:user@foo/bar': { ...defaults, default: 'shortcut', auth: null },
+  'github:user@foo/bar#branch': { ...defaults, default: 'shortcut', auth: null, committish: 'branch' },
+  'github:user:password@foo/bar': { ...defaults, default: 'shortcut', auth: null },
+  'github:user:password@foo/bar#branch': { ...defaults, default: 'shortcut', auth: null, committish: 'branch' },
+  'github::password@foo/bar': { ...defaults, default: 'shortcut', auth: null },
+  'github::password@foo/bar#branch': { ...defaults, default: 'shortcut', auth: null, committish: 'branch' },
+
+  'github:foo/bar.git': { ...defaults, default: 'shortcut' },
+  'github:foo/bar.git#branch': { ...defaults, default: 'shortcut', committish: 'branch' },
+  'github:user@foo/bar.git': { ...defaults, default: 'shortcut', auth: null },
+  'github:user@foo/bar.git#branch': { ...defaults, default: 'shortcut', auth: null, committish: 'branch' },
+  'github:user:password@foo/bar.git': { ...defaults, default: 'shortcut', auth: null },
+  'github:user:password@foo/bar.git#branch': { ...defaults, default: 'shortcut', auth: null, committish: 'branch' },
+  'github::password@foo/bar.git': { ...defaults, default: 'shortcut', auth: null },
+  'github::password@foo/bar.git#branch': { ...defaults, default: 'shortcut', auth: null, committish: 'branch' },
+
+  // git urls
+  //
+  // NOTE auth is accepted and respected
+  'git://github.com/foo/bar': { ...defaults, default: 'git' },
+  'git://github.com/foo/bar#branch': { ...defaults, default: 'git', committish: 'branch' },
+  'git://user@github.com/foo/bar': { ...defaults, default: 'git', auth: 'user' },
+  'git://user@github.com/foo/bar#branch': { ...defaults, default: 'git', auth: 'user', committish: 'branch' },
+  'git://user:password@github.com/foo/bar': { ...defaults, default: 'git', auth: 'user:password' },
+  'git://user:password@github.com/foo/bar#branch': { ...defaults, default: 'git', auth: 'user:password', committish: 'branch' },
+  'git://:password@github.com/foo/bar': { ...defaults, default: 'git', auth: ':password' },
+  'git://:password@github.com/foo/bar#branch': { ...defaults, default: 'git', auth: ':password', committish: 'branch' },
+
+  'git://github.com/foo/bar.git': { ...defaults, default: 'git' },
+  'git://github.com/foo/bar.git#branch': { ...defaults, default: 'git', committish: 'branch' },
+  'git://git@github.com/foo/bar.git': { ...defaults, default: 'git', auth: 'git' },
+  'git://git@github.com/foo/bar.git#branch': { ...defaults, default: 'git', auth: 'git', committish: 'branch' },
+  'git://user:password@github.com/foo/bar.git': { ...defaults, default: 'git', auth: 'user:password' },
+  'git://user:password@github.com/foo/bar.git#branch': { ...defaults, default: 'git', auth: 'user:password', committish: 'branch' },
+  'git://:password@github.com/foo/bar.git': { ...defaults, default: 'git', auth: ':password' },
+  'git://:password@github.com/foo/bar.git#branch': { ...defaults, default: 'git', auth: ':password', committish: 'branch' },
+
+  // no-protocol git+ssh
+  //
+  // NOTE auth is _required_ (see invalid list) but ignored
+  'user@github.com:foo/bar': { ...defaults, default: 'sshurl', auth: null },
+  'user@github.com:foo/bar#branch': { ...defaults, default: 'sshurl', auth: null, committish: 'branch' },
+  'user:password@github.com:foo/bar': { ...defaults, default: 'sshurl', auth: null },
+  'user:password@github.com:foo/bar#branch': { ...defaults, default: 'sshurl', auth: null, committish: 'branch' },
+  ':password@github.com:foo/bar': { ...defaults, default: 'sshurl', auth: null },
+  ':password@github.com:foo/bar#branch': { ...defaults, default: 'sshurl', auth: null, committish: 'branch' },
+
+  'user@github.com:foo/bar.git': { ...defaults, default: 'sshurl', auth: null },
+  'user@github.com:foo/bar.git#branch': { ...defaults, default: 'sshurl', auth: null, committish: 'branch' },
+  'user:password@github.com:foo/bar.git': { ...defaults, default: 'sshurl', auth: null },
+  'user:password@github.com:foo/bar.git#branch': { ...defaults, default: 'sshurl', auth: null, committish: 'branch' },
+  ':password@github.com:foo/bar.git': { ...defaults, default: 'sshurl', auth: null },
+  ':password@github.com:foo/bar.git#branch': { ...defaults, default: 'sshurl', auth: null, committish: 'branch' },
+
+  // git+ssh urls
+  //
+  // NOTE auth is accepted but ignored
+  'git+ssh://github.com:foo/bar': { ...defaults, default: 'sshurl' },
+  'git+ssh://github.com:foo/bar#branch': { ...defaults, default: 'sshurl', committish: 'branch' },
+  'git+ssh://user@github.com:foo/bar': { ...defaults, default: 'sshurl', auth: null },
+  'git+ssh://user@github.com:foo/bar#branch': { ...defaults, default: 'sshurl', auth: null, committish: 'branch' },
+  'git+ssh://user:password@github.com:foo/bar': { ...defaults, default: 'sshurl', auth: null },
+  'git+ssh://user:password@github.com:foo/bar#branch': { ...defaults, default: 'sshurl', auth: null, committish: 'branch' },
+  'git+ssh://:password@github.com:foo/bar': { ...defaults, default: 'sshurl', auth: null },
+  'git+ssh://:password@github.com:foo/bar#branch': { ...defaults, default: 'sshurl', auth: null, committish: 'branch' },
+
+  'git+ssh://github.com:foo/bar.git': { ...defaults, default: 'sshurl' },
+  'git+ssh://github.com:foo/bar.git#branch': { ...defaults, default: 'sshurl', committish: 'branch' },
+  'git+ssh://user@github.com:foo/bar.git': { ...defaults, default: 'sshurl', auth: null },
+  'git+ssh://user@github.com:foo/bar.git#branch': { ...defaults, default: 'sshurl', auth: null, committish: 'branch' },
+  'git+ssh://user:password@github.com:foo/bar.git': { ...defaults, default: 'sshurl', auth: null },
+  'git+ssh://user:password@github.com:foo/bar.git#branch': { ...defaults, default: 'sshurl', auth: null, committish: 'branch' },
+  'git+ssh://:password@github.com:foo/bar.git': { ...defaults, default: 'sshurl', auth: null },
+  'git+ssh://:password@github.com:foo/bar.git#branch': { ...defaults, default: 'sshurl', auth: null, committish: 'branch' },
+
+  // ssh urls
+  //
+  // NOTE auth is accepted but ignored
+  'ssh://github.com:foo/bar': { ...defaults, default: 'sshurl' },
+  'ssh://github.com:foo/bar#branch': { ...defaults, default: 'sshurl', committish: 'branch' },
+  'ssh://user@github.com:foo/bar': { ...defaults, default: 'sshurl', auth: null },
+  'ssh://user@github.com:foo/bar#branch': { ...defaults, default: 'sshurl', auth: null, committish: 'branch' },
+  'ssh://user:password@github.com:foo/bar': { ...defaults, default: 'sshurl', auth: null },
+  'ssh://user:password@github.com:foo/bar#branch': { ...defaults, default: 'sshurl', auth: null, committish: 'branch' },
+  'ssh://:password@github.com:foo/bar': { ...defaults, default: 'sshurl', auth: null },
+  'ssh://:password@github.com:foo/bar#branch': { ...defaults, default: 'sshurl', auth: null, committish: 'branch' },
+
+  'ssh://github.com:foo/bar.git': { ...defaults, default: 'sshurl' },
+  'ssh://github.com:foo/bar.git#branch': { ...defaults, default: 'sshurl', committish: 'branch' },
+  'ssh://user@github.com:foo/bar.git': { ...defaults, default: 'sshurl', auth: null },
+  'ssh://user@github.com:foo/bar.git#branch': { ...defaults, default: 'sshurl', auth: null, committish: 'branch' },
+  'ssh://user:password@github.com:foo/bar.git': { ...defaults, default: 'sshurl', auth: null },
+  'ssh://user:password@github.com:foo/bar.git#branch': { ...defaults, default: 'sshurl', auth: null, committish: 'branch' },
+  'ssh://:password@github.com:foo/bar.git': { ...defaults, default: 'sshurl', auth: null },
+  'ssh://:password@github.com:foo/bar.git#branch': { ...defaults, default: 'sshurl', auth: null, committish: 'branch' },
+
+  // git+https urls
+  //
+  // NOTE auth is accepted and respected
+  'git+https://github.com/foo/bar': { ...defaults, default: 'https' },
+  'git+https://github.com/foo/bar#branch': { ...defaults, default: 'https', committish: 'branch' },
+  'git+https://user@github.com/foo/bar': { ...defaults, default: 'https', auth: 'user' },
+  'git+https://user@github.com/foo/bar#branch': { ...defaults, default: 'https', auth: 'user', committish: 'branch' },
+  'git+https://user:password@github.com/foo/bar': { ...defaults, default: 'https', auth: 'user:password' },
+  'git+https://user:password@github.com/foo/bar#branch': { ...defaults, default: 'https', auth: 'user:password', committish: 'branch' },
+  'git+https://:password@github.com/foo/bar': { ...defaults, default: 'https', auth: ':password' },
+  'git+https://:password@github.com/foo/bar#branch': { ...defaults, default: 'https', auth: ':password', committish: 'branch' },
+
+  'git+https://github.com/foo/bar.git': { ...defaults, default: 'https' },
+  'git+https://github.com/foo/bar.git#branch': { ...defaults, default: 'https', committish: 'branch' },
+  'git+https://user@github.com/foo/bar.git': { ...defaults, default: 'https', auth: 'user' },
+  'git+https://user@github.com/foo/bar.git#branch': { ...defaults, default: 'https', auth: 'user', committish: 'branch' },
+  'git+https://user:password@github.com/foo/bar.git': { ...defaults, default: 'https', auth: 'user:password' },
+  'git+https://user:password@github.com/foo/bar.git#branch': { ...defaults, default: 'https', auth: 'user:password', committish: 'branch' },
+  'git+https://:password@github.com/foo/bar.git': { ...defaults, default: 'https', auth: ':password' },
+  'git+https://:password@github.com/foo/bar.git#branch': { ...defaults, default: 'https', auth: ':password', committish: 'branch' },
+
+  // https urls
+  //
+  // NOTE auth is accepted and respected
+  'https://github.com/foo/bar': { ...defaults, default: 'https' },
+  'https://github.com/foo/bar#branch': { ...defaults, default: 'https', committish: 'branch' },
+  'https://user@github.com/foo/bar': { ...defaults, default: 'https', auth: 'user' },
+  'https://user@github.com/foo/bar#branch': { ...defaults, default: 'https', auth: 'user', committish: 'branch' },
+  'https://user:password@github.com/foo/bar': { ...defaults, default: 'https', auth: 'user:password' },
+  'https://user:password@github.com/foo/bar#branch': { ...defaults, default: 'https', auth: 'user:password', committish: 'branch' },
+  'https://:password@github.com/foo/bar': { ...defaults, default: 'https', auth: ':password' },
+  'https://:password@github.com/foo/bar#branch': { ...defaults, default: 'https', auth: ':password', committish: 'branch' },
+
+  'https://github.com/foo/bar.git': { ...defaults, default: 'https' },
+  'https://github.com/foo/bar.git#branch': { ...defaults, default: 'https', committish: 'branch' },
+  'https://user@github.com/foo/bar.git': { ...defaults, default: 'https', auth: 'user' },
+  'https://user@github.com/foo/bar.git#branch': { ...defaults, default: 'https', auth: 'user', committish: 'branch' },
+  'https://user:password@github.com/foo/bar.git': { ...defaults, default: 'https', auth: 'user:password' },
+  'https://user:password@github.com/foo/bar.git#branch': { ...defaults, default: 'https', auth: 'user:password', committish: 'branch' },
+  'https://:password@github.com/foo/bar.git': { ...defaults, default: 'https', auth: ':password' },
+  'https://:password@github.com/foo/bar.git#branch': { ...defaults, default: 'https', auth: ':password', committish: 'branch' }
 }
 
-test('fromUrl(github url)', function (t) {
-  var fixtures = require('./fixtures')
-  var githubFixtures = require('./fixtures/github')
-  var collectedFixtures = [].concat(fixtures, githubFixtures)
+t.test('valid urls parse properly', t => {
+  t.plan(Object.keys(valid).length)
+  for (const [url, result] of Object.entries(valid)) {
+    t.hasStrict(HostedGit.fromUrl(url), result, `${url} parses`)
+  }
+})
 
-  t.test('domain: github.com', function (tt) {
-    var params = {
-      domain: 'github.com',
-      shortname: 'github',
-      label: 'github',
-      owner: 'some-owner',
-      project: 'some-repo',
-      branch: 'feature-branch'
-    }
-    testFixtures(tt, params, collectedFixtures)
-    tt.end()
-  })
+t.test('invalid urls return undefined', t => {
+  t.plan(invalid.length)
+  for (const url of invalid) {
+    t.equal(HostedGit.fromUrl(url), undefined, `${url} returns undefined`)
+  }
+})
 
-  t.test('domain: www.github.com', function (tt) {
-    var params = {
-      domain: 'www.github.com',
-      shortname: 'github',
-      label: 'github',
-      owner: 'some-owner',
-      project: 'some-repo',
-      branch: 'feature-branch'
-    }
-    testFixtures(tt, params, collectedFixtures)
-    tt.end()
-  })
+t.test('toString respects defaults', t => {
+  const sshurl = HostedGit.fromUrl('git+ssh://github.com/foo/bar')
+  t.equal(sshurl.default, 'sshurl', 'got the right default')
+  t.equal(sshurl.toString(), sshurl.sshurl(), 'toString calls sshurl')
 
-  t.equal(HostedGit.fromUrl('git+ssh://github.com/foo.git'), undefined)
+  const https = HostedGit.fromUrl('https://github.com/foo/bar')
+  t.equal(https.default, 'https', 'got the right default')
+  t.equal(https.toString(), https.https(), 'toString calls https')
 
-  t.test('HTTPS GitHub URL with embedded auth -- generally not a good idea', function (tt) {
-    function verify (host, label, branch) {
-      var hostinfo = HostedGit.fromUrl(host)
-      var hash = branch ? '#' + branch : ''
-      tt.ok(hostinfo, label)
-      if (!hostinfo) return
-      tt.is(hostinfo.https(), 'git+https://user:pass@github.com/111/222.git' + hash, label + ' -> https')
-      tt.is(hostinfo.git(), 'git://user:pass@github.com/111/222.git' + hash, label + ' -> git')
-      tt.is(hostinfo.browse(), 'https://github.com/111/222' + (branch ? '/tree/' + branch : ''), label + ' -> browse')
-      tt.is(hostinfo.browse('C'), 'https://github.com/111/222/tree/' + (branch || 'master') + '/C', label + ' -> browse(path)')
-      tt.is(hostinfo.browse('C/D'), 'https://github.com/111/222/tree/' + (branch || 'master') + '/C/D', label + ' -> browse(path)')
-      tt.is(hostinfo.browse('C', 'A'), 'https://github.com/111/222/tree/' + (branch || 'master') + '/C#a', label + ' -> browse(path, fragment)')
-      tt.is(hostinfo.browse('C/D', 'A'), 'https://github.com/111/222/tree/' + (branch || 'master') + '/C/D#a', label + ' -> browse(path, fragment)')
-      tt.is(hostinfo.bugs(), 'https://github.com/111/222/issues', label + ' -> bugs')
-      tt.is(hostinfo.docs(), 'https://github.com/111/222' + (branch ? '/tree/' + branch : '') + '#readme', label + ' -> docs')
-      tt.is(hostinfo.ssh(), 'git@github.com:111/222.git' + hash, label + ' -> ssh')
-      tt.is(hostinfo.sshurl(), 'git+ssh://git@github.com/111/222.git' + hash, label + ' -> sshurl')
-      tt.is(hostinfo.shortcut(), 'github:111/222' + hash, label + ' -> shortcut')
-      tt.is(hostinfo.file('C'), 'https://user:pass@raw.githubusercontent.com/111/222/' + (branch || 'master') + '/C', label + ' -> file')
-      tt.is(hostinfo.file('C/D'), 'https://user:pass@raw.githubusercontent.com/111/222/' + (branch || 'master') + '/C/D', label + ' -> file')
-    }
+  const http = HostedGit.fromUrl('http://github.com/foo/bar')
+  t.equal(http.default, 'http', 'got the right default')
+  t.equal(http.toString(), http.sshurl(), 'automatically upgrades toString to sshurl')
 
-    // insecure protocols
-    verify('git://user:pass@github.com/111/222', 'git')
-    verify('git://user:pass@github.com/111/222.git', 'git.git')
-    verify('git://user:pass@github.com/111/222#branch', 'git#branch', 'branch')
-    verify('git://user:pass@github.com/111/222.git#branch', 'git.git#branch', 'branch')
+  const git = HostedGit.fromUrl('git://github.com/foo/bar')
+  t.equal(git.default, 'git', 'got the right default')
+  t.equal(git.toString(), git.git(), 'toString calls git')
 
-    verify('https://user:pass@github.com/111/222', 'https')
-    verify('https://user:pass@github.com/111/222.git', 'https.git')
-    verify('https://user:pass@github.com/111/222#branch', 'https#branch', 'branch')
-    verify('https://user:pass@github.com/111/222.git#branch', 'https.git#branch', 'branch')
+  const shortcut = HostedGit.fromUrl('github:foo/bar')
+  t.equal(shortcut.default, 'shortcut', 'got the right default')
+  t.equal(shortcut.toString(), shortcut.shortcut(), 'got the right default')
 
-    verify('http://user:pass@github.com/111/222', 'http')
-    verify('http://user:pass@github.com/111/222.git', 'http.git')
-    verify('http://user:pass@github.com/111/222#branch', 'http#branch', 'branch')
-    verify('http://user:pass@github.com/111/222.git#branch', 'http.git#branch', 'branch')
+  t.end()
+})
 
-    tt.end()
-  })
+t.test('string methods populate correctly', t => {
+  const parsed = HostedGit.fromUrl('git+ssh://github.com/foo/bar')
+  t.equal(parsed.getDefaultRepresentation(), parsed.default)
+  t.equal(parsed.hash(), '', 'hash() returns empty string when committish is unset')
+  t.equal(parsed.ssh(), 'git@github.com:foo/bar.git')
+  t.equal(parsed.sshurl(), 'git+ssh://git@github.com/foo/bar.git')
+  t.equal(parsed.browse(), 'https://github.com/foo/bar')
+  t.equal(parsed.browse('/lib/index.js'), 'https://github.com/foo/bar/tree/master/lib/index.js')
+  t.equal(parsed.browse('/lib/index.js', 'L100'), 'https://github.com/foo/bar/tree/master/lib/index.js#l100')
+  t.equal(parsed.docs(), 'https://github.com/foo/bar#readme')
+  t.equal(parsed.https(), 'git+https://github.com/foo/bar.git')
+  t.equal(parsed.shortcut(), 'github:foo/bar')
+  t.equal(parsed.path(), 'foo/bar')
+  t.equal(parsed.tarball(), 'https://codeload.github.com/foo/bar/tar.gz/master')
+  t.equal(parsed.file(), 'https://raw.githubusercontent.com/foo/bar/master/')
+  t.equal(parsed.file('/lib/index.js'), 'https://raw.githubusercontent.com/foo/bar/master/lib/index.js')
+  t.equal(parsed.git(), 'git://github.com/foo/bar.git')
+  t.equal(parsed.bugs(), 'https://github.com/foo/bar/issues')
+
+  t.equal(parsed.docs({ committish: 'fix/bug' }), 'https://github.com/foo/bar/tree/fix%2Fbug#readme', 'allows overriding options')
+
+  const extra = HostedGit.fromUrl('https://user@github.com/foo/bar#fix/bug')
+  t.equal(extra.hash(), '#fix/bug')
+  t.equal(extra.https(), 'git+https://user@github.com/foo/bar.git#fix/bug')
+  t.equal(extra.shortcut(), 'github:foo/bar#fix/bug')
+  t.equal(extra.ssh(), 'git@github.com:foo/bar.git#fix/bug')
+  t.equal(extra.sshurl(), 'git+ssh://git@github.com/foo/bar.git#fix/bug')
+  t.equal(extra.browse(), 'https://github.com/foo/bar/tree/fix%2Fbug')
+  t.equal(extra.browse('/lib/index.js'), 'https://github.com/foo/bar/tree/fix%2Fbug/lib/index.js')
+  t.equal(extra.browse('/lib/index.js', 'L200'), 'https://github.com/foo/bar/tree/fix%2Fbug/lib/index.js#l200')
+  t.equal(extra.docs(), 'https://github.com/foo/bar/tree/fix%2Fbug#readme')
+  t.equal(extra.file(), 'https://user@raw.githubusercontent.com/foo/bar/fix%2Fbug/')
+  t.equal(extra.file('/lib/index.js'), 'https://user@raw.githubusercontent.com/foo/bar/fix%2Fbug/lib/index.js')
+  t.equal(extra.tarball(), 'https://codeload.github.com/foo/bar/tar.gz/fix%2Fbug')
+
+  t.equal(extra.sshurl({ noCommittish: true }), 'git+ssh://git@github.com/foo/bar.git', 'noCommittish drops committish from urls')
+  t.equal(extra.sshurl({ noGitPlus: true }), 'ssh://git@github.com/foo/bar.git#fix/bug', 'noGitPlus drops git+ prefix from urls')
 
   t.end()
 })
