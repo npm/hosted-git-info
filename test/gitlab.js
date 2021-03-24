@@ -6,7 +6,10 @@ const invalid = [
   // gitlab urls can contain a /-/ segment, make sure we ignore those
   'https://gitlab.com/foo/-/something',
   // missing project
-  'https://gitlab.com/foo'
+  'https://gitlab.com/foo',
+  // tarball, this should not parse so that it can be used for pacote's remote fetcher
+  'https://gitlab.com/foo/bar/repository/archive.tar.gz',
+  'https://gitlab.com/foo/bar/repository/archive.tar.gz?ref=49b393e2ded775f2df36ef2ffcb61b0359c194c9'
 ]
 
 // assigning the constructor here is hacky, but the only way to make assertions that compare
