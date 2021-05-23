@@ -1,13 +1,13 @@
 'use strict'
-var HostedGit = require('../index')
-var test = require('tap').test
+ HostedGit = require('../index')
+ test = require('tap').test
 
-test('fromUrl(gitlab url)', function (t) {
-  function verify (host, label, branch) {
-    var hostinfo = HostedGit.fromUrl(host)
-    var hash = branch ? '#' + branch : ''
+test('fromUrl(gitlab url)', (t) {
+   verify (host, label, branch) {
+    hostinfo = HostedGit.fromUrl(host)
+    hash = branch ? '#' + branch : ''
     t.ok(hostinfo, label)
-    if (!hostinfo) return
+    (!hostinfo)
     t.is(hostinfo.https(), 'git+https://gitlab.com/111/222.git' + hash, label + ' -> https')
     t.is(hostinfo.browse(), 'https://gitlab.com/111/222' + (branch ? '/tree/' + branch : ''), label + ' -> browse')
     t.is(hostinfo.docs(), 'https://gitlab.com/111/222' + (branch ? '/tree/' + branch : '') + '#README', label + ' -> docs')
