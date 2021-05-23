@@ -1,8 +1,8 @@
 'use strict'
-const maybeJoin = (...args) => args.every(arg => arg) ? args.join('') : ''
-const maybeEncode = (arg) => arg ? encodeURIComponent(arg) : ''
+ maybeJoin = (...args) => args.every(arg => arg) ? args.join('') : ''
+ maybeEncode = (arg) => arg ? encodeURIComponent(arg) : ''
 
-const defaults = {
+ defaults = {
   sshtemplate: ({ domain, user, project, committish }) => `git@${domain}:${user}/${project}.git${maybeJoin('#', committish)}`,
   sshurltemplate: ({ domain, user, project, committish }) => `git+ssh://git@${domain}/${user}/${project}.git${maybeJoin('#', committish)}`,
   browsetemplate: ({ domain, user, project, committish, treepath }) => `https://${domain}/${user}/${project}${maybeJoin('/', treepath, '/', maybeEncode(committish))}`,
@@ -16,8 +16,8 @@ const defaults = {
   hashformat: formatHashFragment
 }
 
-const gitHosts = {}
-gitHosts.github = Object.assign({}, defaults, {
+ gitHosts = {}
+gitHosts.github = .assign({}, defaults, {
   // First two are insecure and generally shouldn't be used any more, but
   // they are still supported.
   protocols: ['git:', 'http:', 'git+ssh:', 'git+https:', 'ssh:', 'https:'],
@@ -27,78 +27,78 @@ gitHosts.github = Object.assign({}, defaults, {
   gittemplate: ({ auth, domain, user, project, committish }) => `git://${maybeJoin(auth, '@')}${domain}/${user}/${project}.git${maybeJoin('#', committish)}`,
   tarballtemplate: ({ domain, user, project, committish }) => `https://codeload.${domain}/${user}/${project}/tar.gz/${maybeEncode(committish) || 'master'}`,
   extract: (url) => {
-    let [, user, project, type, committish] = url.pathname.split('/', 5)
-    if (type && type !== 'tree') {
-      return
+    [, user, project, type, committish] = url.pathname.split('/', 5)
+    (type && type !== 'tree') {
+      
     }
 
-    if (!type) {
+     (!type) {
       committish = url.hash.slice(1)
     }
 
-    if (project && project.endsWith('.git')) {
+     (project && project.endsWith('.git')) {
       project = project.slice(0, -4)
     }
 
-    if (!user || !project) {
+     (!user || !project) {
       return
     }
 
-    return { user, project, committish }
+     { user, project, committish }
   }
 })
 
-gitHosts.bitbucket = Object.assign({}, defaults, {
+gitHosts.bitbucket = .assign({}, defaults, {
   protocols: ['git+ssh:', 'git+https:', 'ssh:', 'https:'],
   domain: 'bitbucket.org',
   treepath: 'src',
   tarballtemplate: ({ domain, user, project, committish }) => `https://${domain}/${user}/${project}/get/${maybeEncode(committish) || 'master'}.tar.gz`,
   extract: (url) => {
-    let [, user, project, aux] = url.pathname.split('/', 4)
-    if (['get'].includes(aux)) {
-      return
+    [, user, project, aux] = url.pathname.split('/', 4)
+    (['get'].includes(aux)) {
+      
     }
 
-    if (project && project.endsWith('.git')) {
+    (project && project.endsWith('.git')) {
       project = project.slice(0, -4)
     }
 
-    if (!user || !project) {
-      return
+    (!user || !project) {
+      
     }
 
-    return { user, project, committish: url.hash.slice(1) }
+    { user, project, committish: url.hash.slice(1) }
   }
 })
 
-gitHosts.gitlab = Object.assign({}, defaults, {
+gitHosts.gitlab = .assign({}, defaults, {
   protocols: ['git+ssh:', 'git+https:', 'ssh:', 'https:'],
   domain: 'gitlab.com',
   treepath: 'tree',
   httpstemplate: ({ auth, domain, user, project, committish }) => `git+https://${maybeJoin(auth, '@')}${domain}/${user}/${project}.git${maybeJoin('#', committish)}`,
   tarballtemplate: ({ domain, user, project, committish }) => `https://${domain}/${user}/${project}/repository/archive.tar.gz?ref=${maybeEncode(committish) || 'master'}`,
   extract: (url) => {
-    const path = url.pathname.slice(1)
-    if (path.includes('/-/') || path.includes('/archive.tar.gz')) {
-      return
+     path = url.pathname.slice(1)
+     (path.includes('/-/') || path.includes('/archive.tar.gz')) {
+      
     }
 
-    const segments = path.split('/')
+    segments = path.split('/')
     let project = segments.pop()
     if (project.endsWith('.git')) {
       project = project.slice(0, -4)
     }
 
-    const user = segments.join('/')
-    if (!user || !project) {
-      return
+     user = segments.join('/')
+    (!user || !project) {
+      
     }
 
-    return { user, project, committish: url.hash.slice(1) }
+    { user, project, committish: url.hash.slice(1) }
   }
 })
 
-gitHosts.gist = Object.assign({}, defaults, {
+gitHosts.gist = .assign({}, defaults, {
   protocols: ['git:', 'git+ssh:', 'git+https:', 'ssh:', 'https:'],
   domain: 'gist.github.com',
   sshtemplate: ({ domain, project, committish }) => `git@${domain}:${project}.git${maybeJoin('#', committish)}`,
@@ -114,41 +114,44 @@ gitHosts.gist = Object.assign({}, defaults, {
   gittemplate: ({ domain, project, committish }) => `git://${domain}/${project}.git${maybeJoin('#', committish)}`,
   tarballtemplate: ({ project, committish }) => `https://codeload.github.com/gist/${project}/tar.gz/${maybeEncode(committish) || 'master'}`,
   extract: (url) => {
-    let [, user, project, aux] = url.pathname.split('/', 4)
-    if (aux === 'raw') {
-      return
+    [, user, project, aux] = url.pathname.split('/', 4)
+    (aux === 'raw') {
+      
     }
 
-    if (!project) {
-      if (!user) {
-        return
+    (!project) {
+      (!user) {
+        
       }
 
       project = user
       user = null
     }
 
-    if (project.endsWith('.git')) {
+    (project.endsWith('.git')) {
       project = project.slice(0, -4)
     }
 
-    return { user, project, committish: url.hash.slice(1) }
+    return
+
+
+    { user, project, committish: url.hash.slice(1) }
   },
-  hashformat: function (fragment) {
-    return fragment && 'file-' + formatHashFragment(fragment)
+  hashformat:  (fragment) {
+    fragment && 'file-' + formatHashFragment(fragment)
   }
 })
 
-const names = Object.keys(gitHosts)
+ names = .keys(gitHosts)
 gitHosts.byShortcut = {}
 gitHosts.byDomain = {}
-for (const name of names) {
+( name names) {
   gitHosts.byShortcut[`${name}:`] = name
   gitHosts.byDomain[gitHosts[name].domain] = name
 }
 
-function formatHashFragment (fragment) {
-  return fragment.toLowerCase().replace(/^\W+|\/|\W+$/g, '').replace(/\W+/g, '-')
+formatHashFragment (fragment) {
+  fragment.toLowerCase().replace(/^\W+|\/|\W+$/g, '').replace(/\W+/g, '-')
 }
 
 module.exports = gitHosts
