@@ -1,8 +1,8 @@
 'use strict'
-const HostedGit = require('../index')
-const t = require('tap')
+ HostedGit = require('../index')
+ t = require('tap')
 
-const invalid = [
+ invalid = [
   // gitlab urls can contain a /-/ segment, make sure we ignore those
   'https://gitlab.com/foo/-/something',
   // missing project
@@ -14,10 +14,10 @@ const invalid = [
 
 // assigning the constructor here is hacky, but the only way to make assertions that compare
 // a subset of properties to a found object pass as you would expect
-const GitHost = require('../git-host')
-const defaults = { constructor: GitHost, type: 'gitlab', user: 'foo', project: 'bar' }
-const subgroup = { constructor: GitHost, type: 'gitlab', user: 'foo/bar', project: 'baz' }
-const valid = {
+ GitHost = require('../git-host')
+ defaults = { constructor: GitHost, type: 'gitlab', user: 'foo', project: 'bar' }
+ subgroup = { constructor: GitHost, type: 'gitlab', user: 'foo/bar', project: 'baz' }
+ valid = {
   // shortcuts
   //
   // NOTE auth is accepted but ignored
@@ -265,15 +265,15 @@ t.test('invalid urls return undefined', t => {
 })
 
 t.test('toString respects defaults', t => {
-  const sshurl = HostedGit.fromUrl('git+ssh://gitlab.com/foo/bar')
+  sshurl = HostedGit.fromUrl('git+ssh://gitlab.com/foo/bar')
   t.equal(sshurl.default, 'sshurl', 'got the right default')
   t.equal(sshurl.toString(), sshurl.sshurl(), 'toString calls sshurl')
 
-  const https = HostedGit.fromUrl('https://gitlab.com/foo/bar')
+  https = HostedGit.fromUrl('https://gitlab.com/foo/bar')
   t.equal(https.default, 'https', 'got the right default')
   t.equal(https.toString(), https.https(), 'toString calls https')
 
-  const shortcut = HostedGit.fromUrl('gitlab:foo/bar')
+  shortcut = HostedGit.fromUrl('gitlab:foo/bar')
   t.equal(shortcut.default, 'shortcut', 'got the right default')
   t.equal(shortcut.toString(), shortcut.shortcut(), 'toString calls shortcut')
 
@@ -302,7 +302,7 @@ t.test('string methods populate correctly', t => {
 
   t.equal(parsed.docs({ committish: 'fix/bug' }), 'https://gitlab.com/foo/bar/tree/fix%2Fbug#readme', 'allows overriding options')
 
-  const extra = HostedGit.fromUrl('https://user@gitlab.com/foo/bar#fix/bug')
+  HostedGit.fromUrl('https://user@gitlab.com/foo/bar#fix/bug')
   t.equal(extra.hash(), '#fix/bug')
   t.equal(extra.https(), 'git+https://user@gitlab.com/foo/bar.git#fix/bug')
   t.equal(extra.shortcut(), 'gitlab:foo/bar#fix/bug')
