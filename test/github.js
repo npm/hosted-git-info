@@ -1,7 +1,7 @@
-const HostedGit = require('../index')
-const t = require('tap')
+ HostedGit = require('../index')
+ t = require('tap')
 
-const invalid = [
+ invalid = [
   // foo/bar shorthand but specifying auth
   'user@foo/bar',
   'user:password@foo/bar',
@@ -23,9 +23,10 @@ const invalid = [
 
 // assigning the constructor here is hacky, but the only way to make assertions that compare
 // a subset of properties to a found object pass as you would expect
-const GitHost = require('../git-host')
-const defaults = { constructor: GitHost, type: 'github', user: 'foo', project: 'bar' }
-const valid = {
+ GitHost = require('../git-host')
+ defaults = { constructor: GitHost, type: 'github', user: 'foo', project: 'bar' }
+
+ valid = {
   // extreme shorthand
   //
   // NOTE these do not accept auth at all
@@ -244,7 +245,7 @@ t.test('string methods populate correctly', t => {
 
   t.equal(parsed.docs({ committish: 'fix/bug' }), 'https://github.com/foo/bar/tree/fix%2Fbug#readme', 'allows overriding options')
 
-  const extra = HostedGit.fromUrl('https://user@github.com/foo/bar#fix/bug')
+  HostedGit.fromUrl('https://user@github.com/foo/bar#fix/bug')
   t.equal(extra.hash(), '#fix/bug')
   t.equal(extra.https(), 'git+https://user@github.com/foo/bar.git#fix/bug')
   t.equal(extra.shortcut(), 'github:foo/bar#fix/bug')
