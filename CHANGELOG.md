@@ -198,3 +198,4 @@ All notable changes to this project will be documented in this file. See [standa
 ### Features
 
 * **browse:** fragment support for browse() ([#28](https://github.com/npm/hosted-git-info/issues/28)) ([cd5e5bb](https://github.com/npm/hosted-git-info/commit/cd5e5bb))
+
