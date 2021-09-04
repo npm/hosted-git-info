@@ -293,7 +293,7 @@ t.test('string methods populate correctly', t => {
   t.equal(parsed.https(), 'git+https://gitlab.com/foo/bar.git')
   t.equal(parsed.shortcut(), 'gitlab:foo/bar')
   t.equal(parsed.path(), 'foo/bar')
-  t.equal(parsed.tarball(), 'https://gitlab.com/foo/bar/repository/archive.tar.gz?ref=master')
+  t.equal(parsed.tarball(), 'https://gitlab.com/api/v4/projects/foo%2Fbar/repository/archive.tar.gz?ref=master')
   t.equal(parsed.file(), 'https://gitlab.com/foo/bar/raw/master/')
   t.equal(parsed.file('/lib/index.js'), 'https://gitlab.com/foo/bar/raw/master/lib/index.js')
   t.equal(parsed.bugs(), 'https://gitlab.com/foo/bar/issues')
@@ -314,7 +314,7 @@ t.test('string methods populate correctly', t => {
   t.equal(extra.docs(), 'https://gitlab.com/foo/bar/tree/fix%2Fbug#readme')
   t.equal(extra.file(), 'https://gitlab.com/foo/bar/raw/fix%2Fbug/')
   t.equal(extra.file('/lib/index.js'), 'https://gitlab.com/foo/bar/raw/fix%2Fbug/lib/index.js')
-  t.equal(extra.tarball(), 'https://gitlab.com/foo/bar/repository/archive.tar.gz?ref=fix%2Fbug')
+  t.equal(extra.tarball(), 'https://gitlab.com/api/v4/projects/foo%2Fbar/repository/archive.tar.gz?ref=fix%2Fbug')
 
   t.equal(extra.sshurl({ noCommittish: true }), 'git+ssh://git@gitlab.com/foo/bar.git', 'noCommittish drops committish from urls')
   t.equal(extra.sshurl({ noGitPlus: true }), 'ssh://git@gitlab.com/foo/bar.git#fix/bug', 'noGitPlus drops git+ prefix from urls')

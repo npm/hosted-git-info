@@ -76,7 +76,7 @@ gitHosts.gitlab = Object.assign({}, defaults, {
   domain: 'gitlab.com',
   treepath: 'tree',
   httpstemplate: ({ auth, domain, user, project, committish }) => `git+https://${maybeJoin(auth, '@')}${domain}/${user}/${project}.git${maybeJoin('#', committish)}`,
-  tarballtemplate: ({ domain, user, project, committish }) => `https://${domain}/${user}/${project}/repository/archive.tar.gz?ref=${maybeEncode(committish) || 'master'}`,
+  tarballtemplate: ({ domain, user, project, committish }) => `https://${domain}/api/v4/projects/${user}%2F${project}/repository/archive.tar.gz?ref=${maybeEncode(committish) || 'master'}`,
   extract: (url) => {
     const path = url.pathname.slice(1)
     if (path.includes('/-/') || path.includes('/archive.tar.gz')) {
