@@ -1,278 +1,120 @@
 'use strict'
-var HostedGit = require('../index')
-var test = require('tap').test
+const HostedGit = require('../index')
+const t = require('tap')
 
-var showLabel = function (label, fn) { return label + ' -> ' + fn }
+const invalid = [
+  // missing project
+  'https://git.sr.ht/~foo',
+  // invalid protocos
+  'git://git@git.sr.ht:~foo/bar',
+  'ssh://git.sr.ht:~foo/bar'
+]
 
-var testFixtures = function (t, params, fixtures) {
-  for (var i = 0; i < fixtures.length; ++i) {
-    var fixture = fixtures[i]
+// assigning the constructor here is hacky, but the only way to make assertions that compare
+// a subset of properties to a found object pass as you would expect
+const GitHost = require('../git-host')
+const defaults = { constructor: GitHost, type: 'sourcehut', user: '~foo', project: 'bar' }
 
-    var host = fixture.host(params)
-    var hostinfo = HostedGit.fromUrl(host)
+const valid = {
+  // shortucts
+  'sourcehut:~foo/bar': { ...defaults, default: 'shortcut' },
+  'sourcehut:~foo/bar#branch': { ...defaults, default: 'shortcut', committish: 'branch' },
 
-    // INFO: fromUrl should return `undefined` from fixture input
-    if (fixture.isUndefined) {
-      t.test('input results in undefined', function (tt) {
-        tt.is(hostinfo, undefined)
-        tt.end()
-      })
-      break
-    }
+  // shortcuts (.git)
+  'sourcehut:~foo/bar.git': { ...defaults, default: 'shortcut' },
+  'sourcehut:~foo/bar.git#branch': { ...defaults, default: 'shortcut', committish: 'branch' },
 
-    t.test('hostinfo.https', function (tt) {
-      var expected = function (url, hasBranch) {
-        return (hasBranch)
-          ? url + '#' + params.branch
-          : url
-      }
-      tt.is(
-        hostinfo.https(),
-        expected('git+https://git.sr.ht/~some-owner/some-repo.git', fixture.hasBranch, fixture.hasGroup),
-        showLabel(fixture.label, 'https')
-      )
-      // INFO: not using `expected` because with `{noCommittish: true}` the output is always the same
-      tt.is(
-        hostinfo.https({ noCommittish: true }),
-        'git+https://git.sr.ht/~some-owner/some-repo.git',
-        showLabel(fixture.label, 'https({ noCommittish: true })')
-      )
-      tt.is(
-        hostinfo.https({ noGitPlus: true }),
-        expected('https://git.sr.ht/~some-owner/some-repo.git', fixture.hasBranch),
-        showLabel(fixture.label, 'https({ noGitPlus: true })')
-      )
-      tt.end()
-    })
-    t.test('hostinfo.browse', function (tt) {
-      var expected = function (url, hasBranch) {
-        if (hasBranch) {
-          if (url.indexOf('master') === -1) {
-            return url + '/tree/' + params.branch
-          } else {
-            return url.replace(/master/gi, params.branch)
-          }
-        }
-        return url
-      }
-      tt.is(
-        hostinfo.browse(),
-        expected('https://git.sr.ht/~some-owner/some-repo', fixture.hasBranch),
-        showLabel(fixture.label, 'browse')
-      )
-      tt.is(
-        hostinfo.browse(''),
-        expected('https://git.sr.ht/~some-owner/some-repo/tree/master/', fixture.hasBranch),
-        showLabel(fixture.label, "browse('')")
-      )
-      tt.is(
-        hostinfo.browse('C'),
-        expected('https://git.sr.ht/~some-owner/some-repo/tree/master/C', fixture.hasBranch),
-        showLabel(fixture.label, "browse('C')")
-      )
-      tt.is(
-        hostinfo.browse('C/D'),
-        expected('https://git.sr.ht/~some-owner/some-repo/tree/master/C/D', fixture.hasBranch),
-        showLabel(fixture.label, "browse('C/D')")
-      )
-      tt.is(
-        hostinfo.browse('C', 'A'),
-        expected('https://git.sr.ht/~some-owner/some-repo/tree/master/C#a', fixture.hasBranch),
-        showLabel(fixture.label, "browse('C', 'A')")
-      )
-      tt.is(
-        hostinfo.browse('C/D', 'A'),
-        expected('https://git.sr.ht/~some-owner/some-repo/tree/master/C/D#a', fixture.hasBranch),
-        showLabel(fixture.label, "browse('C/D', 'A')")
-      )
-      tt.end()
-    })
-    t.test('hostinfo.docs', function (tt) {
-      var expected = function (url, hasBranch) {
-        if (hasBranch) {
-          var splitUrl = url.split('#')
-          return splitUrl[0] + '/tree/' + params.branch + '#' + splitUrl[1]
-        }
-        return url
-      }
-      tt.is(
-        hostinfo.docs(),
-        expected('https://git.sr.ht/~some-owner/some-repo#readme', fixture.hasBranch),
-        showLabel(fixture.label, 'docs')
-      )
-      tt.is(
-        hostinfo.docs({ noCommittish: true }),
-        // INFO: not using `expected` because with `{noCommittish: true}` the output is always the same
-        'https://git.sr.ht/~some-owner/some-repo#readme',
-        showLabel(fixture.label, 'docs({ noCommittish: true })')
-      )
-      tt.is(
-        hostinfo.docs({ noGitPlus: true }),
-        expected('https://git.sr.ht/~some-owner/some-repo#readme', fixture.hasBranch),
-        showLabel(fixture.label, 'docs({ noGitPlus: true })')
-      )
-      tt.end()
-    })
-    t.test('hostinfo.ssh', function (tt) {
-      var expected = function (url, hasBranch) {
-        return (hasBranch)
-          ? url + '#' + params.branch
-          : url
-      }
-      tt.is(
-        hostinfo.ssh(),
-        expected('git@git.sr.ht:~some-owner/some-repo.git', fixture.hasBranch),
-        showLabel(fixture.label, 'ssh')
-      )
-      tt.is(
-        hostinfo.ssh({ noCommittish: true }),
-        // INFO: not using `expected` because with `{noCommittish: true}` the output is always the same
-        'git@git.sr.ht:~some-owner/some-repo.git',
-        showLabel(fixture.label, 'ssh({ noCommittish: true })')
-      )
-      tt.is(
-        hostinfo.ssh({ noGitPlus: true }),
-        expected('git@git.sr.ht:~some-owner/some-repo.git', fixture.hasBranch),
-        showLabel(fixture.label, 'ssh({ noGitPlus: true })')
-      )
-      tt.end()
-    })
-    t.test('hostinfo.sshurl', function (tt) {
-      var expected = function (url, hasBranch) {
-        return (hasBranch)
-          ? url + '#' + params.branch
-          : url
-      }
-      tt.is(
-        hostinfo.sshurl(),
-        expected('git+ssh://git@git.sr.ht/~some-owner/some-repo.git', fixture.hasBranch),
-        showLabel(fixture.label, 'sshurl')
-      )
-      tt.is(
-        hostinfo.sshurl({ noCommittish: true }),
-        // INFO: not using `expected` because with `{noCommittish: true}` the output is always the same
-        'git+ssh://git@git.sr.ht/~some-owner/some-repo.git',
-        showLabel(fixture.label, 'sshurl({ noCommittish: true })')
-      )
-      tt.is(
-        hostinfo.sshurl({ noGitPlus: true }),
-        expected('ssh://git@git.sr.ht/~some-owner/some-repo.git', fixture.hasBranch),
-        showLabel(fixture.label, 'sshurl({ noGitPlus: true })')
-      )
-      tt.end()
-    })
-    t.test('hostinfo.shortcut', function (tt) {
-      var expected = function (url, hasBranch) {
-        return (hasBranch)
-          ? url + '#' + params.branch
-          : url
-      }
-      tt.is(
-        hostinfo.shortcut(),
-        expected('sourcehut:~some-owner/some-repo', fixture.hasBranch),
-        showLabel(fixture.label, 'shortcut')
-      )
-      tt.is(
-        hostinfo.shortcut({ noCommittish: true }),
-        // INFO: not using `expected` because with `{noCommittish: true}` the output is always the same
-        'sourcehut:~some-owner/some-repo',
-        showLabel(fixture.label, 'shortcut({ noCommittish: true })')
-      )
-      tt.is(
-        hostinfo.shortcut({ noGitPlus: true }),
-        expected('sourcehut:~some-owner/some-repo', fixture.hasBranch),
-        showLabel(fixture.label, 'shortcut({ noGitPlus: true })')
-      )
-      tt.end()
-    })
-    t.test('hostinfo.file', function (tt) {
-      var expected = function (url, hasBranch) {
-        return (hasBranch)
-          ? url.replace(/master/gi, params.branch)
-          : url
-      }
-      tt.is(
-        hostinfo.file(),
-        expected('https://git.sr.ht/~some-owner/some-repo/blob/master/', fixture.hasBranch),
-        showLabel(fixture.label, 'file')
-      )
-      tt.is(
-        hostinfo.file('C'),
-        expected('https://git.sr.ht/~some-owner/some-repo/blob/master/C', fixture.hasBranch),
-        showLabel(fixture.label, "file('C')")
-      )
-      tt.is(
-        hostinfo.file('C/D'),
-        expected('https://git.sr.ht/~some-owner/some-repo/blob/master/C/D', fixture.hasBranch),
-        showLabel(fixture.label, "file('C/D')")
-      )
-      tt.end()
-    })
-    t.test('hostinfo.tarball', function (tt) {
-      var expected = function (url, hasBranch) {
-        return (hasBranch)
-          ? url.replace(/master/gi, params.branch)
-          : url
-      }
-      tt.is(
-        hostinfo.tarball(),
-        expected('https://git.sr.ht/~some-owner/some-repo/archive/master.tar.gz', fixture.hasBranch),
-        showLabel(fixture.label, 'tarball')
-      )
-      tt.is(
-        hostinfo.tarball({ noCommittish: true }),
-        expected('https://git.sr.ht/~some-owner/some-repo/archive/master.tar.gz', fixture.hasBranch),
-        showLabel(fixture.label, 'tarball({ noCommittish: true })')
-      )
-      tt.is(
-        hostinfo.tarball({ noGitPlus: true }),
-        expected('https://git.sr.ht/~some-owner/some-repo/archive/master.tar.gz', fixture.hasBranch),
-        showLabel(fixture.label, 'tarball({ noGitPlus: true })')
-      )
-      tt.end()
-    })
-  }
+  // no-protocol git+ssh
+  'git@git.sr.ht:~foo/bar': { ...defaults, default: 'sshurl', auth: null },
+  'git@git.sr.ht:~foo/bar#branch': { ...defaults, default: 'sshurl', auth: null, committish: 'branch' },
+
+  // no-protocol git+ssh (.git)
+  'git@git.sr.ht:~foo/bar.git': { ...defaults, default: 'sshurl', auth: null },
+  'git@git.sr.ht:~foo/bar.git#branch': { ...defaults, default: 'sshurl', auth: null, committish: 'branch' },
+
+  // git+ssh urls
+  'git+ssh://git@git.sr.ht:~foo/bar': { ...defaults, default: 'sshurl' },
+  'git+ssh://git@git.sr.ht:~foo/bar#branch': { ...defaults, default: 'sshurl', committish: 'branch' },
+
+  // git+ssh urls (.git)
+  'git+ssh://git@git.sr.ht:~foo/bar.git': { ...defaults, default: 'sshurl' },
+  'git+ssh://git@git.sr.ht:~foo/bar.git#branch': { ...defaults, default: 'sshurl', committish: 'branch' },
+
+  // https urls
+  'https://git.sr.ht/~foo/bar': { ...defaults, default: 'https' },
+  'https://git.sr.ht/~foo/bar#branch': { ...defaults, default: 'https', committish: 'branch' },
+
+  'https://git.sr.ht/~foo/bar.git': { ...defaults, default: 'https' },
+  'https://git.sr.ht/~foo/bar.git#branch': { ...defaults, default: 'https', committish: 'branch' }
 }
 
-test('fromUrl(sourcehut url)', function (t) {
-  var fixtures = require('./fixtures/sourcehut')
+t.test('valid urls parse properly', t => {
+  t.plan(Object.keys(valid).length)
+  for (const [url, result] of Object.entries(valid)) {
+    t.hasStrict(HostedGit.fromUrl(url), result, `${url} parses`)
+  }
+})
 
-  t.test('domain: git.sr.ht', function (tt) {
-    var params = {
-      domain: 'git.sr.ht',
-      shortname: 'sourcehut',
-      label: 'sourcehut',
-      owner: '~some-owner',
-      project: 'some-repo',
-      branch: 'feature-branch'
-    }
-    testFixtures(tt, params, fixtures)
-    tt.end()
-  })
+t.test('invalid urls return undefined', t => {
+  t.plan(invalid.length)
+  for (const url of invalid) {
+    t.equal(HostedGit.fromUrl(url), undefined, `${url} returns undefined`)
+  }
+})
 
-  t.test('Soucehub HTTPS URLs with embedded auth', function (tt) {
-    tt.is(
-      HostedGit.fromUrl('https://user:pass@git.sr.ht/user/repo.git').toString(),
-      'git+https://user:pass@git.sr.ht/user/repo.git',
-      'credentials were included in URL'
-    )
-    tt.is(
-      HostedGit.fromUrl('https://user:pass@git.sr.ht/user/repo').toString(),
-      'git+https://user:pass@git.sr.ht/user/repo.git',
-      'credentials were included in URL'
-    )
-    tt.is(
-      HostedGit.fromUrl('git+https://user:pass@git.sr.ht/user/repo.git').toString(),
-      'git+https://user:pass@git.sr.ht/user/repo.git',
-      'credentials were included in URL'
-    )
-    tt.is(
-      HostedGit.fromUrl('git+https://user:pass@git.sr.ht/user/repo').toString(),
-      'git+https://user:pass@git.sr.ht/user/repo.git',
-      'credentials were included in URL'
-    )
-    tt.end()
-  })
+t.test('toString respects defaults', t => {
+  const sshurl = HostedGit.fromUrl('git+ssh://git.sr.ht/~foo/bar')
+  t.equal(sshurl.default, 'sshurl', 'got the right default')
+  t.equal(sshurl.toString(), sshurl.sshurl(), 'toString calls sshurl')
+
+  const https = HostedGit.fromUrl('https://git.sr.ht/~foo/bar')
+  t.equal(https.default, 'https', 'got the right default')
+  t.equal(https.toString(), https.https(), 'toString calls https')
+
+  const shortcut = HostedGit.fromUrl('sourcehut:~foo/bar')
+  t.equal(shortcut.default, 'shortcut', 'got the right default')
+  t.equal(shortcut.toString(), shortcut.shortcut(), 'toString calls shortcut')
+
+  t.end()
+})
+
+t.test('string methods populate correctly', t => {
+  const parsed = HostedGit.fromUrl('git+ssh://git.sr.ht/~foo/bar')
+  t.equal(parsed.getDefaultRepresentation(), parsed.default, 'getDefaultRepresentation()')
+  t.equal(parsed.hash(), '', 'hash() returns empty string when committish is unset')
+  t.equal(parsed.ssh(), 'git@git.sr.ht:~foo/bar.git')
+  t.equal(parsed.sshurl(), 'git+ssh://git@git.sr.ht/~foo/bar.git')
+  t.equal(parsed.browse(), 'https://git.sr.ht/~foo/bar')
+  t.equal(parsed.browse('/lib/index.js'), 'https://git.sr.ht/~foo/bar/tree/main/lib/index.js')
+  t.equal(parsed.browse('/lib/index.js', 'L100'), 'https://git.sr.ht/~foo/bar/tree/main/lib/index.js#l100')
+  t.equal(parsed.docs(), 'https://git.sr.ht/~foo/bar#readme')
+  t.equal(parsed.https(), 'https://git.sr.ht/~foo/bar.git')
+  t.equal(parsed.shortcut(), 'sourcehut:~foo/bar')
+  t.equal(parsed.path(), '~foo/bar')
+  t.equal(parsed.tarball(), 'https://git.sr.ht/~foo/bar/archive/main.tar.gz')
+  t.equal(parsed.file(), 'https://git.sr.ht/~foo/bar/blob/main/')
+  t.equal(parsed.file('/lib/index.js'), 'https://git.sr.ht/~foo/bar/blob/main/lib/index.js')
+  t.equal(parsed.bugs(), 'https://todo.sr.ht/~foo/bar')
+
+  t.equal(parsed.docs({ committish: 'fix/bug' }), 'https://git.sr.ht/~foo/bar/tree/fix%2Fbug#readme', 'allows overriding options')
+
+  t.same(parsed.git(), null, 'git() returns null')
+
+  const extra = HostedGit.fromUrl('https://@git.sr.ht/~foo/bar#fix/bug')
+  t.equal(extra.hash(), '#fix/bug')
+  t.equal(extra.https(), 'https://git.sr.ht/~foo/bar.git#fix/bug')
+  t.equal(extra.shortcut(), 'sourcehut:~foo/bar#fix/bug')
+  t.equal(extra.ssh(), 'git@git.sr.ht:~foo/bar.git#fix/bug')
+  t.equal(extra.sshurl(), 'git+ssh://git@git.sr.ht/~foo/bar.git#fix/bug')
+  t.equal(extra.browse(), 'https://git.sr.ht/~foo/bar/tree/fix%2Fbug')
+  t.equal(extra.browse('/lib/index.js'), 'https://git.sr.ht/~foo/bar/tree/fix%2Fbug/lib/index.js')
+  t.equal(extra.browse('/lib/index.js', 'L200'), 'https://git.sr.ht/~foo/bar/tree/fix%2Fbug/lib/index.js#l200')
+  t.equal(extra.docs(), 'https://git.sr.ht/~foo/bar/tree/fix%2Fbug#readme')
+  t.equal(extra.file(), 'https://git.sr.ht/~foo/bar/blob/fix%2Fbug/')
+  t.equal(extra.file('/lib/index.js'), 'https://git.sr.ht/~foo/bar/blob/fix%2Fbug/lib/index.js')
+
+  t.equal(extra.sshurl({ noCommittish: true }), 'git+ssh://git@git.sr.ht/~foo/bar.git', 'noCommittish drops committish from urls')
+  t.equal(extra.sshurl({ noGitPlus: true }), 'ssh://git@git.sr.ht/~foo/bar.git#fix/bug', 'noGitPlus drops git+ prefix from urls')
 
   t.end()
 })
