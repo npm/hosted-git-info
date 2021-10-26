@@ -2,6 +2,71 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="4.0.0"></a>
+## [4.0.0](https://github.com/npm/hosted-git-info/compare/v3.0.7...v4.0.0) (2021-03-09)
+
+
+### Features
+
+* rewrite the entire module: all internals have been rewritten to maintain a similar contract but to remove excessive use of regular expressions, unnecessary loops, the custom string templating engine, and various other bits of complexity ([c218b9](https://github.com/npm/hosted-git-info/commit/c218b9ec90cf6a818341cd0f7b03ea65793b185b))
+
+
+### BREAKING CHANGES
+
+* extending with custom providers has changed ([c218b9](https://github.com/npm/hosted-git-info/commit/c218b9ec90cf6a818341cd0f7b03ea65793b185b))
+
+
+
+<a name="3.0.8"></a>
+## [3.0.8](https://github.com/npm/hosted-git-info/compare/v3.0.7...v3.0.8) (2021-01-28)
+
+
+### Bug Fixes
+
+* simplify the regular expression for shortcut matching ([bede0dc](https://github.com/npm/hosted-git-info/commit/bede0dc)), closes [#76](https://github.com/npm/hosted-git-info/issues/76)
+
+
+
+<a name="3.0.7"></a>
+## [3.0.7](https://github.com/npm/hosted-git-info/compare/v3.0.6...v3.0.7) (2020-10-15)
+
+
+### Bug Fixes
+
+* correctly filter out urls for tarballs in gitlab ([eb5bd5a](https://github.com/npm/hosted-git-info/commit/eb5bd5a)), closes [#69](https://github.com/npm/hosted-git-info/issues/69)
+
+
+
+<a name="3.0.6"></a>
+## [3.0.6](https://github.com/npm/hosted-git-info/compare/v3.0.5...v3.0.6) (2020-10-12)
+
+
+### Bug Fixes
+
+* support to github gist legacy hash length ([c067102](https://github.com/npm/hosted-git-info/commit/c067102)), closes [#68](https://github.com/npm/hosted-git-info/issues/68)
+
+
+
+<a name="3.0.5"></a>
+## [3.0.5](https://github.com/npm/hosted-git-info/compare/v3.0.4...v3.0.5) (2020-07-11)
+
+
+
+<a name="3.0.4"></a>
+## [3.0.4](https://github.com/npm/hosted-git-info/compare/v3.0.3...v3.0.4) (2020-02-26)
+
+
+### Bug Fixes
+
+* Do not pass scp-style URLs to the WhatWG url.URL ([0835306](https://github.com/npm/hosted-git-info/commit/0835306)), closes [#60](https://github.com/npm/hosted-git-info/issues/60) [#63](https://github.com/npm/hosted-git-info/issues/63)
+
+
+
+<a name="3.0.3"></a>
+## [3.0.3](https://github.com/npm/hosted-git-info/compare/v3.0.2...v3.0.3) (2020-02-25)
+
+
+
 <a name="3.0.2"></a>
 ## [3.0.2](https://github.com/npm/hosted-git-info/compare/v3.0.1...v3.0.2) (2019-10-08)
 
