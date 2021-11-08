@@ -1,5 +1,5 @@
 'use strict'
-const url = require('url')
+const url = require('whatwg-url')
 const gitHosts = require('./git-host-info.js')
 const GitHost = module.exports = require('./git-host.js')
 const LRU = require('lru-cache')

@@ -1,6 +1,6 @@
 {
-  "name": "hosted-git-info",
-  "version": "4.0.2",
+  "name": "hosted-git-info-fixed",
+  "version": "4.0.3",
   "description": "Provides metadata and conversions from repository urls for GitHub, Bitbucket and GitLab",
   "main": "index.js",
   "repository": {
@@ -29,7 +29,8 @@
     "test:coverage": "tap --coverage-report=html"
   },
   "dependencies": {
-    "lru-cache": "^6.0.0"
+    "lru-cache": "^6.0.0",
+    "whatwg-url": "^11.0.0"
   },
   "devDependencies": {
     "standard": "^16.0.3",
