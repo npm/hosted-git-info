@@ -34,7 +34,7 @@
   "devDependencies": {
     "standard": "^16.0.3",
     "standard-version": "^9.1.0",
-    "tap": "^14.11.0"
+    "tap": "^15.1.6"
   },
   "files": [
     "index.js",
@@ -46,7 +46,6 @@
   },
   "tap": {
     "color": 1,
-    "coverage": true,
-    "esm": false
+    "coverage": true
   }
 }
