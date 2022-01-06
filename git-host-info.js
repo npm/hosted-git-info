@@ -151,7 +151,9 @@ gitHosts.sourcehut = Object.assign({}, defaults, {
   docstemplate: ({ domain, user, project, treepath, committish }) => `https://${domain}/${user}/${project}${maybeJoin('/', treepath, '/', maybeEncode(committish))}#readme`,
   extract: (url) => {
     let [, user, project, aux] = url.pathname.split('/', 4)
-    if (['get'].includes(aux)) {
+
+    // tarball url
+    if (['archive'].includes(aux)) {
       return
     }
 

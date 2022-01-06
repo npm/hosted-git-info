@@ -7,7 +7,9 @@ const invalid = [
   'https://git.sr.ht/~foo',
   // invalid protocos
   'git://git@git.sr.ht:~foo/bar',
-  'ssh://git.sr.ht:~foo/bar'
+  'ssh://git.sr.ht:~foo/bar',
+  // tarball url
+  'https://git.sr.ht/~foo/bar/archive/main.tar.gz'
 ]
 
 // assigning the constructor here is hacky, but the only way to make assertions that compare
