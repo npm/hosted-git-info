@@ -29,7 +29,7 @@
     "test:coverage": "tap --coverage-report=html"
   },
   "dependencies": {
-    "lru-cache": "^6.0.0"
+    "lru-cache": "^7.4.0"
   },
   "devDependencies": {
     "standard": "^16.0.3",
