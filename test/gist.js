@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 'use strict'
-const HostedGit = require('../index')
+const HostedGit = require('..')
 const t = require('tap')
 
 const invalid = [
@@ -13,7 +13,7 @@ const invalid = [
 // user defaults to null for all inputs that do not specify one
 // assigning the constructor here is hacky, but the only way to make assertions that compare
 // a subset of properties to a found object pass as you would expect
-const GitHost = require('../git-host')
+const GitHost = require('../lib/git-host')
 const defaults = { constructor: GitHost, type: 'gist', user: null, project: 'feedbeef' }
 const valid = {
   // shortcuts

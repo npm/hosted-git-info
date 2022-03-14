@@ -1,4 +1,4 @@
-const HostedGit = require('../')
+const HostedGit = require('..')
 const t = require('tap')
 
 // each of these urls should return `undefined`
