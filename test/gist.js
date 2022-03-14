@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 'use strict'
 const HostedGit = require('../index')
 const t = require('tap')
@@ -6,7 +7,7 @@ const invalid = [
   // raw urls that are wrong anyway but for some reason are in the wild
   'https://gist.github.com/foo/feedbeef/raw/fix%2Fbug/',
   // missing both user and project
-  'https://gist.github.com/'
+  'https://gist.github.com/',
 ]
 
 // user defaults to null for all inputs that do not specify one
@@ -305,7 +306,7 @@ const valid = {
   'https://user:password@gist.github.com/foo/feedbeef.git': { ...defaults, default: 'https', auth: 'user:password', user: 'foo' },
   'https://user:password@gist.github.com/foo/feedbeef.git#branch': { ...defaults, default: 'https', auth: 'user:password', user: 'foo', committish: 'branch' },
   'https://:password@gist.github.com/foo/feedbeef.git': { ...defaults, default: 'https', auth: ':password', user: 'foo' },
-  'https://:password@gist.github.com/foo/feedbeef.git#branch': { ...defaults, default: 'https', auth: ':password', user: 'foo', committish: 'branch' }
+  'https://:password@gist.github.com/foo/feedbeef.git#branch': { ...defaults, default: 'https', auth: ':password', user: 'foo', committish: 'branch' },
 }
 
 t.test('valid urls parse properly', t => {

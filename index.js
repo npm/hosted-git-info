@@ -9,7 +9,7 @@ const protocolToRepresentationMap = {
   'git+ssh:': 'sshurl',
   'git+https:': 'https',
   'ssh:': 'sshurl',
-  'git:': 'git'
+  'git:': 'git',
 }
 
 function protocolToRepresentation (protocol) {
@@ -21,10 +21,11 @@ const authProtocols = {
   'https:': true,
   'git+https:': true,
   'http:': true,
-  'git+http:': true
+  'git+http:': true,
 }
 
-const knownProtocols = Object.keys(gitHosts.byShortcut).concat(['http:', 'https:', 'git:', 'git+ssh:', 'git+https:', 'ssh:'])
+const knownProtocols = Object.keys(gitHosts.byShortcut)
+  .concat(['http:', 'https:', 'git:', 'git+ssh:', 'git+https:', 'ssh:'])
 
 module.exports.fromUrl = function (giturl, opts) {
   if (typeof giturl !== 'string') {
@@ -52,7 +53,10 @@ function fromUrl (giturl, opts) {
   }
 
   const gitHostShortcut = gitHosts.byShortcut[parsed.protocol]
-  const gitHostDomain = gitHosts.byDomain[parsed.hostname.startsWith('www.') ? parsed.hostname.slice(4) : parsed.hostname]
+  const gitHostDomain =
+    gitHosts.byDomain[parsed.hostname.startsWith('www.') ?
+      parsed.hostname.slice(4) :
+      parsed.hostname]
   const gitHostName = gitHostShortcut || gitHostDomain
   if (!gitHostName) {
     return
@@ -172,11 +176,14 @@ const isGitHubShorthand = (arg) => {
   const colonOnlyAfterHash = firstColon === -1 || (firstHash > -1 && firstColon > firstHash)
   const secondSlashOnlyAfterHash = secondSlash === -1 || (firstHash > -1 && secondSlash > firstHash)
   const hasSlash = firstSlash > 0
-  // if a # is found, what we really want to know is that the character immediately before # is not a /
+  // if a # is found, what we really want to know is that the character
+  // immediately before # is not a /
   const doesNotEndWithSlash = firstHash > -1 ? arg[firstHash - 1] !== '/' : !arg.endsWith('/')
   const doesNotStartWithDot = !arg.startsWith('.')
 
-  return spaceOnlyAfterHash && hasSlash && doesNotEndWithSlash && doesNotStartWithDot && atOnlyAfterHash && colonOnlyAfterHash && secondSlashOnlyAfterHash
+  return spaceOnlyAfterHash && hasSlash && doesNotEndWithSlash &&
+    doesNotStartWithDot && atOnlyAfterHash && colonOnlyAfterHash &&
+    secondSlashOnlyAfterHash
 }
 
 // attempt to correct an scp style url so that it will parse with `new URL()`

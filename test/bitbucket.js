@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 'use strict'
 const HostedGit = require('../index')
 const t = require('tap')
@@ -8,7 +9,7 @@ const invalid = [
   // url to get a tarball
   'https://bitbucket.org/foo/bar/get/archive.tar.gz',
   // missing project
-  'https://bitbucket.org/foo'
+  'https://bitbucket.org/foo',
 ]
 
 // assigning the constructor here is hacky, but the only way to make assertions that compare
@@ -141,7 +142,7 @@ const valid = {
   'https://user:password@bitbucket.org/foo/bar.git': { ...defaults, default: 'https', auth: 'user:password' },
   'https://user:password@bitbucket.org/foo/bar.git#branch': { ...defaults, default: 'https', auth: 'user:password', committish: 'branch' },
   'https://:password@bitbucket.org/foo/bar.git': { ...defaults, default: 'https', auth: ':password' },
-  'https://:password@bitbucket.org/foo/bar.git#branch': { ...defaults, default: 'https', auth: ':password', committish: 'branch' }
+  'https://:password@bitbucket.org/foo/bar.git#branch': { ...defaults, default: 'https', auth: ':password', committish: 'branch' },
 }
 
 t.test('valid urls parse properly', t => {
