@@ -12,7 +12,7 @@ const urls = [
   '::',
   '',
   null,
-  undefined
+  undefined,
 ]
 
 t.test('invalid results parse to undefined', t => {

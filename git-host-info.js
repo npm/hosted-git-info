@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 'use strict'
 const maybeJoin = (...args) => args.every(arg => arg) ? args.join('') : ''
 const maybeEncode = (arg) => arg ? encodeURIComponent(arg) : ''
@@ -13,7 +14,7 @@ const defaults = {
   shortcuttemplate: ({ type, user, project, committish }) => `${type}:${user}/${project}${maybeJoin('#', committish)}`,
   pathtemplate: ({ user, project, committish }) => `${user}/${project}${maybeJoin('#', committish)}`,
   bugstemplate: ({ domain, user, project }) => `https://${domain}/${user}/${project}/issues`,
-  hashformat: formatHashFragment
+  hashformat: formatHashFragment,
 }
 
 const gitHosts = {}
@@ -45,7 +46,7 @@ gitHosts.github = Object.assign({}, defaults, {
     }
 
     return { user, project, committish }
-  }
+  },
 })
 
 gitHosts.bitbucket = Object.assign({}, defaults, {
@@ -68,7 +69,7 @@ gitHosts.bitbucket = Object.assign({}, defaults, {
     }
 
     return { user, project, committish: url.hash.slice(1) }
-  }
+  },
 })
 
 gitHosts.gitlab = Object.assign({}, defaults, {
@@ -95,7 +96,7 @@ gitHosts.gitlab = Object.assign({}, defaults, {
     }
 
     return { user, project, committish: url.hash.slice(1) }
-  }
+  },
 })
 
 gitHosts.gist = Object.assign({}, defaults, {
@@ -136,7 +137,7 @@ gitHosts.gist = Object.assign({}, defaults, {
   },
   hashformat: function (fragment) {
     return fragment && 'file-' + formatHashFragment(fragment)
-  }
+  },
 })
 
 gitHosts.sourcehut = Object.assign({}, defaults, {
@@ -166,7 +167,7 @@ gitHosts.sourcehut = Object.assign({}, defaults, {
     }
 
     return { user, project, committish: url.hash.slice(1) }
-  }
+  },
 })
 
 const names = Object.keys(gitHosts)

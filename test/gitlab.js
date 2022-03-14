@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 'use strict'
 const HostedGit = require('../index')
 const t = require('tap')
@@ -9,7 +10,7 @@ const invalid = [
   'https://gitlab.com/foo',
   // tarball, this should not parse so that it can be used for pacote's remote fetcher
   'https://gitlab.com/foo/bar/repository/archive.tar.gz',
-  'https://gitlab.com/foo/bar/repository/archive.tar.gz?ref=49b393e2ded775f2df36ef2ffcb61b0359c194c9'
+  'https://gitlab.com/foo/bar/repository/archive.tar.gz?ref=49b393e2ded775f2df36ef2ffcb61b0359c194c9',
 ]
 
 // assigning the constructor here is hacky, but the only way to make assertions that compare
@@ -247,7 +248,7 @@ const valid = {
   'https://user:password@gitlab.com/foo/bar/baz.git': { ...subgroup, default: 'https', auth: 'user:password' },
   'https://user:password@gitlab.com/foo/bar/baz.git#branch': { ...subgroup, default: 'https', auth: 'user:password', committish: 'branch' },
   'https://:password@gitlab.com/foo/bar/baz.git': { ...subgroup, default: 'https', auth: ':password' },
-  'https://:password@gitlab.com/foo/bar/baz.git#branch': { ...subgroup, default: 'https', auth: ':password', committish: 'branch' }
+  'https://:password@gitlab.com/foo/bar/baz.git#branch': { ...subgroup, default: 'https', auth: ':password', committish: 'branch' },
 }
 
 t.test('valid urls parse properly', t => {

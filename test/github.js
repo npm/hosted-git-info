@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 const HostedGit = require('../index')
 const t = require('tap')
 
@@ -18,7 +19,7 @@ const invalid = [
   // missing path
   'git+ssh://git@github.com:',
   // a deep url to something we don't know
-  'https://github.com/foo/bar/issues'
+  'https://github.com/foo/bar/issues',
 ]
 
 // assigning the constructor here is hacky, but the only way to make assertions that compare
@@ -182,7 +183,7 @@ const valid = {
   'https://www.github.com/foo/bar': { ...defaults, default: 'https' },
   'foo/bar#branch with space': { ...defaults, default: 'shortcut', committish: 'branch with space' },
   'https://github.com/foo/bar/tree/branch': { ...defaults, default: 'https', committish: 'branch' },
-  'user..blerg--/..foo-js# . . . . . some . tags / / /': { ...defaults, default: 'shortcut', user: 'user..blerg--', project: '..foo-js', committish: ' . . . . . some . tags / / /' }
+  'user..blerg--/..foo-js# . . . . . some . tags / / /': { ...defaults, default: 'shortcut', user: 'user..blerg--', project: '..foo-js', committish: ' . . . . . some . tags / / /' },
 }
 
 t.test('valid urls parse properly', t => {
