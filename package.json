@@ -37,7 +37,7 @@
   },
   "devDependencies": {
     "@npmcli/template-oss": "^2.9.2",
-    "standard-version": "^9.1.0",
+    "standard-version": "^9.3.2",
     "tap": "^15.1.6"
   },
   "files": [
