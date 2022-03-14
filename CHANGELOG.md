@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
 <a name="4.0.0"></a>
+## [5.0.0](https://www.github.com/npm/hosted-git-info/compare/v4.1.0...v5.0.0) (2022-03-14)
+
+
+### ⚠ BREAKING CHANGES
+
+* this drops support for node 10 and non-LTS versions of node 12 and node 14
+
+### Bug Fixes
+
+* move files to lib ([a3f4836](https://www.github.com/npm/hosted-git-info/commit/a3f4836ba0a75b355c004e1991e8dd1e6321a983))
+
+
+* @npmcli/template-oss@2.9.2 ([c42e1f2](https://www.github.com/npm/hosted-git-info/commit/c42e1f216542ead9d0d328704c5db02204f15ce8))
+
+
+### Dependencies
+
+* bump lru-cache from 6.0.0 to 7.5.1 ([#128](https://www.github.com/npm/hosted-git-info/issues/128)) ([5b0b3b5](https://www.github.com/npm/hosted-git-info/commit/5b0b3b50bd36f659037e3b82a7ff47b0eff3b9f9))
+
 ## [4.0.0](https://github.com/npm/hosted-git-info/compare/v3.0.7...v4.0.0) (2021-03-09)
 
 
