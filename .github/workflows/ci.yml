@@ -1,22 +1,62 @@
+# This file is automatically added by @npmcli/template-oss. Do not edit.
+
 name: CI
-on: [push, pull_request]
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - latest
+  schedule:
+    # "At 02:00 on Monday" https://crontab.guru/#0_2_*_*_1
+    - cron: "0 2 * * 1"
+
 jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+      - run: npm i --prefer-online -g npm@latest
+      - run: npm i
+      - run: npm run lint
+
   test:
     strategy:
       fail-fast: false
       matrix:
-        node-version: ['10.1', 10.x, '12.1', 12.x, '14.1', 14.x]
-
-    runs-on: ubuntu-latest
+        node-version: [12.13.0, 12.x, 14.15.0, 14.x, 16.13.0, 16.x]
+        platform:
+        - os: ubuntu-latest
+          shell: bash
+        - os: macos-latest
+          shell: bash
+        - os: windows-latest
+          shell: cmd
+    runs-on: ${{ matrix.platform.os }}
+    defaults:
+      run:
+        shell: ${{ matrix.platform.shell }}
     steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v2
-      with:
-        node-version: ${{ matrix.node-version }}
-    - name: Update npm
-      run: npm i -g npm@7
-    - name: Install dependencies
-      run: npm ci
-    - name: Run Tap tests
-      run: npm test
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+        # node 12 and 14 ship with npm@6, which is known to fail when updating itself in windows
+      - name: Update to workable npm (windows)
+        if: matrix.platform.os == 'windows-latest' && (startsWith(matrix.node-version, '12') || startsWith(matrix.node-version, '14'))
+        run: |
+          curl -sO https://registry.npmjs.org/npm/-/npm-7.5.4.tgz
+          tar xf npm-7.5.4.tgz
+          cd package
+          node lib/npm.js install --no-fund --no-audit -g ..\npm-7.5.4.tgz
+          cd ..
+          rmdir /s /q package
+      - name: Update npm
+        run: npm i --prefer-online --no-fund --no-audit -g npm@latest
+      - run: npm -v
+      - run: npm i
+      - run: npm test --ignore-scripts
