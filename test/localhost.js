@@ -1,6 +1,6 @@
 // An example of a custom setup, useful when testing modules like pacote,
 // which do various things with these git shortcuts.
-const ghi = require('../git-host-info.js')
+const ghi = require('../lib/git-host-info.js')
 ghi.localhost = {
   protocols: ['git:'],
   domain: 'localhost',
@@ -13,7 +13,7 @@ ghi.localhost = {
 ghi.byShortcut['localhost:'] = 'localhost'
 ghi.byDomain.localhost = 'localhost'
 
-const HostedGit = require('../')
+const HostedGit = require('..')
 const t = require('tap')
 
 t.test('supports extensions', t => {

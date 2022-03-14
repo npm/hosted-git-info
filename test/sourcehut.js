@@ -1,5 +1,5 @@
 'use strict'
-const HostedGit = require('../index')
+const HostedGit = require('..')
 const t = require('tap')
 
 const invalid = [
@@ -14,7 +14,7 @@ const invalid = [
 
 // assigning the constructor here is hacky, but the only way to make assertions that compare
 // a subset of properties to a found object pass as you would expect
-const GitHost = require('../git-host')
+const GitHost = require('../lib/git-host')
 const defaults = { constructor: GitHost, type: 'sourcehut', user: '~foo', project: 'bar' }
 
 const valid = {
