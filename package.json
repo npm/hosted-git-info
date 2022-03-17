@@ -33,7 +33,7 @@
     "lintfix": "npm run lint -- --fix"
   },
   "dependencies": {
-    "lru-cache": "^7.5.1"
+    "lru-cache": "^7.6.0"
   },
   "devDependencies": {
     "@npmcli/template-oss": "^2.9.2",
