@@ -1,8 +1,5 @@
-# Change Log
+# Changelog
 
-All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
-
-<a name="4.0.0"></a>
 ## [5.0.0](https://www.github.com/npm/hosted-git-info/compare/v4.1.0...v5.0.0) (2022-03-14)
 
 
