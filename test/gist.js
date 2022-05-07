@@ -354,7 +354,7 @@ t.test('string methods populate correctly', t => {
   t.equal(parsed.https(), 'git+https://gist.github.com/feedbeef.git')
   t.equal(parsed.shortcut(), 'gist:feedbeef')
   t.equal(parsed.path(), 'feedbeef')
-  t.equal(parsed.tarball(), 'https://codeload.github.com/gist/feedbeef/tar.gz/master')
+  t.equal(parsed.tarball(), 'https://codeload.github.com/gist/feedbeef/tar.gz/HEAD')
   t.equal(parsed.file(), 'https://gist.githubusercontent.com/foo/feedbeef/raw/')
   t.equal(parsed.file('/lib/index.js'), 'https://gist.githubusercontent.com/foo/feedbeef/raw/lib/index.js')
   t.equal(parsed.git(), 'git://gist.github.com/feedbeef.git')
