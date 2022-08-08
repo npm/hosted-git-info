@@ -345,6 +345,8 @@ t.test('string methods populate correctly', t => {
   t.equal(parsed.hash(), '', 'hash() returns empty string when committish is unset')
   t.equal(parsed.ssh(), 'git@gist.github.com:feedbeef.git')
   t.equal(parsed.sshurl(), 'git+ssh://git@gist.github.com/feedbeef.git')
+  t.equal(parsed.edit(), 'https://gist.github.com/foo/feedbeef/edit', 'gist link only redirects with a user')
+  t.equal(parsed.edit('/lib/index.js'), 'https://gist.github.com/foo/feedbeef/edit', 'gist link only redirects with a user')
   t.equal(parsed.browse(), 'https://gist.github.com/feedbeef')
   t.equal(parsed.browse('/lib/index.js'), 'https://gist.github.com/feedbeef#file-libindex-js')
   t.equal(parsed.browse('/lib/index.js', 'L100'), 'https://gist.github.com/feedbeef#file-libindex-js')
