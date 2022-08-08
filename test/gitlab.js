@@ -287,6 +287,8 @@ t.test('string methods populate correctly', t => {
   t.equal(parsed.hash(), '', 'hash() returns empty string when committish is unset')
   t.equal(parsed.ssh(), 'git@gitlab.com:foo/bar.git')
   t.equal(parsed.sshurl(), 'git+ssh://git@gitlab.com/foo/bar.git')
+  t.equal(parsed.edit(), 'https://gitlab.com/foo/bar')
+  t.equal(parsed.edit('/lib/index.js'), 'https://gitlab.com/foo/bar/-/edit/master/lib/index.js')
   t.equal(parsed.browse(), 'https://gitlab.com/foo/bar')
   t.equal(parsed.browse('/lib/index.js'), 'https://gitlab.com/foo/bar/tree/master/lib/index.js')
   t.equal(parsed.browse('/lib/index.js', 'L100'), 'https://gitlab.com/foo/bar/tree/master/lib/index.js#l100')

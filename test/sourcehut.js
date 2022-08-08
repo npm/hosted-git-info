@@ -94,6 +94,8 @@ t.test('string methods populate correctly', t => {
   t.equal(parsed.hash(), '', 'hash() returns empty string when committish is unset')
   t.equal(parsed.ssh(), 'git@git.sr.ht:~foo/bar.git')
   t.equal(parsed.sshurl(), 'git+ssh://git@git.sr.ht/~foo/bar.git')
+  t.equal(parsed.edit('/lib/index.js'), 'https://git.sr.ht/~foo/bar', 'no editing, link to browse')
+  t.equal(parsed.edit(), 'https://git.sr.ht/~foo/bar', 'no editing, link to browse')
   t.equal(parsed.browse(), 'https://git.sr.ht/~foo/bar')
   t.equal(parsed.browse('/lib/index.js'), 'https://git.sr.ht/~foo/bar/tree/main/lib/index.js')
   t.equal(
