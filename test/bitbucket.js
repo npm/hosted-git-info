@@ -12,10 +12,7 @@ const invalid = [
   'https://bitbucket.org/foo',
 ]
 
-// assigning the constructor here is hacky, but the only way to make assertions that compare
-// a subset of properties to a found object pass as you would expect
-const GitHost = require('../lib/git-host')
-const defaults = { constructor: GitHost, type: 'bitbucket', user: 'foo', project: 'bar' }
+const defaults = { type: 'bitbucket', user: 'foo', project: 'bar' }
 
 const valid = {
   // shortucts
@@ -182,7 +179,7 @@ t.test('string methods populate correctly', t => {
   t.equal(parsed.ssh(), 'git@bitbucket.org:foo/bar.git')
   t.equal(parsed.sshurl(), 'git+ssh://git@bitbucket.org/foo/bar.git')
   t.equal(parsed.edit(), 'https://bitbucket.org/foo/bar')
-  t.equal(parsed.edit('/lib/index.js'), 'https://bitbucket.org/foo/bar/src/master/lib/index.js?mode=edit')
+  t.equal(parsed.edit('/lib/index.js'), 'https://bitbucket.org/foo/bar/src/HEAD/lib/index.js?mode=edit')
   t.equal(parsed.browse(), 'https://bitbucket.org/foo/bar')
   t.equal(parsed.browse('/lib/index.js'), 'https://bitbucket.org/foo/bar/src/HEAD/lib/index.js')
   t.equal(parsed.browse('/lib/index.js', 'L100'), 'https://bitbucket.org/foo/bar/src/HEAD/lib/index.js#l100')

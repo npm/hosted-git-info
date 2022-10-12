@@ -22,10 +22,7 @@ const invalid = [
   'https://github.com/foo/bar/issues',
 ]
 
-// assigning the constructor here is hacky, but the only way to make assertions that compare
-// a subset of properties to a found object pass as you would expect
-const GitHost = require('../lib/git-host')
-const defaults = { constructor: GitHost, type: 'github', user: 'foo', project: 'bar' }
+const defaults = { type: 'github', user: 'foo', project: 'bar' }
 // This is a valid git branch name that contains other occurences of the characters we check
 // for to determine the committish in order to test that we parse those correctly
 const committishDefaults = { committish: 'lk/br@nch.t#st:^1.0.0-pre.4' }
@@ -235,11 +232,13 @@ t.test('string methods populate correctly', t => {
   t.equal(parsed.ssh(), 'git@github.com:foo/bar.git')
   t.equal(parsed.sshurl(), 'git+ssh://git@github.com/foo/bar.git')
   t.equal(parsed.edit(), 'https://github.com/foo/bar')
-  t.equal(parsed.edit('/lib/index.js'), 'https://github.com/foo/bar/edit/master/lib/index.js')
+  t.equal(parsed.edit('/lib/index.js'), 'https://github.com/foo/bar/edit/HEAD/lib/index.js')
   t.equal(parsed.edit('/lib/index.js', { committish: 'docs' }), 'https://github.com/foo/bar/edit/docs/lib/index.js')
   t.equal(parsed.browse(), 'https://github.com/foo/bar')
   t.equal(parsed.browse('/lib/index.js'), 'https://github.com/foo/bar/tree/HEAD/lib/index.js')
   t.equal(parsed.browse('/lib/index.js', 'L100'), 'https://github.com/foo/bar/tree/HEAD/lib/index.js#l100')
+  t.equal(parsed.browseFile('/lib/index.js'), 'https://github.com/foo/bar/blob/HEAD/lib/index.js')
+  t.equal(parsed.browseFile('/lib/index.js', 'L100'), 'https://github.com/foo/bar/blob/HEAD/lib/index.js#l100')
   t.equal(parsed.docs(), 'https://github.com/foo/bar#readme')
   t.equal(parsed.https(), 'git+https://github.com/foo/bar.git')
   t.equal(parsed.shortcut(), 'github:foo/bar')

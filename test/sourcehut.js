@@ -9,13 +9,10 @@ const invalid = [
   'git://git@git.sr.ht:~foo/bar',
   'ssh://git.sr.ht:~foo/bar',
   // tarball url
-  'https://git.sr.ht/~foo/bar/archive/main.tar.gz',
+  'https://git.sr.ht/~foo/bar/archive/HEAD.tar.gz',
 ]
 
-// assigning the constructor here is hacky, but the only way to make assertions that compare
-// a subset of properties to a found object pass as you would expect
-const GitHost = require('../lib/git-host')
-const defaults = { constructor: GitHost, type: 'sourcehut', user: '~foo', project: 'bar' }
+const defaults = { type: 'sourcehut', user: '~foo', project: 'bar' }
 
 const valid = {
   // shortucts
@@ -97,18 +94,18 @@ t.test('string methods populate correctly', t => {
   t.equal(parsed.edit('/lib/index.js'), 'https://git.sr.ht/~foo/bar', 'no editing, link to browse')
   t.equal(parsed.edit(), 'https://git.sr.ht/~foo/bar', 'no editing, link to browse')
   t.equal(parsed.browse(), 'https://git.sr.ht/~foo/bar')
-  t.equal(parsed.browse('/lib/index.js'), 'https://git.sr.ht/~foo/bar/tree/main/lib/index.js')
+  t.equal(parsed.browse('/lib/index.js'), 'https://git.sr.ht/~foo/bar/tree/HEAD/lib/index.js')
   t.equal(
     parsed.browse('/lib/index.js', 'L100'),
-    'https://git.sr.ht/~foo/bar/tree/main/lib/index.js#l100'
+    'https://git.sr.ht/~foo/bar/tree/HEAD/lib/index.js#l100'
   )
   t.equal(parsed.docs(), 'https://git.sr.ht/~foo/bar#readme')
   t.equal(parsed.https(), 'https://git.sr.ht/~foo/bar.git')
   t.equal(parsed.shortcut(), 'sourcehut:~foo/bar')
   t.equal(parsed.path(), '~foo/bar')
-  t.equal(parsed.tarball(), 'https://git.sr.ht/~foo/bar/archive/main.tar.gz')
-  t.equal(parsed.file(), 'https://git.sr.ht/~foo/bar/blob/main/')
-  t.equal(parsed.file('/lib/index.js'), 'https://git.sr.ht/~foo/bar/blob/main/lib/index.js')
+  t.equal(parsed.tarball(), 'https://git.sr.ht/~foo/bar/archive/HEAD.tar.gz')
+  t.equal(parsed.file(), 'https://git.sr.ht/~foo/bar/blob/HEAD/')
+  t.equal(parsed.file('/lib/index.js'), 'https://git.sr.ht/~foo/bar/blob/HEAD/lib/index.js')
   t.equal(parsed.bugs(), 'https://todo.sr.ht/~foo/bar')
 
   t.equal(
