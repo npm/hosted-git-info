@@ -7,8 +7,8 @@ particular file for direct access without git.
 ## Example
 
 ```javascript
-var hostedGitInfo = require("hosted-git-info")
-var info = hostedGitInfo.fromUrl("git@github.com:npm/hosted-git-info.git", opts)
+const hostedGitInfo = require("hosted-git-info")
+const info = hostedGitInfo.fromUrl("git@github.com:npm/hosted-git-info.git", opts)
 /* info looks like:
 {
   type: "github",
@@ -52,7 +52,7 @@ Implications:
 
 ## Usage
 
-### var info = hostedGitInfo.fromUrl(gitSpecifier[, options])
+### const info = hostedGitInfo.fromUrl(gitSpecifier[, options])
 
 * *gitSpecifer* is a URL of a git repository or a SCP-style specifier of one.
 * *options* is an optional object. It can have the following properties:
@@ -129,5 +129,5 @@ SSH connect strings will be normalized into `git+ssh` URLs.
 
 ## Supported hosts
 
-Currently this supports GitHub, Bitbucket and GitLab. Pull requests for
-additional hosts welcome.
+Currently this supports GitHub (including Gists), Bitbucket, GitLab and Sourcehut.
+Pull requests for additional hosts welcome.

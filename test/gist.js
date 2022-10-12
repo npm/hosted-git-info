@@ -10,11 +10,7 @@ const invalid = [
   'https://gist.github.com/',
 ]
 
-// user defaults to null for all inputs that do not specify one
-// assigning the constructor here is hacky, but the only way to make assertions that compare
-// a subset of properties to a found object pass as you would expect
-const GitHost = require('../lib/git-host')
-const defaults = { constructor: GitHost, type: 'gist', user: null, project: 'feedbeef' }
+const defaults = { type: 'gist', user: null, project: 'feedbeef' }
 const valid = {
   // shortcuts
   //
@@ -350,6 +346,8 @@ t.test('string methods populate correctly', t => {
   t.equal(parsed.browse(), 'https://gist.github.com/feedbeef')
   t.equal(parsed.browse('/lib/index.js'), 'https://gist.github.com/feedbeef#file-libindex-js')
   t.equal(parsed.browse('/lib/index.js', 'L100'), 'https://gist.github.com/feedbeef#file-libindex-js')
+  t.equal(parsed.browseFile('/lib/index.js'), 'https://gist.github.com/feedbeef#file-libindex-js')
+  t.equal(parsed.browseFile('/lib/index.js', 'L100'), 'https://gist.github.com/feedbeef#file-libindex-js')
   t.equal(parsed.docs(), 'https://gist.github.com/feedbeef')
   t.equal(parsed.https(), 'git+https://gist.github.com/feedbeef.git')
   t.equal(parsed.shortcut(), 'gist:feedbeef')
