@@ -1,5 +1,24 @@
 # Changelog
 
+## [6.0.0](https://github.com/npm/hosted-git-info/compare/v5.1.0...v6.0.0) (2022-10-12)
+
+### ⚠️ BREAKING CHANGES
+
+* `GitHost` now has a static `addHost` method to use instead of manually editing the object from `lib/git-host-info.js`.
+* set default git ref to HEAD
+* `hosted-git-info` is now compatible with the following semver range for node: `^14.17.0 || ^16.13.0 || >=18.0.0`
+
+### Features
+
+* [`9e0ce62`](https://github.com/npm/hosted-git-info/commit/9e0ce62b9aadb2a9cfe8999e96b004a5de4edfdf) [#142](https://github.com/npm/hosted-git-info/pull/142) refactor (@lukekarrys)
+* [`89155e8`](https://github.com/npm/hosted-git-info/commit/89155e8799369f20ae71713f64e3d0f664192a58) set default git ref to HEAD (@darcyclarke)
+* [`9ed9c38`](https://github.com/npm/hosted-git-info/commit/9ed9c38002f899ad2628f96b27b2ec9fecb4662f) [#162](https://github.com/npm/hosted-git-info/pull/162) postinstall for dependabot template-oss PR (@lukekarrys)
+
+### Bug Fixes
+
+* [`61ca7fb`](https://github.com/npm/hosted-git-info/commit/61ca7fb8f003299693e23f351eea589c38a3602c) [#152](https://github.com/npm/hosted-git-info/pull/152) parse branch names containing @ (@lukekarrys)
+* [`3cd4a98`](https://github.com/npm/hosted-git-info/commit/3cd4a9881e20d3a59bf3bb470661a29208824dd6) ignore colons after hash when correcting scp urls (@lukekarrys)
+
 ## [5.1.0](https://github.com/npm/hosted-git-info/compare/v5.0.0...v5.1.0) (2022-08-09)
 
 
