@@ -1,5 +1,11 @@
 # Changelog
 
+## [5.2.0](https://github.com/npm/hosted-git-info/compare/v5.1.0...v5.2.0) (2022-10-26)
+
+### Features
+
+* [`c512363`](https://github.com/npm/hosted-git-info/commit/c51236372f5070a01f76db0620b3fbcbe3ceb3c9) [#173](https://github.com/npm/hosted-git-info/pull/173) add parseUrl method for only parsing (@lukekarrys)
+
 ## [5.1.0](https://github.com/npm/hosted-git-info/compare/v5.0.0...v5.1.0) (2022-08-09)
 
 
