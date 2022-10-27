@@ -1,5 +1,11 @@
 # Changelog
 
+## [6.1.1](https://github.com/npm/hosted-git-info/compare/v6.1.0...v6.1.1) (2022-10-27)
+
+### Bug Fixes
+
+* [`f03bfbd`](https://github.com/npm/hosted-git-info/commit/f03bfbd3022c8f6283a991ff879ed97704ac35fa) [#176](https://github.com/npm/hosted-git-info/pull/176) only correct protocols when called from githost (@lukekarrys)
+
 ## [6.1.0](https://github.com/npm/hosted-git-info/compare/v6.0.0...v6.1.0) (2022-10-26)
 
 ### Features
