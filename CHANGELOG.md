@@ -1,5 +1,11 @@
 # Changelog
 
+## [5.2.1](https://github.com/npm/hosted-git-info/compare/v5.2.0...v5.2.1) (2022-10-27)
+
+### Bug Fixes
+
+* [`d2db548`](https://github.com/npm/hosted-git-info/commit/d2db5488ba372a12b642743cf07f7a88585130b0) [#177](https://github.com/npm/hosted-git-info/pull/177) only correct protocols when called from githost (@lukekarrys)
+
 ## [5.2.0](https://github.com/npm/hosted-git-info/compare/v5.1.0...v5.2.0) (2022-10-26)
 
 ### Features
