@@ -30,7 +30,7 @@
     "template-oss-apply": "template-oss-apply --force"
   },
   "dependencies": {
-    "lru-cache": "^7.5.1"
+    "lru-cache": "^8.0.3"
   },
   "devDependencies": {
     "@npmcli/eslint-config": "^4.0.0",
