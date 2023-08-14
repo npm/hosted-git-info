@@ -1,5 +1,20 @@
 # Changelog
 
+## [7.0.0](https://github.com/npm/hosted-git-info/compare/v6.1.1...v7.0.0) (2023-08-14)
+
+### ⚠️ BREAKING CHANGES
+
+* support for node 14 has been removed
+
+### Bug Fixes
+
+* [`f9f7fde`](https://github.com/npm/hosted-git-info/commit/f9f7fde1385d3f99ed7a52b9d4b079d8074fc99f) [#209](https://github.com/npm/hosted-git-info/pull/209) use lru-cache named export (@lukekarrys)
+* [`c98e908`](https://github.com/npm/hosted-git-info/commit/c98e90807775bf5c306a30426d7f6c6ebe9842d5) [#209](https://github.com/npm/hosted-git-info/pull/209) drop node14 support (@lukekarrys)
+
+### Dependencies
+
+* [`ecdd7de`](https://github.com/npm/hosted-git-info/commit/ecdd7decf24f66297ca5f459b4f1f36d41352e23) [#209](https://github.com/npm/hosted-git-info/pull/209) bump lru-cache from 7.18.3 to 10.0.1
+
 ## [6.1.1](https://github.com/npm/hosted-git-info/compare/v6.1.0...v6.1.1) (2022-10-27)
 
 ### Bug Fixes
