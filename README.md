@@ -81,7 +81,7 @@ eg, `github:npm/hosted-git-info`
 
 eg, `https://github.com/npm/hosted-git-info/tree/v1.2.0`,
 `https://github.com/npm/hosted-git-info/tree/v1.2.0/package.json`,
-`https://github.com/npm/hosted-git-info/tree/v1.2.0/REAMDE.md#supported-hosts`
+`https://github.com/npm/hosted-git-info/tree/v1.2.0/README.md#supported-hosts`
 
 * info.bugs(opts)
 
