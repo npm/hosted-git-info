@@ -106,7 +106,7 @@ t.test('string methods populate correctly', t => {
   t.equal(parsed.tarball(), 'https://git.sr.ht/~foo/bar/archive/HEAD.tar.gz')
   t.equal(parsed.file(), 'https://git.sr.ht/~foo/bar/blob/HEAD/')
   t.equal(parsed.file('/lib/index.js'), 'https://git.sr.ht/~foo/bar/blob/HEAD/lib/index.js')
-  t.equal(parsed.bugs(), 'https://todo.sr.ht/~foo/bar')
+  t.equal(parsed.bugs(), null)
 
   t.equal(
     parsed.docs({ committish: 'fix/bug' }),
