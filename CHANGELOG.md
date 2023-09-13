@@ -1,5 +1,11 @@
 # Changelog
 
+## [7.0.1](https://github.com/npm/hosted-git-info/compare/v7.0.0...v7.0.1) (2023-09-13)
+
+### Bug Fixes
+
+* [`d7bac33`](https://github.com/npm/hosted-git-info/commit/d7bac33726d6a65788d16e3314f52449f0da58c4) [#213](https://github.com/npm/hosted-git-info/pull/213) remove sourcehut bugstemplate (#213) (@vladh)
+
 ## [7.0.0](https://github.com/npm/hosted-git-info/compare/v6.1.1...v7.0.0) (2023-08-14)
 
 ### ⚠️ BREAKING CHANGES
