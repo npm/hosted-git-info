@@ -16,6 +16,7 @@ updates:
       prefix-development: chore
     labels:
       - "Dependencies"
+    open-pull-requests-limit: 10
   - package-ecosystem: npm
     directory: /
     schedule:
@@ -32,3 +33,4 @@ updates:
       - "Dependencies"
       - "Backport"
       - "release/v5"
+    open-pull-requests-limit: 10
