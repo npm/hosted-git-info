@@ -1,5 +1,13 @@
 # Changelog
 
+## [7.0.2](https://github.com/npm/hosted-git-info/compare/v7.0.1...v7.0.2) (2024-04-21)
+
+### Chores
+
+* [`7bbdfd8`](https://github.com/npm/hosted-git-info/commit/7bbdfd8a564ddd5952fd245c38193af17e6a8d2c) [#248](https://github.com/npm/hosted-git-info/pull/248) chore: postinstall for dependabot template-oss PR (@lukekarrys)
+* [`2efc69b`](https://github.com/npm/hosted-git-info/commit/2efc69beca342455f1113625c66157f3f5c53af4) [#248](https://github.com/npm/hosted-git-info/pull/248) bump @npmcli/template-oss from 4.21.3 to 4.21.4 (@dependabot[bot])
+* [`7a888b0`](https://github.com/npm/hosted-git-info/commit/7a888b014982957049d194bec6f54444a8a7a0fa) [#242](https://github.com/npm/hosted-git-info/pull/242) postinstall for dependabot template-oss PR (@lukekarrys)
+
 ## [7.0.1](https://github.com/npm/hosted-git-info/compare/v7.0.0...v7.0.1) (2023-09-13)
 
 ### Bug Fixes
