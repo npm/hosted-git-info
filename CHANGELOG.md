@@ -1,5 +1,15 @@
 # Changelog
 
+## [5.2.2](https://github.com/npm/hosted-git-info/compare/v5.2.1...v5.2.2) (2024-04-21)
+
+### Chores
+
+* [`6bc08d6`](https://github.com/npm/hosted-git-info/commit/6bc08d66ac6891b2f3e7604a00205a9e63866bfb) [#238](https://github.com/npm/hosted-git-info/pull/238) chore: postinstall for dependabot template-oss PR (@lukekarrys)
+* [`e7fb828`](https://github.com/npm/hosted-git-info/commit/e7fb8282795090e94a37b76635b6ebec4b1b4e37) [#236](https://github.com/npm/hosted-git-info/pull/236) chore: postinstall for dependabot template-oss PR (@lukekarrys)
+* [`c9e70f3`](https://github.com/npm/hosted-git-info/commit/c9e70f384b8703a957788ec490a1255d96f2eb05) [#216](https://github.com/npm/hosted-git-info/pull/216) auto publish (@lukekarrys)
+* [`1d8624c`](https://github.com/npm/hosted-git-info/commit/1d8624c4d63325714c0b41666bc35034d33284e0) [#247](https://github.com/npm/hosted-git-info/pull/247) postinstall for dependabot template-oss PR (@lukekarrys)
+* [`7eb1e07`](https://github.com/npm/hosted-git-info/commit/7eb1e07379c2c4af82032a47d5ee835595c8ade5) [#247](https://github.com/npm/hosted-git-info/pull/247) bump @npmcli/template-oss from 4.21.3 to 4.21.4 (@dependabot[bot])
+
 ## [5.2.1](https://github.com/npm/hosted-git-info/compare/v5.2.0...v5.2.1) (2022-10-27)
 
 ### Bug Fixes
