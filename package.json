@@ -5,7 +5,7 @@
   "main": "./lib/index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/npm/hosted-git-info.git"
+    "url": "git+https://github.com/npm/hosted-git-info.git"
   },
   "keywords": [
     "git",
@@ -54,7 +54,7 @@
   },
   "templateOSS": {
     "//@npmcli/template-oss": "This file is partially managed by @npmcli/template-oss. Edits may be overwritten.",
-    "version": "4.21.4",
+    "version": "4.22.0",
     "backport": 5,
     "publish": true
   }
