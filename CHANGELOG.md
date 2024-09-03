@@ -1,5 +1,16 @@
 # Changelog
 
+## [8.0.0](https://github.com/npm/hosted-git-info/compare/v7.0.2...v8.0.0) (2024-09-03)
+### ⚠️ BREAKING CHANGES
+* `hosted-git-info` now supports node `^18.17.0 || >=20.5.0`
+### Bug Fixes
+* [`967d930`](https://github.com/npm/hosted-git-info/commit/967d930a3a2adb8b0b55c9d8ddfa1eeb9470f3e1) [#268](https://github.com/npm/hosted-git-info/pull/268) align to npm 10 node engine range (@hashtagchris)
+### Chores
+* [`20551b0`](https://github.com/npm/hosted-git-info/commit/20551b02dffa5fdb56d9b89b3521c016c4924ace) [#268](https://github.com/npm/hosted-git-info/pull/268) run template-oss-apply (@hashtagchris)
+* [`9a3c062`](https://github.com/npm/hosted-git-info/commit/9a3c062a74dba37c6958a00ee22eb9207d45aefc) [#265](https://github.com/npm/hosted-git-info/pull/265) bump @npmcli/eslint-config from 4.0.5 to 5.0.0 (@dependabot[bot])
+* [`8f0fa04`](https://github.com/npm/hosted-git-info/commit/8f0fa04d0fba8d6a2467acc648a2f568f3baa7ed) [#266](https://github.com/npm/hosted-git-info/pull/266) postinstall for dependabot template-oss PR (@hashtagchris)
+* [`e0fe523`](https://github.com/npm/hosted-git-info/commit/e0fe523d96dc023b8e6750aa458b0d816673cb49) [#266](https://github.com/npm/hosted-git-info/pull/266) bump @npmcli/template-oss from 4.23.1 to 4.23.3 (@dependabot[bot])
+
 ## [7.0.2](https://github.com/npm/hosted-git-info/compare/v7.0.1...v7.0.2) (2024-05-04)
 
 ### Bug Fixes
