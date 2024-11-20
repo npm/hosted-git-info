@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.0.1](https://github.com/npm/hosted-git-info/compare/v8.0.0...v8.0.1) (2024-11-20)
+### Bug Fixes
+* [`e47b7e4`](https://github.com/npm/hosted-git-info/commit/e47b7e476199820446483aefa0525d4726e49450) [#274](https://github.com/npm/hosted-git-info/pull/274) break up greedy host fragment parsing regex (#274) (@wraithgar)
+### Chores
+* [`3d55d13`](https://github.com/npm/hosted-git-info/commit/3d55d1316d1b323b1402ad2c642c6d1f37249058) [#277](https://github.com/npm/hosted-git-info/pull/277) fix workflows for new backport branch (#277) (@wraithgar)
+* [`b3e455f`](https://github.com/npm/hosted-git-info/commit/b3e455fd7d66c2c967dba0cc624db8ed142bb86f) [#273](https://github.com/npm/hosted-git-info/pull/273) bump @npmcli/template-oss from 4.23.3 to 4.23.4 (#273) (@dependabot[bot], @npm-cli-bot)
+
 ## [8.0.0](https://github.com/npm/hosted-git-info/compare/v7.0.2...v8.0.0) (2024-09-03)
 ### ⚠️ BREAKING CHANGES
 * `hosted-git-info` now supports node `^18.17.0 || >=20.5.0`
