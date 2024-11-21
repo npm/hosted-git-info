@@ -1,5 +1,11 @@
 # Changelog
 
+## [6.1.2](https://github.com/npm/hosted-git-info/compare/v6.1.1...v6.1.2) (2024-11-21)
+### Bug Fixes
+* [`09061c0`](https://github.com/npm/hosted-git-info/commit/09061c0d8304a27aa356ab91421321b34a4f0bc1) [#276](https://github.com/npm/hosted-git-info/pull/276) break up greedy host fragment parsing regex (#276) (@wraithgar)
+### Chores
+* [`3d8f14e`](https://github.com/npm/hosted-git-info/commit/3d8f14ea3339b36508c3e07a4aa484f5640cd96c) [#278](https://github.com/npm/hosted-git-info/pull/278) bump @npmcli/template-oss from 4.7.1 to 4.23.4 (#278) (@dependabot[bot], @wraithgar)
+
 ## [6.1.1](https://github.com/npm/hosted-git-info/compare/v6.1.0...v6.1.1) (2022-10-27)
 
 ### Bug Fixes
