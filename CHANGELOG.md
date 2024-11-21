@@ -1,5 +1,9 @@
 # Changelog
 
+## [8.0.2](https://github.com/npm/hosted-git-info/compare/v8.0.1...v8.0.2) (2024-11-21)
+### Bug Fixes
+* [`cc004ba`](https://github.com/npm/hosted-git-info/commit/cc004bae62d17b90c2fc889fcde5afbcac2fc508) [#280](https://github.com/npm/hosted-git-info/pull/280) even better regex for host fragment (#280) (@wraithgar)
+
 ## [8.0.1](https://github.com/npm/hosted-git-info/compare/v8.0.0...v8.0.1) (2024-11-20)
 ### Bug Fixes
 * [`e47b7e4`](https://github.com/npm/hosted-git-info/commit/e47b7e476199820446483aefa0525d4726e49450) [#274](https://github.com/npm/hosted-git-info/pull/274) break up greedy host fragment parsing regex (#274) (@wraithgar)
