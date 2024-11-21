@@ -1,5 +1,9 @@
 # Changelog
 
+## [6.1.3](https://github.com/npm/hosted-git-info/compare/v6.1.2...v6.1.3) (2024-11-21)
+### Bug Fixes
+* [`7124552`](https://github.com/npm/hosted-git-info/commit/712455236f29e1be13f405cb67ce4b3a9c240e0c) [#281](https://github.com/npm/hosted-git-info/pull/281) even better regex for host fragment (#281) (@wraithgar)
+
 ## [6.1.2](https://github.com/npm/hosted-git-info/compare/v6.1.1...v6.1.2) (2024-11-21)
 ### Bug Fixes
 * [`09061c0`](https://github.com/npm/hosted-git-info/commit/09061c0d8304a27aa356ab91421321b34a4f0bc1) [#276](https://github.com/npm/hosted-git-info/pull/276) break up greedy host fragment parsing regex (#276) (@wraithgar)
