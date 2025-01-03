@@ -19,7 +19,7 @@ const info = hostedGitInfo.fromUrl("git@github.com:npm/hosted-git-info.git", opt
 */
 ```
 
-If the URL can't be matched with a git host, `null` will be returned.  We
+If the URL can't be matched with a git host, `null` will be returned. We
 can match git, ssh and https urls.  Additionally, we can match ssh connect
 strings (`git@github.com:npm/hosted-git-info`) and shortcuts (eg,
 `github:npm/hosted-git-info`).  GitHub specifically, is detected in the case
@@ -58,6 +58,11 @@ Implications:
 * *options* is an optional object. It can have the following properties:
   * *noCommittish* — If true then committishes won't be included in generated URLs.
   * *noGitPlus* — If true then `git+` won't be prefixed on URLs.
+
+### const infoOrURL = hostedGitInfo.fromManifest(manifest[, options])
+
+* *manifest* is a package manifest, such as that returned by [`pacote.manifest()`](https://npmjs.com/pacote)
+* *options* is an optional object. It can have the same properties as `fromUrl` above.
 
 ## Methods
 
