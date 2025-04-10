@@ -321,3 +321,80 @@ t.test('string methods populate correctly', t => {
 
   t.end()
 })
+
+t.test('from manifest', t => {
+  t.equal(HostedGit.fromManifest(), undefined, 'no manifest returns undefined')
+  t.equal(HostedGit.fromManifest(), undefined, 'no manifest returns undefined')
+  t.equal(HostedGit.fromManifest(false), undefined, 'false manifest returns undefined')
+  t.equal(HostedGit.fromManifest(() => {}), undefined, 'function manifest returns undefined')
+
+  const unknownHostRepo = {
+    name: 'foo',
+    repository: {
+      url: 'https://nope.com',
+    },
+  }
+  t.same(HostedGit.fromManifest(unknownHostRepo), 'https://nope.com/')
+
+  const insecureUnknownHostRepo = {
+    name: 'foo',
+    repository: {
+      url: 'http://nope.com',
+    },
+  }
+  t.same(HostedGit.fromManifest(insecureUnknownHostRepo), 'https://nope.com/')
+
+  const insecureGitUnknownHostRepo = {
+    name: 'foo',
+    repository: {
+      url: 'git+http://nope.com',
+    },
+  }
+  t.same(HostedGit.fromManifest(insecureGitUnknownHostRepo), 'http://nope.com')
+
+  const badRepo = {
+    name: 'foo',
+    repository: {
+      url: '#',
+    },
+  }
+  t.equal(HostedGit.fromManifest(badRepo), null)
+
+  const manifest = {
+    name: 'foo',
+    repository: {
+      type: 'git',
+      url: 'git+ssh://gitlab.com/foo/bar.git',
+    },
+  }
+
+  const parsed = HostedGit.fromManifest(manifest)
+  t.same(parsed.browse(), 'https://gitlab.com/foo/bar')
+
+  const monorepo = {
+    name: 'clowncar',
+    repository: {
+      type: 'git',
+      url: 'git+ssh://gitlab.com/foo/bar.git',
+      directory: 'packages/foo',
+    },
+  }
+
+  const honk = HostedGit.fromManifest(monorepo)
+  t.same(honk.browse(monorepo.repository.directory), 'https://gitlab.com/foo/bar/tree/HEAD/packages/foo')
+
+  const stringRepo = {
+    name: 'foo',
+    repository: 'git+ssh://gitlab.com/foo/bar.git',
+  }
+  const stringRepoParsed = HostedGit.fromManifest(stringRepo)
+  t.same(stringRepoParsed.browse(), 'https://gitlab.com/foo/bar')
+
+  const nonStringRepo = {
+    name: 'foo',
+    repository: 42,
+  }
+  t.throws(() => HostedGit.fromManifest(nonStringRepo))
+
+  t.end()
+})
