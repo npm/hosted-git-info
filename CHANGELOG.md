@@ -1,5 +1,11 @@
 # Changelog
 
+## [8.1.0](https://github.com/npm/hosted-git-info/compare/v8.0.2...v8.1.0) (2025-04-14)
+### Features
+* [`ef0865c`](https://github.com/npm/hosted-git-info/commit/ef0865cc5c28700f990bf25d919e2520c944cf55) [#288](https://github.com/npm/hosted-git-info/pull/288) add `HostedGitInfo.fromManifest` (#288) (@ljharb)
+### Chores
+* [`ac08fe8`](https://github.com/npm/hosted-git-info/commit/ac08fe89153d19d1fecbd1e5ce5014fad833134c) [#296](https://github.com/npm/hosted-git-info/pull/296) bump @npmcli/template-oss from 4.23.6 to 4.24.3 (#296) (@dependabot[bot], @npm-cli-bot)
+
 ## [8.0.2](https://github.com/npm/hosted-git-info/compare/v8.0.1...v8.0.2) (2024-11-21)
 ### Bug Fixes
 * [`cc004ba`](https://github.com/npm/hosted-git-info/commit/cc004bae62d17b90c2fc889fcde5afbcac2fc508) [#280](https://github.com/npm/hosted-git-info/pull/280) even better regex for host fragment (#280) (@wraithgar)
