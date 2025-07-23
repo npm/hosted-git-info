@@ -31,7 +31,7 @@
     "eslint": "eslint \"**/*.{js,cjs,ts,mjs,jsx,tsx}\""
   },
   "dependencies": {
-    "lru-cache": "^10.0.1"
+    "lru-cache": "^11.1.0"
   },
   "devDependencies": {
     "@npmcli/eslint-config": "^5.0.0",
