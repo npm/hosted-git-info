@@ -1,5 +1,15 @@
 # Changelog
 
+## [9.0.0](https://github.com/npm/hosted-git-info/compare/v8.1.0...v9.0.0) (2025-07-24)
+### ⚠️ BREAKING CHANGES
+* `hosted-git-info` now supports node `^20.17.0 || >=22.9.0`
+### Bug Fixes
+* [`f5d971c`](https://github.com/npm/hosted-git-info/commit/f5d971c6e21de4c7d533fbfe7c0f4db33c1c10a4) [#305](https://github.com/npm/hosted-git-info/pull/305) align to npm 11 node engine range (@owlstronaut)
+### Dependencies
+* [`7a9c71e`](https://github.com/npm/hosted-git-info/commit/7a9c71ec56c588ed938dcfbc700eb56bcd20d14d) [#305](https://github.com/npm/hosted-git-info/pull/305) `lru-cache@11.1.0`
+### Chores
+* [`a0e07cd`](https://github.com/npm/hosted-git-info/commit/a0e07cd0b8cfd51907acac8a13caf426f690a4f6) [#302](https://github.com/npm/hosted-git-info/pull/302) bump @npmcli/template-oss from 4.24.4 to 4.25.0 (#302) (@dependabot[bot], @owlstronaut)
+
 ## [8.1.0](https://github.com/npm/hosted-git-info/compare/v8.0.2...v8.1.0) (2025-04-14)
 ### Features
 * [`ef0865c`](https://github.com/npm/hosted-git-info/commit/ef0865cc5c28700f990bf25d919e2520c944cf55) [#288](https://github.com/npm/hosted-git-info/pull/288) add `HostedGitInfo.fromManifest` (#288) (@ljharb)
