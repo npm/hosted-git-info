@@ -15,3 +15,10 @@ t.test('can parse file urls', async t => {
   t.ok(parseUrl(u))
   t.ok(HostedGit.parseUrl(u))
 })
+
+t.test('can parse custom urls', async t => {
+  const u = 'foobar://user:host@path'
+  t.ok(parseUrl(u, {}))
+  t.equal(parseUrl(u, {}).protocol, 'foobar:')
+  t.ok(HostedGit.parseUrl(u))
+})
