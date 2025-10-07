@@ -1,5 +1,12 @@
 # Changelog
 
+## [9.0.1](https://github.com/npm/hosted-git-info/compare/v9.0.0...v9.0.1) (2025-10-07)
+### Bug Fixes
+* [`bf29151`](https://github.com/npm/hosted-git-info/commit/bf291511cdcefba273d16df4b4fdc22edec47139) [#312](https://github.com/npm/hosted-git-info/pull/312) remove redundant httpstemplate (#312) (@markovejnovic)
+### Chores
+* [`6525ea6`](https://github.com/npm/hosted-git-info/commit/6525ea64373032e840df77b9764b69f2d3682d19) [#311](https://github.com/npm/hosted-git-info/pull/311) stop backport branch updates (#311) (@owlstronaut)
+* [`97fef20`](https://github.com/npm/hosted-git-info/commit/97fef208f7b6663f21d1069654f60abea695f368) [#308](https://github.com/npm/hosted-git-info/pull/308) bump @npmcli/template-oss from 4.25.0 to 4.25.1 (#308) (@dependabot[bot], @npm-cli-bot)
+
 ## [9.0.0](https://github.com/npm/hosted-git-info/compare/v8.1.0...v9.0.0) (2025-07-24)
 ### ⚠️ BREAKING CHANGES
 * `hosted-git-info` now supports node `^20.17.0 || >=22.9.0`
