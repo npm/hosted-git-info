@@ -1,5 +1,9 @@
 # Changelog
 
+## [9.0.2](https://github.com/npm/hosted-git-info/compare/v9.0.1...v9.0.2) (2025-10-08)
+### Bug Fixes
+* [`c91490e`](https://github.com/npm/hosted-git-info/commit/c91490e162b3226c09b7337b54649988f741fa9c) [#314](https://github.com/npm/hosted-git-info/pull/314) correctProtocol misparsing protocol (#314) (@markovejnovic)
+
 ## [9.0.1](https://github.com/npm/hosted-git-info/compare/v9.0.0...v9.0.1) (2025-10-07)
 ### Bug Fixes
 * [`bf29151`](https://github.com/npm/hosted-git-info/commit/bf291511cdcefba273d16df4b4fdc22edec47139) [#312](https://github.com/npm/hosted-git-info/pull/312) remove redundant httpstemplate (#312) (@markovejnovic)
