@@ -1,7 +1,15 @@
 /* eslint-disable max-len */
 'use strict'
+const { test } = require('node:test')
+const assert = require('node:assert')
 const HostedGit = require('..')
-const t = require('tap')
+
+// Helper function to assert actual object contains all expected properties
+const assertHasStrict = (actual, expected, message) => {
+  for (const [key, value] of Object.entries(expected)) {
+    assert.strictEqual(actual[key], value, `${message} (${key})`)
+  }
+}
 
 const invalid = [
   // invalid protocol
@@ -142,75 +150,70 @@ const valid = {
   'https://:password@bitbucket.org/foo/bar.git#branch': { ...defaults, default: 'https', auth: ':password', committish: 'branch' },
 }
 
-t.test('valid urls parse properly', t => {
-  t.plan(Object.keys(valid).length)
+test('valid urls parse properly', () => {
   for (const [url, result] of Object.entries(valid)) {
-    t.hasStrict(HostedGit.fromUrl(url), result, `${url} parses`)
+    const parsed = HostedGit.fromUrl(url)
+    assertHasStrict(parsed, result, `${url} parses`)
   }
 })
 
-t.test('invalid urls return undefined', t => {
-  t.plan(invalid.length)
+test('invalid urls return undefined', () => {
   for (const url of invalid) {
-    t.equal(HostedGit.fromUrl(url), undefined, `${url} returns undefined`)
+    assert.strictEqual(HostedGit.fromUrl(url), undefined, `${url} returns undefined`)
   }
 })
 
-t.test('toString respects defaults', t => {
+test('toString respects defaults', () => {
   const sshurl = HostedGit.fromUrl('git+ssh://bitbucket.org/foo/bar')
-  t.equal(sshurl.default, 'sshurl', 'got the right default')
-  t.equal(sshurl.toString(), sshurl.sshurl(), 'toString calls sshurl')
+  assert.strictEqual(sshurl.default, 'sshurl', 'got the right default')
+  assert.strictEqual(sshurl.toString(), sshurl.sshurl(), 'toString calls sshurl')
 
   const https = HostedGit.fromUrl('https://bitbucket.org/foo/bar')
-  t.equal(https.default, 'https', 'got the right default')
-  t.equal(https.toString(), https.https(), 'toString calls https')
+  assert.strictEqual(https.default, 'https', 'got the right default')
+  assert.strictEqual(https.toString(), https.https(), 'toString calls https')
 
   const shortcut = HostedGit.fromUrl('bitbucket:foo/bar')
-  t.equal(shortcut.default, 'shortcut', 'got the right default')
-  t.equal(shortcut.toString(), shortcut.shortcut(), 'toString calls shortcut')
-
-  t.end()
+  assert.strictEqual(shortcut.default, 'shortcut', 'got the right default')
+  assert.strictEqual(shortcut.toString(), shortcut.shortcut(), 'toString calls shortcut')
 })
 
-t.test('string methods populate correctly', t => {
+test('string methods populate correctly', () => {
   const parsed = HostedGit.fromUrl('git+ssh://bitbucket.org/foo/bar')
-  t.equal(parsed.getDefaultRepresentation(), parsed.default, 'getDefaultRepresentation()')
-  t.equal(parsed.hash(), '', 'hash() returns empty string when committish is unset')
-  t.equal(parsed.ssh(), 'git@bitbucket.org:foo/bar.git')
-  t.equal(parsed.sshurl(), 'git+ssh://git@bitbucket.org/foo/bar.git')
-  t.equal(parsed.edit(), 'https://bitbucket.org/foo/bar')
-  t.equal(parsed.edit('/lib/index.js'), 'https://bitbucket.org/foo/bar/src/HEAD/lib/index.js?mode=edit')
-  t.equal(parsed.browse(), 'https://bitbucket.org/foo/bar')
-  t.equal(parsed.browse('/lib/index.js'), 'https://bitbucket.org/foo/bar/src/HEAD/lib/index.js')
-  t.equal(parsed.browse('/lib/index.js', 'L100'), 'https://bitbucket.org/foo/bar/src/HEAD/lib/index.js#l100')
-  t.equal(parsed.docs(), 'https://bitbucket.org/foo/bar#readme')
-  t.equal(parsed.https(), 'git+https://bitbucket.org/foo/bar.git')
-  t.equal(parsed.shortcut(), 'bitbucket:foo/bar')
-  t.equal(parsed.path(), 'foo/bar')
-  t.equal(parsed.tarball(), 'https://bitbucket.org/foo/bar/get/HEAD.tar.gz')
-  t.equal(parsed.file(), 'https://bitbucket.org/foo/bar/raw/HEAD/')
-  t.equal(parsed.file('/lib/index.js'), 'https://bitbucket.org/foo/bar/raw/HEAD/lib/index.js')
-  t.equal(parsed.bugs(), 'https://bitbucket.org/foo/bar/issues')
+  assert.strictEqual(parsed.getDefaultRepresentation(), parsed.default, 'getDefaultRepresentation()')
+  assert.strictEqual(parsed.hash(), '', 'hash() returns empty string when committish is unset')
+  assert.strictEqual(parsed.ssh(), 'git@bitbucket.org:foo/bar.git')
+  assert.strictEqual(parsed.sshurl(), 'git+ssh://git@bitbucket.org/foo/bar.git')
+  assert.strictEqual(parsed.edit(), 'https://bitbucket.org/foo/bar')
+  assert.strictEqual(parsed.edit('/lib/index.js'), 'https://bitbucket.org/foo/bar/src/HEAD/lib/index.js?mode=edit')
+  assert.strictEqual(parsed.browse(), 'https://bitbucket.org/foo/bar')
+  assert.strictEqual(parsed.browse('/lib/index.js'), 'https://bitbucket.org/foo/bar/src/HEAD/lib/index.js')
+  assert.strictEqual(parsed.browse('/lib/index.js', 'L100'), 'https://bitbucket.org/foo/bar/src/HEAD/lib/index.js#l100')
+  assert.strictEqual(parsed.docs(), 'https://bitbucket.org/foo/bar#readme')
+  assert.strictEqual(parsed.https(), 'git+https://bitbucket.org/foo/bar.git')
+  assert.strictEqual(parsed.shortcut(), 'bitbucket:foo/bar')
+  assert.strictEqual(parsed.path(), 'foo/bar')
+  assert.strictEqual(parsed.tarball(), 'https://bitbucket.org/foo/bar/get/HEAD.tar.gz')
+  assert.strictEqual(parsed.file(), 'https://bitbucket.org/foo/bar/raw/HEAD/')
+  assert.strictEqual(parsed.file('/lib/index.js'), 'https://bitbucket.org/foo/bar/raw/HEAD/lib/index.js')
+  assert.strictEqual(parsed.bugs(), 'https://bitbucket.org/foo/bar/issues')
 
-  t.equal(parsed.docs({ committish: 'fix/bug' }), 'https://bitbucket.org/foo/bar/src/fix%2Fbug#readme', 'allows overriding options')
+  assert.strictEqual(parsed.docs({ committish: 'fix/bug' }), 'https://bitbucket.org/foo/bar/src/fix%2Fbug#readme', 'allows overriding options')
 
-  t.same(parsed.git(), null, 'git() returns null')
+  assert.deepStrictEqual(parsed.git(), null, 'git() returns null')
 
   const extra = HostedGit.fromUrl('https://user@bitbucket.org/foo/bar#fix/bug')
-  t.equal(extra.hash(), '#fix/bug')
-  t.equal(extra.https(), 'git+https://user@bitbucket.org/foo/bar.git#fix/bug')
-  t.equal(extra.shortcut(), 'bitbucket:foo/bar#fix/bug')
-  t.equal(extra.ssh(), 'git@bitbucket.org:foo/bar.git#fix/bug')
-  t.equal(extra.sshurl(), 'git+ssh://git@bitbucket.org/foo/bar.git#fix/bug')
-  t.equal(extra.browse(), 'https://bitbucket.org/foo/bar/src/fix%2Fbug')
-  t.equal(extra.browse('/lib/index.js'), 'https://bitbucket.org/foo/bar/src/fix%2Fbug/lib/index.js')
-  t.equal(extra.browse('/lib/index.js', 'L200'), 'https://bitbucket.org/foo/bar/src/fix%2Fbug/lib/index.js#l200')
-  t.equal(extra.docs(), 'https://bitbucket.org/foo/bar/src/fix%2Fbug#readme')
-  t.equal(extra.file(), 'https://bitbucket.org/foo/bar/raw/fix%2Fbug/')
-  t.equal(extra.file('/lib/index.js'), 'https://bitbucket.org/foo/bar/raw/fix%2Fbug/lib/index.js')
+  assert.strictEqual(extra.hash(), '#fix/bug')
+  assert.strictEqual(extra.https(), 'git+https://user@bitbucket.org/foo/bar.git#fix/bug')
+  assert.strictEqual(extra.shortcut(), 'bitbucket:foo/bar#fix/bug')
+  assert.strictEqual(extra.ssh(), 'git@bitbucket.org:foo/bar.git#fix/bug')
+  assert.strictEqual(extra.sshurl(), 'git+ssh://git@bitbucket.org/foo/bar.git#fix/bug')
+  assert.strictEqual(extra.browse(), 'https://bitbucket.org/foo/bar/src/fix%2Fbug')
+  assert.strictEqual(extra.browse('/lib/index.js'), 'https://bitbucket.org/foo/bar/src/fix%2Fbug/lib/index.js')
+  assert.strictEqual(extra.browse('/lib/index.js', 'L200'), 'https://bitbucket.org/foo/bar/src/fix%2Fbug/lib/index.js#l200')
+  assert.strictEqual(extra.docs(), 'https://bitbucket.org/foo/bar/src/fix%2Fbug#readme')
+  assert.strictEqual(extra.file(), 'https://bitbucket.org/foo/bar/raw/fix%2Fbug/')
+  assert.strictEqual(extra.file('/lib/index.js'), 'https://bitbucket.org/foo/bar/raw/fix%2Fbug/lib/index.js')
 
-  t.equal(extra.sshurl({ noCommittish: true }), 'git+ssh://git@bitbucket.org/foo/bar.git', 'noCommittish drops committish from urls')
-  t.equal(extra.sshurl({ noGitPlus: true }), 'ssh://git@bitbucket.org/foo/bar.git#fix/bug', 'noGitPlus drops git+ prefix from urls')
-
-  t.end()
+  assert.strictEqual(extra.sshurl({ noCommittish: true }), 'git+ssh://git@bitbucket.org/foo/bar.git', 'noCommittish drops committish from urls')
+  assert.strictEqual(extra.sshurl({ noGitPlus: true }), 'ssh://git@bitbucket.org/foo/bar.git#fix/bug', 'noGitPlus drops git+ prefix from urls')
 })

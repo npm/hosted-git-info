@@ -1,7 +1,15 @@
 /* eslint-disable max-len */
 'use strict'
+const { test } = require('node:test')
+const assert = require('node:assert')
 const HostedGit = require('..')
-const t = require('tap')
+
+// Helper function to assert actual object contains all expected properties
+const assertHasStrict = (actual, expected, message) => {
+  for (const [key, value] of Object.entries(expected)) {
+    assert.strictEqual(actual[key], value, `${message} (${key})`)
+  }
+}
 
 const invalid = [
   // raw urls that are wrong anyway but for some reason are in the wild
@@ -305,77 +313,72 @@ const valid = {
   'https://:password@gist.github.com/foo/feedbeef.git#branch': { ...defaults, default: 'https', auth: ':password', user: 'foo', committish: 'branch' },
 }
 
-t.test('valid urls parse properly', t => {
-  t.plan(Object.keys(valid).length)
+test('valid urls parse properly', () => {
   for (const [url, result] of Object.entries(valid)) {
-    t.hasStrict(HostedGit.fromUrl(url), result, `${url} parses`)
+    const parsed = HostedGit.fromUrl(url)
+    assertHasStrict(parsed, result, `${url} parses`)
   }
 })
 
-t.test('invalid urls return undefined', t => {
-  t.plan(invalid.length)
+test('invalid urls return undefined', () => {
   for (const url of invalid) {
-    t.equal(HostedGit.fromUrl(url), undefined, `${url} returns undefined`)
+    assert.strictEqual(HostedGit.fromUrl(url), undefined, `${url} returns undefined`)
   }
 })
 
-t.test('toString respects defaults', t => {
+test('toString respects defaults', () => {
   const sshurl = HostedGit.fromUrl('git+ssh://gist.github.com/foo/feedbeef')
-  t.equal(sshurl.default, 'sshurl', 'got the right default')
-  t.equal(sshurl.toString(), sshurl.sshurl(), 'toString calls sshurl')
+  assert.strictEqual(sshurl.default, 'sshurl', 'got the right default')
+  assert.strictEqual(sshurl.toString(), sshurl.sshurl(), 'toString calls sshurl')
 
   const https = HostedGit.fromUrl('https://gist.github.com/foo/feedbeef')
-  t.equal(https.default, 'https', 'got the right default')
-  t.equal(https.toString(), https.https(), 'toString calls https')
+  assert.strictEqual(https.default, 'https', 'got the right default')
+  assert.strictEqual(https.toString(), https.https(), 'toString calls https')
 
   const shortcut = HostedGit.fromUrl('gist:feedbeef')
-  t.equal(shortcut.default, 'shortcut', 'got the right default')
-  t.equal(shortcut.toString(), shortcut.shortcut(), 'toString calls shortcut')
-
-  t.end()
+  assert.strictEqual(shortcut.default, 'shortcut', 'got the right default')
+  assert.strictEqual(shortcut.toString(), shortcut.shortcut(), 'toString calls shortcut')
 })
 
-t.test('string methods populate correctly', t => {
+test('string methods populate correctly', () => {
   const parsed = HostedGit.fromUrl('git+ssh://gist.github.com/foo/feedbeef')
-  t.equal(parsed.getDefaultRepresentation(), parsed.default)
-  t.equal(parsed.hash(), '', 'hash() returns empty string when committish is unset')
-  t.equal(parsed.ssh(), 'git@gist.github.com:feedbeef.git')
-  t.equal(parsed.sshurl(), 'git+ssh://git@gist.github.com/feedbeef.git')
-  t.equal(parsed.edit(), 'https://gist.github.com/foo/feedbeef/edit', 'gist link only redirects with a user')
-  t.equal(parsed.edit('/lib/index.js'), 'https://gist.github.com/foo/feedbeef/edit', 'gist link only redirects with a user')
-  t.equal(parsed.browse(), 'https://gist.github.com/feedbeef')
-  t.equal(parsed.browse('/lib/index.js'), 'https://gist.github.com/feedbeef#file-libindex-js')
-  t.equal(parsed.browse('/lib/index.js', 'L100'), 'https://gist.github.com/feedbeef#file-libindex-js')
-  t.equal(parsed.browseFile('/lib/index.js'), 'https://gist.github.com/feedbeef#file-libindex-js')
-  t.equal(parsed.browseFile('/lib/index.js', 'L100'), 'https://gist.github.com/feedbeef#file-libindex-js')
-  t.equal(parsed.docs(), 'https://gist.github.com/feedbeef')
-  t.equal(parsed.https(), 'git+https://gist.github.com/feedbeef.git')
-  t.equal(parsed.shortcut(), 'gist:feedbeef')
-  t.equal(parsed.path(), 'feedbeef')
-  t.equal(parsed.tarball(), 'https://codeload.github.com/gist/feedbeef/tar.gz/HEAD')
-  t.equal(parsed.file(), 'https://gist.githubusercontent.com/foo/feedbeef/raw/')
-  t.equal(parsed.file('/lib/index.js'), 'https://gist.githubusercontent.com/foo/feedbeef/raw/lib/index.js')
-  t.equal(parsed.git(), 'git://gist.github.com/feedbeef.git')
-  t.equal(parsed.bugs(), 'https://gist.github.com/feedbeef')
+  assert.strictEqual(parsed.getDefaultRepresentation(), parsed.default)
+  assert.strictEqual(parsed.hash(), '', 'hash() returns empty string when committish is unset')
+  assert.strictEqual(parsed.ssh(), 'git@gist.github.com:feedbeef.git')
+  assert.strictEqual(parsed.sshurl(), 'git+ssh://git@gist.github.com/feedbeef.git')
+  assert.strictEqual(parsed.edit(), 'https://gist.github.com/foo/feedbeef/edit', 'gist link only redirects with a user')
+  assert.strictEqual(parsed.edit('/lib/index.js'), 'https://gist.github.com/foo/feedbeef/edit', 'gist link only redirects with a user')
+  assert.strictEqual(parsed.browse(), 'https://gist.github.com/feedbeef')
+  assert.strictEqual(parsed.browse('/lib/index.js'), 'https://gist.github.com/feedbeef#file-libindex-js')
+  assert.strictEqual(parsed.browse('/lib/index.js', 'L100'), 'https://gist.github.com/feedbeef#file-libindex-js')
+  assert.strictEqual(parsed.browseFile('/lib/index.js'), 'https://gist.github.com/feedbeef#file-libindex-js')
+  assert.strictEqual(parsed.browseFile('/lib/index.js', 'L100'), 'https://gist.github.com/feedbeef#file-libindex-js')
+  assert.strictEqual(parsed.docs(), 'https://gist.github.com/feedbeef')
+  assert.strictEqual(parsed.https(), 'git+https://gist.github.com/feedbeef.git')
+  assert.strictEqual(parsed.shortcut(), 'gist:feedbeef')
+  assert.strictEqual(parsed.path(), 'feedbeef')
+  assert.strictEqual(parsed.tarball(), 'https://codeload.github.com/gist/feedbeef/tar.gz/HEAD')
+  assert.strictEqual(parsed.file(), 'https://gist.githubusercontent.com/foo/feedbeef/raw/')
+  assert.strictEqual(parsed.file('/lib/index.js'), 'https://gist.githubusercontent.com/foo/feedbeef/raw/lib/index.js')
+  assert.strictEqual(parsed.git(), 'git://gist.github.com/feedbeef.git')
+  assert.strictEqual(parsed.bugs(), 'https://gist.github.com/feedbeef')
 
-  t.equal(parsed.ssh({ committish: 'fix/bug' }), 'git@gist.github.com:feedbeef.git#fix/bug', 'allows overriding options')
+  assert.strictEqual(parsed.ssh({ committish: 'fix/bug' }), 'git@gist.github.com:feedbeef.git#fix/bug', 'allows overriding options')
 
   const extra = HostedGit.fromUrl('https://user@gist.github.com/foo/feedbeef#fix/bug')
-  t.equal(extra.hash(), '#fix/bug')
-  t.equal(extra.https(), 'git+https://gist.github.com/feedbeef.git#fix/bug')
-  t.equal(extra.shortcut(), 'gist:feedbeef#fix/bug')
-  t.equal(extra.ssh(), 'git@gist.github.com:feedbeef.git#fix/bug')
-  t.equal(extra.sshurl(), 'git+ssh://git@gist.github.com/feedbeef.git#fix/bug')
-  t.equal(extra.browse(), 'https://gist.github.com/feedbeef/fix%2Fbug')
-  t.equal(extra.browse('/lib/index.js'), 'https://gist.github.com/feedbeef/fix%2Fbug#file-libindex-js')
-  t.equal(extra.browse('/lib/index.js', 'L200'), 'https://gist.github.com/feedbeef/fix%2Fbug#file-libindex-js')
-  t.equal(extra.docs(), 'https://gist.github.com/feedbeef/fix%2Fbug')
-  t.equal(extra.file(), 'https://gist.githubusercontent.com/foo/feedbeef/raw/fix%2Fbug/')
-  t.equal(extra.file('/lib/index.js'), 'https://gist.githubusercontent.com/foo/feedbeef/raw/fix%2Fbug/lib/index.js')
-  t.equal(extra.tarball(), 'https://codeload.github.com/gist/feedbeef/tar.gz/fix%2Fbug')
+  assert.strictEqual(extra.hash(), '#fix/bug')
+  assert.strictEqual(extra.https(), 'git+https://gist.github.com/feedbeef.git#fix/bug')
+  assert.strictEqual(extra.shortcut(), 'gist:feedbeef#fix/bug')
+  assert.strictEqual(extra.ssh(), 'git@gist.github.com:feedbeef.git#fix/bug')
+  assert.strictEqual(extra.sshurl(), 'git+ssh://git@gist.github.com/feedbeef.git#fix/bug')
+  assert.strictEqual(extra.browse(), 'https://gist.github.com/feedbeef/fix%2Fbug')
+  assert.strictEqual(extra.browse('/lib/index.js'), 'https://gist.github.com/feedbeef/fix%2Fbug#file-libindex-js')
+  assert.strictEqual(extra.browse('/lib/index.js', 'L200'), 'https://gist.github.com/feedbeef/fix%2Fbug#file-libindex-js')
+  assert.strictEqual(extra.docs(), 'https://gist.github.com/feedbeef/fix%2Fbug')
+  assert.strictEqual(extra.file(), 'https://gist.githubusercontent.com/foo/feedbeef/raw/fix%2Fbug/')
+  assert.strictEqual(extra.file('/lib/index.js'), 'https://gist.githubusercontent.com/foo/feedbeef/raw/fix%2Fbug/lib/index.js')
+  assert.strictEqual(extra.tarball(), 'https://codeload.github.com/gist/feedbeef/tar.gz/fix%2Fbug')
 
-  t.equal(extra.sshurl({ noCommittish: true }), 'git+ssh://git@gist.github.com/feedbeef.git', 'noCommittish drops committish from urls')
-  t.equal(extra.sshurl({ noGitPlus: true }), 'ssh://git@gist.github.com/feedbeef.git#fix/bug', 'noGitPlus drops git+ prefix from urls')
-
-  t.end()
+  assert.strictEqual(extra.sshurl({ noCommittish: true }), 'git+ssh://git@gist.github.com/feedbeef.git', 'noCommittish drops committish from urls')
+  assert.strictEqual(extra.sshurl({ noGitPlus: true }), 'ssh://git@gist.github.com/feedbeef.git#fix/bug', 'noGitPlus drops git+ prefix from urls')
 })

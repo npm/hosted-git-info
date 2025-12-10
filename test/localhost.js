@@ -1,7 +1,8 @@
+const { test } = require('node:test')
+const assert = require('node:assert')
 const HostedGit = require('..')
-const t = require('tap')
 
-t.test('supports extensions', t => {
+test('supports extensions', () => {
   // An example of a custom setup, useful when testing modules like pacote,
   // which do various things with these git shortcuts.
   HostedGit.addHost('localhost', {
@@ -14,18 +15,14 @@ t.test('supports extensions', t => {
   })
 
   const hosted = HostedGit.fromUrl('git://localhost:12345/foo/bar')
-  t.match(
-    hosted,
-    { type: 'localhost', default: 'git', user: 'foo', project: 'bar' },
-    'parsed correctly'
-  )
+  assert.strictEqual(hosted.type, 'localhost')
+  assert.strictEqual(hosted.default, 'git')
+  assert.strictEqual(hosted.user, 'foo')
+  assert.strictEqual(hosted.project, 'bar')
 
   const shortcut = HostedGit.fromUrl('localhost:foo/bar')
-  t.match(
-    shortcut,
-    { type: 'localhost', default: 'shortcut', user: 'foo', project: 'bar' },
-    'parsed correctly'
-  )
-
-  t.end()
+  assert.strictEqual(shortcut.type, 'localhost')
+  assert.strictEqual(shortcut.default, 'shortcut')
+  assert.strictEqual(shortcut.user, 'foo')
+  assert.strictEqual(shortcut.project, 'bar')
 })

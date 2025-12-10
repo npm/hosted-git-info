@@ -1,14 +1,13 @@
+const { test } = require('node:test')
+const assert = require('node:assert')
 const HostedGit = require('..')
-const t = require('tap')
 
-t.test('file:// URLs', t => {
+test('file:// URLs', () => {
   const fileRepo = {
     name: 'foo',
     repository: {
       url: 'file:///path/dot.git',
     },
   }
-  t.equal(HostedGit.fromManifest(fileRepo), null)
-
-  t.end()
+  assert.strictEqual(HostedGit.fromManifest(fileRepo), null)
 })

@@ -1,6 +1,14 @@
 'use strict'
+const { test } = require('node:test')
+const assert = require('node:assert')
 const HostedGit = require('..')
-const t = require('tap')
+
+// Helper function to assert actual object contains all expected properties
+const assertHasStrict = (actual, expected, message) => {
+  for (const [key, value] of Object.entries(expected)) {
+    assert.strictEqual(actual[key], value, `${message} (${key})`)
+  }
+}
 
 const invalid = [
   // missing project
@@ -55,93 +63,88 @@ const valid = {
   'https://git.sr.ht/~foo/bar.git#branch': { ...defaults, default: 'https', committish: 'branch' },
 }
 
-t.test('valid urls parse properly', t => {
-  t.plan(Object.keys(valid).length)
+test('valid urls parse properly', () => {
   for (const [url, result] of Object.entries(valid)) {
-    t.hasStrict(HostedGit.fromUrl(url), result, `${url} parses`)
+    const parsed = HostedGit.fromUrl(url)
+    assertHasStrict(parsed, result, `${url} parses`)
   }
 })
 
-t.test('invalid urls return undefined', t => {
-  t.plan(invalid.length)
+test('invalid urls return undefined', () => {
   for (const url of invalid) {
-    t.equal(HostedGit.fromUrl(url), undefined, `${url} returns undefined`)
+    assert.strictEqual(HostedGit.fromUrl(url), undefined, `${url} returns undefined`)
   }
 })
 
-t.test('toString respects defaults', t => {
+test('toString respects defaults', () => {
   const sshurl = HostedGit.fromUrl('git+ssh://git.sr.ht/~foo/bar')
-  t.equal(sshurl.default, 'sshurl', 'got the right default')
-  t.equal(sshurl.toString(), sshurl.sshurl(), 'toString calls sshurl')
+  assert.strictEqual(sshurl.default, 'sshurl', 'got the right default')
+  assert.strictEqual(sshurl.toString(), sshurl.sshurl(), 'toString calls sshurl')
 
   const https = HostedGit.fromUrl('https://git.sr.ht/~foo/bar')
-  t.equal(https.default, 'https', 'got the right default')
-  t.equal(https.toString(), https.https(), 'toString calls https')
+  assert.strictEqual(https.default, 'https', 'got the right default')
+  assert.strictEqual(https.toString(), https.https(), 'toString calls https')
 
   const shortcut = HostedGit.fromUrl('sourcehut:~foo/bar')
-  t.equal(shortcut.default, 'shortcut', 'got the right default')
-  t.equal(shortcut.toString(), shortcut.shortcut(), 'toString calls shortcut')
-
-  t.end()
+  assert.strictEqual(shortcut.default, 'shortcut', 'got the right default')
+  assert.strictEqual(shortcut.toString(), shortcut.shortcut(), 'toString calls shortcut')
 })
 
-t.test('string methods populate correctly', t => {
+test('string methods populate correctly', () => {
   const parsed = HostedGit.fromUrl('git+ssh://git.sr.ht/~foo/bar')
-  t.equal(parsed.getDefaultRepresentation(), parsed.default, 'getDefaultRepresentation()')
-  t.equal(parsed.hash(), '', 'hash() returns empty string when committish is unset')
-  t.equal(parsed.ssh(), 'git@git.sr.ht:~foo/bar.git')
-  t.equal(parsed.sshurl(), 'git+ssh://git@git.sr.ht/~foo/bar.git')
-  t.equal(parsed.edit('/lib/index.js'), 'https://git.sr.ht/~foo/bar', 'no editing, link to browse')
-  t.equal(parsed.edit(), 'https://git.sr.ht/~foo/bar', 'no editing, link to browse')
-  t.equal(parsed.browse(), 'https://git.sr.ht/~foo/bar')
-  t.equal(parsed.browse('/lib/index.js'), 'https://git.sr.ht/~foo/bar/tree/HEAD/lib/index.js')
-  t.equal(
+  assert.strictEqual(parsed.getDefaultRepresentation(), parsed.default, 'getDefaultRepresentation()')
+  assert.strictEqual(parsed.hash(), '', 'hash() returns empty string when committish is unset')
+  assert.strictEqual(parsed.ssh(), 'git@git.sr.ht:~foo/bar.git')
+  assert.strictEqual(parsed.sshurl(), 'git+ssh://git@git.sr.ht/~foo/bar.git')
+  assert.strictEqual(parsed.edit('/lib/index.js'), 'https://git.sr.ht/~foo/bar', 'no editing, link to browse')
+  assert.strictEqual(parsed.edit(), 'https://git.sr.ht/~foo/bar', 'no editing, link to browse')
+  assert.strictEqual(parsed.browse(), 'https://git.sr.ht/~foo/bar')
+  assert.strictEqual(parsed.browse('/lib/index.js'), 'https://git.sr.ht/~foo/bar/tree/HEAD/lib/index.js')
+  assert.strictEqual(
     parsed.browse('/lib/index.js', 'L100'),
     'https://git.sr.ht/~foo/bar/tree/HEAD/lib/index.js#l100'
   )
-  t.equal(parsed.docs(), 'https://git.sr.ht/~foo/bar#readme')
-  t.equal(parsed.https(), 'https://git.sr.ht/~foo/bar.git')
-  t.equal(parsed.shortcut(), 'sourcehut:~foo/bar')
-  t.equal(parsed.path(), '~foo/bar')
-  t.equal(parsed.tarball(), 'https://git.sr.ht/~foo/bar/archive/HEAD.tar.gz')
-  t.equal(parsed.file(), 'https://git.sr.ht/~foo/bar/blob/HEAD/')
-  t.equal(parsed.file('/lib/index.js'), 'https://git.sr.ht/~foo/bar/blob/HEAD/lib/index.js')
-  t.equal(parsed.bugs(), null)
+  assert.strictEqual(parsed.docs(), 'https://git.sr.ht/~foo/bar#readme')
+  assert.strictEqual(parsed.https(), 'https://git.sr.ht/~foo/bar.git')
+  assert.strictEqual(parsed.shortcut(), 'sourcehut:~foo/bar')
+  assert.strictEqual(parsed.path(), '~foo/bar')
+  assert.strictEqual(parsed.tarball(), 'https://git.sr.ht/~foo/bar/archive/HEAD.tar.gz')
+  assert.strictEqual(parsed.file(), 'https://git.sr.ht/~foo/bar/blob/HEAD/')
+  assert.strictEqual(parsed.file('/lib/index.js'), 'https://git.sr.ht/~foo/bar/blob/HEAD/lib/index.js')
+  assert.strictEqual(parsed.bugs(), null)
 
-  t.equal(
+  assert.strictEqual(
     parsed.docs({ committish: 'fix/bug' }),
     'https://git.sr.ht/~foo/bar/tree/fix%2Fbug#readme',
     'allows overriding options'
   )
 
-  t.same(parsed.git(), null, 'git() returns null')
+  assert.deepStrictEqual(parsed.git(), null, 'git() returns null')
 
   const extra = HostedGit.fromUrl('https://@git.sr.ht/~foo/bar#fix/bug')
-  t.equal(extra.hash(), '#fix/bug')
-  t.equal(extra.https(), 'https://git.sr.ht/~foo/bar.git#fix/bug')
-  t.equal(extra.shortcut(), 'sourcehut:~foo/bar#fix/bug')
-  t.equal(extra.ssh(), 'git@git.sr.ht:~foo/bar.git#fix/bug')
-  t.equal(extra.sshurl(), 'git+ssh://git@git.sr.ht/~foo/bar.git#fix/bug')
-  t.equal(extra.browse(), 'https://git.sr.ht/~foo/bar/tree/fix%2Fbug')
-  t.equal(extra.browse('/lib/index.js'), 'https://git.sr.ht/~foo/bar/tree/fix%2Fbug/lib/index.js')
-  t.equal(
+  assert.strictEqual(extra.hash(), '#fix/bug')
+  assert.strictEqual(extra.https(), 'https://git.sr.ht/~foo/bar.git#fix/bug')
+  assert.strictEqual(extra.shortcut(), 'sourcehut:~foo/bar#fix/bug')
+  assert.strictEqual(extra.ssh(), 'git@git.sr.ht:~foo/bar.git#fix/bug')
+  assert.strictEqual(extra.sshurl(), 'git+ssh://git@git.sr.ht/~foo/bar.git#fix/bug')
+  assert.strictEqual(extra.browse(), 'https://git.sr.ht/~foo/bar/tree/fix%2Fbug')
+  assert.strictEqual(extra.browse('/lib/index.js'), 'https://git.sr.ht/~foo/bar/tree/fix%2Fbug/lib/index.js')
+  assert.strictEqual(
     extra.browse('/lib/index.js', 'L200'),
     'https://git.sr.ht/~foo/bar/tree/fix%2Fbug/lib/index.js#l200'
   )
-  t.equal(extra.docs(), 'https://git.sr.ht/~foo/bar/tree/fix%2Fbug#readme')
-  t.equal(extra.file(), 'https://git.sr.ht/~foo/bar/blob/fix%2Fbug/')
-  t.equal(extra.file('/lib/index.js'), 'https://git.sr.ht/~foo/bar/blob/fix%2Fbug/lib/index.js')
+  assert.strictEqual(extra.docs(), 'https://git.sr.ht/~foo/bar/tree/fix%2Fbug#readme')
+  assert.strictEqual(extra.file(), 'https://git.sr.ht/~foo/bar/blob/fix%2Fbug/')
+  assert.strictEqual(extra.file('/lib/index.js'), 'https://git.sr.ht/~foo/bar/blob/fix%2Fbug/lib/index.js')
 
-  t.equal(
+  assert.strictEqual(
     extra.sshurl({ noCommittish: true }),
     'git+ssh://git@git.sr.ht/~foo/bar.git',
     'noCommittish drops committish from urls'
   )
-  t.equal(
+  assert.strictEqual(
     extra.sshurl({ noGitPlus: true }),
     'ssh://git@git.sr.ht/~foo/bar.git#fix/bug',
     'noGitPlus drops git+ prefix from urls'
   )
-
-  t.end()
 })
