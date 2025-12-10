@@ -21,14 +21,16 @@
   "homepage": "https://github.com/npm/hosted-git-info",
   "scripts": {
     "posttest": "npm run lint",
-    "snap": "tap",
-    "test": "tap",
+    "snap": "node --test --test-update-snapshots './test/**/*.js'",
+    "test": "node --test './test/**/*.js'",
     "test:coverage": "tap --coverage-report=html",
     "lint": "npm run eslint",
     "postlint": "template-oss-check",
     "lintfix": "npm run eslint -- --fix",
     "template-oss-apply": "template-oss-apply --force",
-    "eslint": "eslint \"**/*.{js,cjs,ts,mjs,jsx,tsx}\""
+    "eslint": "eslint \"**/*.{js,cjs,ts,mjs,jsx,tsx}\"",
+    "test:node20": "node --test test",
+    "test:cover": "node --test --experimental-test-coverage --test-timeout=3000 --test-coverage-lines=100 --test-coverage-functions=100 --test-coverage-branches=100 './test/**/*.js'"
   },
   "dependencies": {
     "lru-cache": "^11.1.0"
@@ -45,17 +47,11 @@
   "engines": {
     "node": "^20.17.0 || >=22.9.0"
   },
-  "tap": {
-    "color": 1,
-    "coverage": true,
-    "nyc-arg": [
-      "--exclude",
-      "tap-snapshots/**"
-    ]
-  },
   "templateOSS": {
     "//@npmcli/template-oss": "This file is partially managed by @npmcli/template-oss. Edits may be overwritten.",
     "version": "4.28.1",
-    "publish": "true"
+    "publish": "true",
+    "testRunner": "node:test",
+    "latestCiVersion": 24
   }
 }
