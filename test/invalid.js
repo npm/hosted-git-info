@@ -1,5 +1,6 @@
+const { test } = require('node:test')
+const assert = require('node:assert')
 const HostedGit = require('..')
-const t = require('tap')
 
 // each of these urls should return `undefined`
 // none should throw
@@ -15,9 +16,8 @@ const urls = [
   undefined,
 ]
 
-t.test('invalid results parse to undefined', t => {
-  t.plan(urls.length)
+test('invalid results parse to undefined', () => {
   for (const url of urls) {
-    t.equal(HostedGit.fromUrl(url), undefined, `${url} returns undefined`)
+    assert.strictEqual(HostedGit.fromUrl(url), undefined, `${url} returns undefined`)
   }
 })

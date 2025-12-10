@@ -1,7 +1,15 @@
 /* eslint-disable max-len */
 'use strict'
+const { test } = require('node:test')
+const assert = require('node:assert')
 const HostedGit = require('..')
-const t = require('tap')
+
+// Helper function to assert actual object contains all expected properties
+const assertHasStrict = (actual, expected, message) => {
+  for (const [key, value] of Object.entries(expected)) {
+    assert.strictEqual(actual[key], value, `${message} (${key})`)
+  }
+}
 
 const invalid = [
   // gitlab urls can contain a /-/ segment, make sure we ignore those
@@ -248,85 +256,80 @@ const valid = {
   'https://:password@gitlab.com/foo/bar/baz.git#branch': { ...subgroup, default: 'https', auth: ':password', committish: 'branch' },
 }
 
-t.test('valid urls parse properly', t => {
-  t.plan(Object.keys(valid).length)
+test('valid urls parse properly', () => {
   for (const [url, result] of Object.entries(valid)) {
-    t.hasStrict(HostedGit.fromUrl(url), result, `${url} parses`)
+    const parsed = HostedGit.fromUrl(url)
+    assertHasStrict(parsed, result, `${url} parses`)
   }
 })
 
-t.test('invalid urls return undefined', t => {
-  t.plan(invalid.length)
+test('invalid urls return undefined', () => {
   for (const url of invalid) {
-    t.equal(HostedGit.fromUrl(url), undefined, `${url} returns undefined`)
+    assert.strictEqual(HostedGit.fromUrl(url), undefined, `${url} returns undefined`)
   }
 })
 
-t.test('toString respects defaults', t => {
+test('toString respects defaults', () => {
   const sshurl = HostedGit.fromUrl('git+ssh://gitlab.com/foo/bar')
-  t.equal(sshurl.default, 'sshurl', 'got the right default')
-  t.equal(sshurl.toString(), sshurl.sshurl(), 'toString calls sshurl')
+  assert.strictEqual(sshurl.default, 'sshurl', 'got the right default')
+  assert.strictEqual(sshurl.toString(), sshurl.sshurl(), 'toString calls sshurl')
 
   const https = HostedGit.fromUrl('https://gitlab.com/foo/bar')
-  t.equal(https.default, 'https', 'got the right default')
-  t.equal(https.toString(), https.https(), 'toString calls https')
+  assert.strictEqual(https.default, 'https', 'got the right default')
+  assert.strictEqual(https.toString(), https.https(), 'toString calls https')
 
   const shortcut = HostedGit.fromUrl('gitlab:foo/bar')
-  t.equal(shortcut.default, 'shortcut', 'got the right default')
-  t.equal(shortcut.toString(), shortcut.shortcut(), 'toString calls shortcut')
-
-  t.end()
+  assert.strictEqual(shortcut.default, 'shortcut', 'got the right default')
+  assert.strictEqual(shortcut.toString(), shortcut.shortcut(), 'toString calls shortcut')
 })
 
-t.test('string methods populate correctly', t => {
+test('string methods populate correctly', () => {
   const parsed = HostedGit.fromUrl('git+ssh://gitlab.com/foo/bar')
-  t.equal(parsed.getDefaultRepresentation(), parsed.default)
-  t.equal(parsed.hash(), '', 'hash() returns empty string when committish is unset')
-  t.equal(parsed.ssh(), 'git@gitlab.com:foo/bar.git')
-  t.equal(parsed.sshurl(), 'git+ssh://git@gitlab.com/foo/bar.git')
-  t.equal(parsed.edit(), 'https://gitlab.com/foo/bar')
-  t.equal(parsed.edit('/lib/index.js'), 'https://gitlab.com/foo/bar/-/edit/HEAD/lib/index.js')
-  t.equal(parsed.browse(), 'https://gitlab.com/foo/bar')
-  t.equal(parsed.browse('/lib/index.js'), 'https://gitlab.com/foo/bar/tree/HEAD/lib/index.js')
-  t.equal(parsed.browse('/lib/index.js', 'L100'), 'https://gitlab.com/foo/bar/tree/HEAD/lib/index.js#l100')
-  t.equal(parsed.docs(), 'https://gitlab.com/foo/bar#readme')
-  t.equal(parsed.https(), 'git+https://gitlab.com/foo/bar.git')
-  t.equal(parsed.shortcut(), 'gitlab:foo/bar')
-  t.equal(parsed.path(), 'foo/bar')
-  t.equal(parsed.tarball(), 'https://gitlab.com/foo/bar/repository/archive.tar.gz?ref=HEAD')
-  t.equal(parsed.file(), 'https://gitlab.com/foo/bar/raw/HEAD/')
-  t.equal(parsed.file('/lib/index.js'), 'https://gitlab.com/foo/bar/raw/HEAD/lib/index.js')
-  t.equal(parsed.bugs(), 'https://gitlab.com/foo/bar/issues')
+  assert.strictEqual(parsed.getDefaultRepresentation(), parsed.default)
+  assert.strictEqual(parsed.hash(), '', 'hash() returns empty string when committish is unset')
+  assert.strictEqual(parsed.ssh(), 'git@gitlab.com:foo/bar.git')
+  assert.strictEqual(parsed.sshurl(), 'git+ssh://git@gitlab.com/foo/bar.git')
+  assert.strictEqual(parsed.edit(), 'https://gitlab.com/foo/bar')
+  assert.strictEqual(parsed.edit('/lib/index.js'), 'https://gitlab.com/foo/bar/-/edit/HEAD/lib/index.js')
+  assert.strictEqual(parsed.browse(), 'https://gitlab.com/foo/bar')
+  assert.strictEqual(parsed.browse('/lib/index.js'), 'https://gitlab.com/foo/bar/tree/HEAD/lib/index.js')
+  assert.strictEqual(parsed.browse('/lib/index.js', 'L100'), 'https://gitlab.com/foo/bar/tree/HEAD/lib/index.js#l100')
+  assert.strictEqual(parsed.docs(), 'https://gitlab.com/foo/bar#readme')
+  assert.strictEqual(parsed.https(), 'git+https://gitlab.com/foo/bar.git')
+  assert.strictEqual(parsed.shortcut(), 'gitlab:foo/bar')
+  assert.strictEqual(parsed.path(), 'foo/bar')
+  assert.strictEqual(parsed.tarball(), 'https://gitlab.com/foo/bar/repository/archive.tar.gz?ref=HEAD')
+  assert.strictEqual(parsed.file(), 'https://gitlab.com/foo/bar/raw/HEAD/')
+  assert.strictEqual(parsed.file('/lib/index.js'), 'https://gitlab.com/foo/bar/raw/HEAD/lib/index.js')
+  assert.strictEqual(parsed.bugs(), 'https://gitlab.com/foo/bar/issues')
 
-  t.same(parsed.git(), null, 'git() returns null')
+  assert.deepStrictEqual(parsed.git(), null, 'git() returns null')
 
-  t.equal(parsed.docs({ committish: 'fix/bug' }), 'https://gitlab.com/foo/bar/tree/fix%2Fbug#readme', 'allows overriding options')
+  assert.strictEqual(parsed.docs({ committish: 'fix/bug' }), 'https://gitlab.com/foo/bar/tree/fix%2Fbug#readme', 'allows overriding options')
 
   const extra = HostedGit.fromUrl('https://user@gitlab.com/foo/bar#fix/bug')
-  t.equal(extra.hash(), '#fix/bug')
-  t.equal(extra.https(), 'git+https://user@gitlab.com/foo/bar.git#fix/bug')
-  t.equal(extra.shortcut(), 'gitlab:foo/bar#fix/bug')
-  t.equal(extra.ssh(), 'git@gitlab.com:foo/bar.git#fix/bug')
-  t.equal(extra.sshurl(), 'git+ssh://git@gitlab.com/foo/bar.git#fix/bug')
-  t.equal(extra.browse(), 'https://gitlab.com/foo/bar/tree/fix%2Fbug')
-  t.equal(extra.browse('/lib/index.js'), 'https://gitlab.com/foo/bar/tree/fix%2Fbug/lib/index.js')
-  t.equal(extra.browse('/lib/index.js', 'L200'), 'https://gitlab.com/foo/bar/tree/fix%2Fbug/lib/index.js#l200')
-  t.equal(extra.docs(), 'https://gitlab.com/foo/bar/tree/fix%2Fbug#readme')
-  t.equal(extra.file(), 'https://gitlab.com/foo/bar/raw/fix%2Fbug/')
-  t.equal(extra.file('/lib/index.js'), 'https://gitlab.com/foo/bar/raw/fix%2Fbug/lib/index.js')
-  t.equal(extra.tarball(), 'https://gitlab.com/foo/bar/repository/archive.tar.gz?ref=fix%2Fbug')
+  assert.strictEqual(extra.hash(), '#fix/bug')
+  assert.strictEqual(extra.https(), 'git+https://user@gitlab.com/foo/bar.git#fix/bug')
+  assert.strictEqual(extra.shortcut(), 'gitlab:foo/bar#fix/bug')
+  assert.strictEqual(extra.ssh(), 'git@gitlab.com:foo/bar.git#fix/bug')
+  assert.strictEqual(extra.sshurl(), 'git+ssh://git@gitlab.com/foo/bar.git#fix/bug')
+  assert.strictEqual(extra.browse(), 'https://gitlab.com/foo/bar/tree/fix%2Fbug')
+  assert.strictEqual(extra.browse('/lib/index.js'), 'https://gitlab.com/foo/bar/tree/fix%2Fbug/lib/index.js')
+  assert.strictEqual(extra.browse('/lib/index.js', 'L200'), 'https://gitlab.com/foo/bar/tree/fix%2Fbug/lib/index.js#l200')
+  assert.strictEqual(extra.docs(), 'https://gitlab.com/foo/bar/tree/fix%2Fbug#readme')
+  assert.strictEqual(extra.file(), 'https://gitlab.com/foo/bar/raw/fix%2Fbug/')
+  assert.strictEqual(extra.file('/lib/index.js'), 'https://gitlab.com/foo/bar/raw/fix%2Fbug/lib/index.js')
+  assert.strictEqual(extra.tarball(), 'https://gitlab.com/foo/bar/repository/archive.tar.gz?ref=fix%2Fbug')
 
-  t.equal(extra.sshurl({ noCommittish: true }), 'git+ssh://git@gitlab.com/foo/bar.git', 'noCommittish drops committish from urls')
-  t.equal(extra.sshurl({ noGitPlus: true }), 'ssh://git@gitlab.com/foo/bar.git#fix/bug', 'noGitPlus drops git+ prefix from urls')
-
-  t.end()
+  assert.strictEqual(extra.sshurl({ noCommittish: true }), 'git+ssh://git@gitlab.com/foo/bar.git', 'noCommittish drops committish from urls')
+  assert.strictEqual(extra.sshurl({ noGitPlus: true }), 'ssh://git@gitlab.com/foo/bar.git#fix/bug', 'noGitPlus drops git+ prefix from urls')
 })
 
-t.test('from manifest', t => {
-  t.equal(HostedGit.fromManifest(), undefined, 'no manifest returns undefined')
-  t.equal(HostedGit.fromManifest(), undefined, 'no manifest returns undefined')
-  t.equal(HostedGit.fromManifest(false), undefined, 'false manifest returns undefined')
-  t.equal(HostedGit.fromManifest(() => {}), undefined, 'function manifest returns undefined')
+test('from manifest', () => {
+  assert.strictEqual(HostedGit.fromManifest(), undefined, 'no manifest returns undefined')
+  assert.strictEqual(HostedGit.fromManifest(), undefined, 'no manifest returns undefined')
+  assert.strictEqual(HostedGit.fromManifest(false), undefined, 'false manifest returns undefined')
+  assert.strictEqual(HostedGit.fromManifest(() => {}), undefined, 'function manifest returns undefined')
 
   const unknownHostRepo = {
     name: 'foo',
@@ -334,7 +337,7 @@ t.test('from manifest', t => {
       url: 'https://nope.com',
     },
   }
-  t.same(HostedGit.fromManifest(unknownHostRepo), 'https://nope.com/')
+  assert.deepStrictEqual(HostedGit.fromManifest(unknownHostRepo), 'https://nope.com/')
 
   const insecureUnknownHostRepo = {
     name: 'foo',
@@ -342,7 +345,7 @@ t.test('from manifest', t => {
       url: 'http://nope.com',
     },
   }
-  t.same(HostedGit.fromManifest(insecureUnknownHostRepo), 'https://nope.com/')
+  assert.deepStrictEqual(HostedGit.fromManifest(insecureUnknownHostRepo), 'https://nope.com/')
 
   const insecureGitUnknownHostRepo = {
     name: 'foo',
@@ -350,7 +353,7 @@ t.test('from manifest', t => {
       url: 'git+http://nope.com',
     },
   }
-  t.same(HostedGit.fromManifest(insecureGitUnknownHostRepo), 'http://nope.com')
+  assert.deepStrictEqual(HostedGit.fromManifest(insecureGitUnknownHostRepo), 'http://nope.com')
 
   const badRepo = {
     name: 'foo',
@@ -358,7 +361,7 @@ t.test('from manifest', t => {
       url: '#',
     },
   }
-  t.equal(HostedGit.fromManifest(badRepo), null)
+  assert.strictEqual(HostedGit.fromManifest(badRepo), null)
 
   const manifest = {
     name: 'foo',
@@ -369,7 +372,7 @@ t.test('from manifest', t => {
   }
 
   const parsed = HostedGit.fromManifest(manifest)
-  t.same(parsed.browse(), 'https://gitlab.com/foo/bar')
+  assert.deepStrictEqual(parsed.browse(), 'https://gitlab.com/foo/bar')
 
   const monorepo = {
     name: 'clowncar',
@@ -381,20 +384,18 @@ t.test('from manifest', t => {
   }
 
   const honk = HostedGit.fromManifest(monorepo)
-  t.same(honk.browse(monorepo.repository.directory), 'https://gitlab.com/foo/bar/tree/HEAD/packages/foo')
+  assert.deepStrictEqual(honk.browse(monorepo.repository.directory), 'https://gitlab.com/foo/bar/tree/HEAD/packages/foo')
 
   const stringRepo = {
     name: 'foo',
     repository: 'git+ssh://gitlab.com/foo/bar.git',
   }
   const stringRepoParsed = HostedGit.fromManifest(stringRepo)
-  t.same(stringRepoParsed.browse(), 'https://gitlab.com/foo/bar')
+  assert.deepStrictEqual(stringRepoParsed.browse(), 'https://gitlab.com/foo/bar')
 
   const nonStringRepo = {
     name: 'foo',
     repository: 42,
   }
-  t.throws(() => HostedGit.fromManifest(nonStringRepo))
-
-  t.end()
+  assert.throws(() => HostedGit.fromManifest(nonStringRepo))
 })
