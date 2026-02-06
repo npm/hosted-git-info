@@ -31,161 +31,162 @@ const invalid = [
 ]
 
 const defaults = { type: 'github', user: 'foo', project: 'bar' }
-// This is a valid git branch name that contains other occurences of the characters we check
-// for to determine the committish in order to test that we parse those correctly
-const committishDefaults = { committish: 'lk/br@nch.t#st:^1.0.0-pre.4' }
+const sha1 = '0d7bd85a85fa2571fa532d2fc842ed099b236ad2'
+const sha256 = '8e3a9b3579ab330238c06b761e7f1b5dc5b4ac6e5a96da4dd2fb3b7411009df8'
+// This is a valid git branch name that contains other occurences of the characters we check for to determine the committish in order to test that we parse those correctly
+const committish = 'lk/br@nch.t#st:^1.0.0-pre.4'
 const valid = {
   // extreme shorthand
   //
   // NOTE these do not accept auth at all
   'foo/bar': { ...defaults, default: 'shortcut' },
-  [`foo/bar#${committishDefaults.committish}`]: { ...defaults, default: 'shortcut', ...committishDefaults },
+  [`foo/bar#${committish}`]: { ...defaults, default: 'shortcut', committish },
 
   'foo/bar.git': { ...defaults, default: 'shortcut' },
-  [`foo/bar.git#${committishDefaults.committish}`]: { ...defaults, default: 'shortcut', ...committishDefaults },
+  [`foo/bar.git#${committish}`]: { ...defaults, default: 'shortcut', committish },
 
   // shortcuts
   //
   // NOTE auth is accepted but ignored
   'github:foo/bar': { ...defaults, default: 'shortcut' },
-  [`github:foo/bar#${committishDefaults.committish}`]: { ...defaults, default: 'shortcut', ...committishDefaults },
+  [`github:foo/bar#${committish}`]: { ...defaults, default: 'shortcut', committish },
   'github:user@foo/bar': { ...defaults, default: 'shortcut', auth: null },
-  [`github:user@foo/bar#${committishDefaults.committish}`]: { ...defaults, default: 'shortcut', auth: null, ...committishDefaults },
+  [`github:user@foo/bar#${committish}`]: { ...defaults, default: 'shortcut', auth: null, committish },
   'github:user:password@foo/bar': { ...defaults, default: 'shortcut', auth: null },
-  [`github:user:password@foo/bar#${committishDefaults.committish}`]: { ...defaults, default: 'shortcut', auth: null, ...committishDefaults },
+  [`github:user:password@foo/bar#${committish}`]: { ...defaults, default: 'shortcut', auth: null, committish },
   'github::password@foo/bar': { ...defaults, default: 'shortcut', auth: null },
-  [`github::password@foo/bar#${committishDefaults.committish}`]: { ...defaults, default: 'shortcut', auth: null, ...committishDefaults },
+  [`github::password@foo/bar#${committish}`]: { ...defaults, default: 'shortcut', auth: null, committish },
 
   'github:foo/bar.git': { ...defaults, default: 'shortcut' },
-  [`github:foo/bar.git#${committishDefaults.committish}`]: { ...defaults, default: 'shortcut', ...committishDefaults },
+  [`github:foo/bar.git#${committish}`]: { ...defaults, default: 'shortcut', committish },
   'github:user@foo/bar.git': { ...defaults, default: 'shortcut', auth: null },
-  [`github:user@foo/bar.git#${committishDefaults.committish}`]: { ...defaults, default: 'shortcut', auth: null, ...committishDefaults },
+  [`github:user@foo/bar.git#${committish}`]: { ...defaults, default: 'shortcut', auth: null, committish },
   'github:user:password@foo/bar.git': { ...defaults, default: 'shortcut', auth: null },
-  [`github:user:password@foo/bar.git#${committishDefaults.committish}`]: { ...defaults, default: 'shortcut', auth: null, ...committishDefaults },
+  [`github:user:password@foo/bar.git#${committish}`]: { ...defaults, default: 'shortcut', auth: null, committish },
   'github::password@foo/bar.git': { ...defaults, default: 'shortcut', auth: null },
-  [`github::password@foo/bar.git#${committishDefaults.committish}`]: { ...defaults, default: 'shortcut', auth: null, ...committishDefaults },
+  [`github::password@foo/bar.git#${committish}`]: { ...defaults, default: 'shortcut', auth: null, committish },
 
   // git urls
   //
   // NOTE auth is accepted and respected
   'git://github.com/foo/bar': { ...defaults, default: 'git' },
-  [`git://github.com/foo/bar#${committishDefaults.committish}`]: { ...defaults, default: 'git', ...committishDefaults },
+  [`git://github.com/foo/bar#${committish}`]: { ...defaults, default: 'git', committish },
   'git://user@github.com/foo/bar': { ...defaults, default: 'git', auth: 'user' },
-  [`git://user@github.com/foo/bar#${committishDefaults.committish}`]: { ...defaults, default: 'git', auth: 'user', ...committishDefaults },
+  [`git://user@github.com/foo/bar#${committish}`]: { ...defaults, default: 'git', auth: 'user', committish },
   'git://user:password@github.com/foo/bar': { ...defaults, default: 'git', auth: 'user:password' },
-  [`git://user:password@github.com/foo/bar#${committishDefaults.committish}`]: { ...defaults, default: 'git', auth: 'user:password', ...committishDefaults },
+  [`git://user:password@github.com/foo/bar#${committish}`]: { ...defaults, default: 'git', auth: 'user:password', committish },
   'git://:password@github.com/foo/bar': { ...defaults, default: 'git', auth: ':password' },
-  [`git://:password@github.com/foo/bar#${committishDefaults.committish}`]: { ...defaults, default: 'git', auth: ':password', ...committishDefaults },
+  [`git://:password@github.com/foo/bar#${committish}`]: { ...defaults, default: 'git', auth: ':password', committish },
 
   'git://github.com/foo/bar.git': { ...defaults, default: 'git' },
-  [`git://github.com/foo/bar.git#${committishDefaults.committish}`]: { ...defaults, default: 'git', ...committishDefaults },
+  [`git://github.com/foo/bar.git#${committish}`]: { ...defaults, default: 'git', committish },
   'git://git@github.com/foo/bar.git': { ...defaults, default: 'git', auth: 'git' },
-  [`git://git@github.com/foo/bar.git#${committishDefaults.committish}`]: { ...defaults, default: 'git', auth: 'git', ...committishDefaults },
+  [`git://git@github.com/foo/bar.git#${committish}`]: { ...defaults, default: 'git', auth: 'git', committish },
   'git://user:password@github.com/foo/bar.git': { ...defaults, default: 'git', auth: 'user:password' },
-  [`git://user:password@github.com/foo/bar.git#${committishDefaults.committish}`]: { ...defaults, default: 'git', auth: 'user:password', ...committishDefaults },
+  [`git://user:password@github.com/foo/bar.git#${committish}`]: { ...defaults, default: 'git', auth: 'user:password', committish },
   'git://:password@github.com/foo/bar.git': { ...defaults, default: 'git', auth: ':password' },
-  [`git://:password@github.com/foo/bar.git#${committishDefaults.committish}`]: { ...defaults, default: 'git', auth: ':password', ...committishDefaults },
+  [`git://:password@github.com/foo/bar.git#${committish}`]: { ...defaults, default: 'git', auth: ':password', committish },
 
   // no-protocol git+ssh
   //
   // NOTE auth is _required_ (see invalid list) but ignored
   'user@github.com:foo/bar': { ...defaults, default: 'sshurl', auth: null },
-  [`user@github.com:foo/bar#${committishDefaults.committish}`]: { ...defaults, default: 'sshurl', auth: null, ...committishDefaults },
+  [`user@github.com:foo/bar#${committish}`]: { ...defaults, default: 'sshurl', auth: null, committish },
   'user:password@github.com:foo/bar': { ...defaults, default: 'sshurl', auth: null },
-  [`user:password@github.com:foo/bar#${committishDefaults.committish}`]: { ...defaults, default: 'sshurl', auth: null, ...committishDefaults },
+  [`user:password@github.com:foo/bar#${committish}`]: { ...defaults, default: 'sshurl', auth: null, committish },
   ':password@github.com:foo/bar': { ...defaults, default: 'sshurl', auth: null },
-  [`:password@github.com:foo/bar#${committishDefaults.committish}`]: { ...defaults, default: 'sshurl', auth: null, ...committishDefaults },
+  [`:password@github.com:foo/bar#${committish}`]: { ...defaults, default: 'sshurl', auth: null, committish },
 
   'user@github.com:foo/bar.git': { ...defaults, default: 'sshurl', auth: null },
-  [`user@github.com:foo/bar.git#${committishDefaults.committish}`]: { ...defaults, default: 'sshurl', auth: null, ...committishDefaults },
+  [`user@github.com:foo/bar.git#${committish}`]: { ...defaults, default: 'sshurl', auth: null, committish },
   'user:password@github.com:foo/bar.git': { ...defaults, default: 'sshurl', auth: null },
-  [`user:password@github.com:foo/bar.git#${committishDefaults.committish}`]: { ...defaults, default: 'sshurl', auth: null, ...committishDefaults },
+  [`user:password@github.com:foo/bar.git#${committish}`]: { ...defaults, default: 'sshurl', auth: null, committish },
   ':password@github.com:foo/bar.git': { ...defaults, default: 'sshurl', auth: null },
-  [`:password@github.com:foo/bar.git#${committishDefaults.committish}`]: { ...defaults, default: 'sshurl', auth: null, ...committishDefaults },
+  [`:password@github.com:foo/bar.git#${committish}`]: { ...defaults, default: 'sshurl', auth: null, committish },
 
   // git+ssh urls
   //
   // NOTE auth is accepted but ignored
   'git+ssh://github.com:foo/bar': { ...defaults, default: 'sshurl' },
-  [`git+ssh://github.com:foo/bar#${committishDefaults.committish}`]: { ...defaults, default: 'sshurl', ...committishDefaults },
+  [`git+ssh://github.com:foo/bar#${committish}`]: { ...defaults, default: 'sshurl', committish },
   'git+ssh://user@github.com:foo/bar': { ...defaults, default: 'sshurl', auth: null },
-  [`git+ssh://user@github.com:foo/bar#${committishDefaults.committish}`]: { ...defaults, default: 'sshurl', auth: null, ...committishDefaults },
+  [`git+ssh://user@github.com:foo/bar#${committish}`]: { ...defaults, default: 'sshurl', auth: null, committish },
   'git+ssh://user:password@github.com:foo/bar': { ...defaults, default: 'sshurl', auth: null },
-  [`git+ssh://user:password@github.com:foo/bar#${committishDefaults.committish}`]: { ...defaults, default: 'sshurl', auth: null, ...committishDefaults },
+  [`git+ssh://user:password@github.com:foo/bar#${committish}`]: { ...defaults, default: 'sshurl', auth: null, committish },
   'git+ssh://:password@github.com:foo/bar': { ...defaults, default: 'sshurl', auth: null },
-  [`git+ssh://:password@github.com:foo/bar#${committishDefaults.committish}`]: { ...defaults, default: 'sshurl', auth: null, ...committishDefaults },
+  [`git+ssh://:password@github.com:foo/bar#${committish}`]: { ...defaults, default: 'sshurl', auth: null, committish },
 
   'git+ssh://github.com:foo/bar.git': { ...defaults, default: 'sshurl' },
-  [`git+ssh://github.com:foo/bar.git#${committishDefaults.committish}`]: { ...defaults, default: 'sshurl', ...committishDefaults },
+  [`git+ssh://github.com:foo/bar.git#${committish}`]: { ...defaults, default: 'sshurl', committish },
   'git+ssh://user@github.com:foo/bar.git': { ...defaults, default: 'sshurl', auth: null },
-  [`git+ssh://user@github.com:foo/bar.git#${committishDefaults.committish}`]: { ...defaults, default: 'sshurl', auth: null, ...committishDefaults },
+  [`git+ssh://user@github.com:foo/bar.git#${committish}`]: { ...defaults, default: 'sshurl', auth: null, committish },
   'git+ssh://user:password@github.com:foo/bar.git': { ...defaults, default: 'sshurl', auth: null },
-  [`git+ssh://user:password@github.com:foo/bar.git#${committishDefaults.committish}`]: { ...defaults, default: 'sshurl', auth: null, ...committishDefaults },
+  [`git+ssh://user:password@github.com:foo/bar.git#${committish}`]: { ...defaults, default: 'sshurl', auth: null, committish },
   'git+ssh://:password@github.com:foo/bar.git': { ...defaults, default: 'sshurl', auth: null },
-  [`git+ssh://:password@github.com:foo/bar.git#${committishDefaults.committish}`]: { ...defaults, default: 'sshurl', auth: null, ...committishDefaults },
+  [`git+ssh://:password@github.com:foo/bar.git#${committish}`]: { ...defaults, default: 'sshurl', auth: null, committish },
 
   // ssh urls
   //
   // NOTE auth is accepted but ignored
   'ssh://github.com:foo/bar': { ...defaults, default: 'sshurl' },
-  [`ssh://github.com:foo/bar#${committishDefaults.committish}`]: { ...defaults, default: 'sshurl', ...committishDefaults },
+  [`ssh://github.com:foo/bar#${committish}`]: { ...defaults, default: 'sshurl', committish },
   'ssh://user@github.com:foo/bar': { ...defaults, default: 'sshurl', auth: null },
-  [`ssh://user@github.com:foo/bar#${committishDefaults.committish}`]: { ...defaults, default: 'sshurl', auth: null, ...committishDefaults },
+  [`ssh://user@github.com:foo/bar#${committish}`]: { ...defaults, default: 'sshurl', auth: null, committish },
   'ssh://user:password@github.com:foo/bar': { ...defaults, default: 'sshurl', auth: null },
-  [`ssh://user:password@github.com:foo/bar#${committishDefaults.committish}`]: { ...defaults, default: 'sshurl', auth: null, ...committishDefaults },
+  [`ssh://user:password@github.com:foo/bar#${committish}`]: { ...defaults, default: 'sshurl', auth: null, committish },
   'ssh://:password@github.com:foo/bar': { ...defaults, default: 'sshurl', auth: null },
-  [`ssh://:password@github.com:foo/bar#${committishDefaults.committish}`]: { ...defaults, default: 'sshurl', auth: null, ...committishDefaults },
+  [`ssh://:password@github.com:foo/bar#${committish}`]: { ...defaults, default: 'sshurl', auth: null, committish },
 
   'ssh://github.com:foo/bar.git': { ...defaults, default: 'sshurl' },
-  [`ssh://github.com:foo/bar.git#${committishDefaults.committish}`]: { ...defaults, default: 'sshurl', ...committishDefaults },
+  [`ssh://github.com:foo/bar.git#${committish}`]: { ...defaults, default: 'sshurl', committish },
   'ssh://user@github.com:foo/bar.git': { ...defaults, default: 'sshurl', auth: null },
-  [`ssh://user@github.com:foo/bar.git#${committishDefaults.committish}`]: { ...defaults, default: 'sshurl', auth: null, ...committishDefaults },
+  [`ssh://user@github.com:foo/bar.git#${committish}`]: { ...defaults, default: 'sshurl', auth: null, committish },
   'ssh://user:password@github.com:foo/bar.git': { ...defaults, default: 'sshurl', auth: null },
-  [`ssh://user:password@github.com:foo/bar.git#${committishDefaults.committish}`]: { ...defaults, default: 'sshurl', auth: null, ...committishDefaults },
+  [`ssh://user:password@github.com:foo/bar.git#${committish}`]: { ...defaults, default: 'sshurl', auth: null, committish },
   'ssh://:password@github.com:foo/bar.git': { ...defaults, default: 'sshurl', auth: null },
-  [`ssh://:password@github.com:foo/bar.git#${committishDefaults.committish}`]: { ...defaults, default: 'sshurl', auth: null, ...committishDefaults },
+  [`ssh://:password@github.com:foo/bar.git#${committish}`]: { ...defaults, default: 'sshurl', auth: null, committish },
 
   // git+https urls
   //
   // NOTE auth is accepted and respected
   'git+https://github.com/foo/bar': { ...defaults, default: 'https' },
-  [`git+https://github.com/foo/bar#${committishDefaults.committish}`]: { ...defaults, default: 'https', ...committishDefaults },
+  [`git+https://github.com/foo/bar#${committish}`]: { ...defaults, default: 'https', committish },
   'git+https://user@github.com/foo/bar': { ...defaults, default: 'https', auth: 'user' },
-  [`git+https://user@github.com/foo/bar#${committishDefaults.committish}`]: { ...defaults, default: 'https', auth: 'user', ...committishDefaults },
+  [`git+https://user@github.com/foo/bar#${committish}`]: { ...defaults, default: 'https', auth: 'user', committish },
   'git+https://user:password@github.com/foo/bar': { ...defaults, default: 'https', auth: 'user:password' },
-  [`git+https://user:password@github.com/foo/bar#${committishDefaults.committish}`]: { ...defaults, default: 'https', auth: 'user:password', ...committishDefaults },
+  [`git+https://user:password@github.com/foo/bar#${committish}`]: { ...defaults, default: 'https', auth: 'user:password', committish },
   'git+https://:password@github.com/foo/bar': { ...defaults, default: 'https', auth: ':password' },
-  [`git+https://:password@github.com/foo/bar#${committishDefaults.committish}`]: { ...defaults, default: 'https', auth: ':password', ...committishDefaults },
+  [`git+https://:password@github.com/foo/bar#${committish}`]: { ...defaults, default: 'https', auth: ':password', committish },
 
   'git+https://github.com/foo/bar.git': { ...defaults, default: 'https' },
-  [`git+https://github.com/foo/bar.git#${committishDefaults.committish}`]: { ...defaults, default: 'https', ...committishDefaults },
+  [`git+https://github.com/foo/bar.git#${committish}`]: { ...defaults, default: 'https', committish },
   'git+https://user@github.com/foo/bar.git': { ...defaults, default: 'https', auth: 'user' },
-  [`git+https://user@github.com/foo/bar.git#${committishDefaults.committish}`]: { ...defaults, default: 'https', auth: 'user', ...committishDefaults },
+  [`git+https://user@github.com/foo/bar.git#${committish}`]: { ...defaults, default: 'https', auth: 'user', committish },
   'git+https://user:password@github.com/foo/bar.git': { ...defaults, default: 'https', auth: 'user:password' },
-  [`git+https://user:password@github.com/foo/bar.git#${committishDefaults.committish}`]: { ...defaults, default: 'https', auth: 'user:password', ...committishDefaults },
+  [`git+https://user:password@github.com/foo/bar.git#${committish}`]: { ...defaults, default: 'https', auth: 'user:password', committish },
   'git+https://:password@github.com/foo/bar.git': { ...defaults, default: 'https', auth: ':password' },
-  [`git+https://:password@github.com/foo/bar.git#${committishDefaults.committish}`]: { ...defaults, default: 'https', auth: ':password', ...committishDefaults },
+  [`git+https://:password@github.com/foo/bar.git#${committish}`]: { ...defaults, default: 'https', auth: ':password', committish },
 
   // https urls
   //
   // NOTE auth is accepted and respected
   'https://github.com/foo/bar': { ...defaults, default: 'https' },
-  [`https://github.com/foo/bar#${committishDefaults.committish}`]: { ...defaults, default: 'https', ...committishDefaults },
+  [`https://github.com/foo/bar#${committish}`]: { ...defaults, default: 'https', committish },
   'https://user@github.com/foo/bar': { ...defaults, default: 'https', auth: 'user' },
-  [`https://user@github.com/foo/bar#${committishDefaults.committish}`]: { ...defaults, default: 'https', auth: 'user', ...committishDefaults },
+  [`https://user@github.com/foo/bar#${committish}`]: { ...defaults, default: 'https', auth: 'user', committish },
   'https://user:password@github.com/foo/bar': { ...defaults, default: 'https', auth: 'user:password' },
-  [`https://user:password@github.com/foo/bar#${committishDefaults.committish}`]: { ...defaults, default: 'https', auth: 'user:password', ...committishDefaults },
+  [`https://user:password@github.com/foo/bar#${committish}`]: { ...defaults, default: 'https', auth: 'user:password', committish },
   'https://:password@github.com/foo/bar': { ...defaults, default: 'https', auth: ':password' },
-  [`https://:password@github.com/foo/bar#${committishDefaults.committish}`]: { ...defaults, default: 'https', auth: ':password', ...committishDefaults },
+  [`https://:password@github.com/foo/bar#${committish}`]: { ...defaults, default: 'https', auth: ':password', committish },
 
   'https://github.com/foo/bar.git': { ...defaults, default: 'https' },
-  [`https://github.com/foo/bar.git#${committishDefaults.committish}`]: { ...defaults, default: 'https', ...committishDefaults },
+  [`https://github.com/foo/bar.git#${committish}`]: { ...defaults, default: 'https', committish },
   'https://user@github.com/foo/bar.git': { ...defaults, default: 'https', auth: 'user' },
-  [`https://user@github.com/foo/bar.git#${committishDefaults.committish}`]: { ...defaults, default: 'https', auth: 'user', ...committishDefaults },
+  [`https://user@github.com/foo/bar.git#${committish}`]: { ...defaults, default: 'https', auth: 'user', committish },
   'https://user:password@github.com/foo/bar.git': { ...defaults, default: 'https', auth: 'user:password' },
-  [`https://user:password@github.com/foo/bar.git#${committishDefaults.committish}`]: { ...defaults, default: 'https', auth: 'user:password', ...committishDefaults },
+  [`https://user:password@github.com/foo/bar.git#${committish}`]: { ...defaults, default: 'https', auth: 'user:password', committish },
   'https://:password@github.com/foo/bar.git': { ...defaults, default: 'https', auth: ':password' },
-  [`https://:password@github.com/foo/bar.git#${committishDefaults.committish}`]: { ...defaults, default: 'https', auth: ':password', ...committishDefaults },
+  [`https://:password@github.com/foo/bar.git#${committish}`]: { ...defaults, default: 'https', auth: ':password', committish },
 
   // inputs that are not quite proper but we accept anyway
   'https://www.github.com/foo/bar': { ...defaults, default: 'https' },
@@ -193,6 +194,10 @@ const valid = {
   'foo/bar#branch:with:colons': { ...defaults, default: 'shortcut', committish: 'branch:with:colons' },
   'https://github.com/foo/bar/tree/branch': { ...defaults, default: 'https', committish: 'branch' },
   'user..blerg--/..foo-js# . . . . . some . tags / / /': { ...defaults, default: 'shortcut', user: 'user..blerg--', project: '..foo-js', committish: ' . . . . . some . tags / / /' },
+
+  // full committish lengths
+  [`https://github.com/foo/bar#${sha1}`]: { ...defaults, default: 'https', committish: sha1 },
+  [`https://github.com/foo/bar#${sha256}`]: { ...defaults, default: 'https', committish: sha256 },
 }
 
 test('valid urls parse properly', () => {
