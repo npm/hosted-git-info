@@ -105,7 +105,7 @@ test('string methods populate correctly', () => {
     'https://git.sr.ht/~foo/bar/tree/HEAD/lib/index.js#l100'
   )
   assert.strictEqual(parsed.docs(), 'https://git.sr.ht/~foo/bar#readme')
-  assert.strictEqual(parsed.https(), 'https://git.sr.ht/~foo/bar.git')
+  assert.strictEqual(parsed.https(), 'https://git.sr.ht/~foo/bar')
   assert.strictEqual(parsed.shortcut(), 'sourcehut:~foo/bar')
   assert.strictEqual(parsed.path(), '~foo/bar')
   assert.strictEqual(parsed.tarball(), 'https://git.sr.ht/~foo/bar/archive/HEAD.tar.gz')
@@ -123,7 +123,7 @@ test('string methods populate correctly', () => {
 
   const extra = HostedGit.fromUrl('https://@git.sr.ht/~foo/bar#fix/bug')
   assert.strictEqual(extra.hash(), '#fix/bug')
-  assert.strictEqual(extra.https(), 'https://git.sr.ht/~foo/bar.git#fix/bug')
+  assert.strictEqual(extra.https(), 'https://git.sr.ht/~foo/bar#fix/bug')
   assert.strictEqual(extra.shortcut(), 'sourcehut:~foo/bar#fix/bug')
   assert.strictEqual(extra.ssh(), 'git@git.sr.ht:~foo/bar.git#fix/bug')
   assert.strictEqual(extra.sshurl(), 'git+ssh://git@git.sr.ht/~foo/bar.git#fix/bug')
