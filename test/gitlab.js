@@ -17,8 +17,8 @@ const invalid = [
   // missing project
   'https://gitlab.com/foo',
   // tarball, this should not parse so that it can be used for pacote's remote fetcher
-  'https://gitlab.com/foo/bar/repository/archive.tar.gz',
-  'https://gitlab.com/foo/bar/repository/archive.tar.gz?ref=49b393e2ded775f2df36ef2ffcb61b0359c194c9',
+  'https://gitlab.com/api/v4/projects/foo%2Fbar/repository/archive.tar.gz',
+  'https://gitlab.com/api/v4/projects/foo%2Fbar/repository/archive.tar.gz?sha=49b393e2ded775f2df36ef2ffcb61b0359c194c9',
 ]
 
 const defaults = { type: 'gitlab', user: 'foo', project: 'bar' }
@@ -298,7 +298,7 @@ test('string methods populate correctly', () => {
   assert.strictEqual(parsed.https(), 'git+https://gitlab.com/foo/bar.git')
   assert.strictEqual(parsed.shortcut(), 'gitlab:foo/bar')
   assert.strictEqual(parsed.path(), 'foo/bar')
-  assert.strictEqual(parsed.tarball(), 'https://gitlab.com/foo/bar/repository/archive.tar.gz?ref=HEAD')
+  assert.strictEqual(parsed.tarball(), 'https://gitlab.com/api/v4/projects/foo%2Fbar/repository/archive.tar.gz?sha=HEAD')
   assert.strictEqual(parsed.file(), 'https://gitlab.com/foo/bar/raw/HEAD/')
   assert.strictEqual(parsed.file('/lib/index.js'), 'https://gitlab.com/foo/bar/raw/HEAD/lib/index.js')
   assert.strictEqual(parsed.bugs(), 'https://gitlab.com/foo/bar/issues')
@@ -319,7 +319,10 @@ test('string methods populate correctly', () => {
   assert.strictEqual(extra.docs(), 'https://gitlab.com/foo/bar/tree/fix%2Fbug#readme')
   assert.strictEqual(extra.file(), 'https://gitlab.com/foo/bar/raw/fix%2Fbug/')
   assert.strictEqual(extra.file('/lib/index.js'), 'https://gitlab.com/foo/bar/raw/fix%2Fbug/lib/index.js')
-  assert.strictEqual(extra.tarball(), 'https://gitlab.com/foo/bar/repository/archive.tar.gz?ref=fix%2Fbug')
+  assert.strictEqual(extra.tarball(), 'https://gitlab.com/api/v4/projects/foo%2Fbar/repository/archive.tar.gz?sha=fix%2Fbug')
+
+  const subgroupParsed = HostedGit.fromUrl('git+ssh://gitlab.com/foo/bar/baz')
+  assert.strictEqual(subgroupParsed.tarball(), 'https://gitlab.com/api/v4/projects/foo%2Fbar%2Fbaz/repository/archive.tar.gz?sha=HEAD')
 
   assert.strictEqual(extra.sshurl({ noCommittish: true }), 'git+ssh://git@gitlab.com/foo/bar.git', 'noCommittish drops committish from urls')
   assert.strictEqual(extra.sshurl({ noGitPlus: true }), 'ssh://git@gitlab.com/foo/bar.git#fix/bug', 'noGitPlus drops git+ prefix from urls')
