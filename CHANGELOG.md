@@ -1,5 +1,18 @@
 # Changelog
 
+## [9.0.3](https://github.com/npm/hosted-git-info/compare/v9.0.2...v9.0.3) (2026-05-01)
+### Bug Fixes
+* [`ac3c890`](https://github.com/npm/hosted-git-info/commit/ac3c8903fc7e00a55f61e0f50ebc223ccc96f124) [#327](https://github.com/npm/hosted-git-info/pull/327) use GitLab API v4 endpoint for tarball URLs (@304)
+* [`eca53e7`](https://github.com/npm/hosted-git-info/commit/eca53e78fa7fe9f4105222d5811503df685ef28c) [#326](https://github.com/npm/hosted-git-info/pull/326) remove .git suffix from Sourcehut https URLs (#326) (@yetval)
+### Chores
+* [`4c8d2d4`](https://github.com/npm/hosted-git-info/commit/4c8d2d49764481e1e04e00c4ffb4dcc2598b605e) [#329](https://github.com/npm/hosted-git-info/pull/329) template-oss-apply (@owlstronaut)
+* [`c816377`](https://github.com/npm/hosted-git-info/commit/c816377ad982367ab212de32d3215a24cb21f9ba) [#329](https://github.com/npm/hosted-git-info/pull/329) `@npmcli/template-oss@4.30.0` (@owlstronaut)
+* [`4862744`](https://github.com/npm/hosted-git-info/commit/486274464b81ee0c7d133929a2d693a452157788) [#324](https://github.com/npm/hosted-git-info/pull/324) explicit sha-1 and sha-256 git committish tests (#324) (@wraithgar)
+* [`8a1b486`](https://github.com/npm/hosted-git-info/commit/8a1b4862fdc873a34fec08e061690b6886c03b2a) [#322](https://github.com/npm/hosted-git-info/pull/322) remove tap (@owlstronaut)
+* [`e88c758`](https://github.com/npm/hosted-git-info/commit/e88c7580b4ceeb56076342bd9368d62087edf9f1) [#322](https://github.com/npm/hosted-git-info/pull/322) swap from tap to built-in node:test (@owlstronaut)
+* [`d542a55`](https://github.com/npm/hosted-git-info/commit/d542a55a81c9e67afe8cce6b791da040399b4318) [#319](https://github.com/npm/hosted-git-info/pull/319) bump @npmcli/eslint-config from 5.1.0 to 6.0.0 (#319) (@dependabot[bot])
+* [`0cd1a4d`](https://github.com/npm/hosted-git-info/commit/0cd1a4dff0914f1779ecd368562d1ce749ec307c) [#321](https://github.com/npm/hosted-git-info/pull/321) bump @npmcli/template-oss from 4.28.0 to 4.28.1 (#321) (@dependabot[bot], @npm-cli-bot)
+
 ## [9.0.2](https://github.com/npm/hosted-git-info/compare/v9.0.1...v9.0.2) (2025-10-08)
 ### Bug Fixes
 * [`c91490e`](https://github.com/npm/hosted-git-info/commit/c91490e162b3226c09b7337b54649988f741fa9c) [#314](https://github.com/npm/hosted-git-info/pull/314) correctProtocol misparsing protocol (#314) (@markovejnovic)
