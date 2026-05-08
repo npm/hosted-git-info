@@ -1,5 +1,15 @@
 # Changelog
 
+## [10.0.0](https://github.com/npm/hosted-git-info/compare/v9.0.3...v10.0.0) (2026-05-08)
+### ⚠️ BREAKING CHANGES
+* `hosted-git-info` now supports node `^22.22.2 || ^24.15.0 || >=26.0.0`
+* template-oss-apply
+### Features
+* [`12c898d`](https://github.com/npm/hosted-git-info/commit/12c898de6550c1cd7f96d5a2e72d2e0ba3f23bca) [#332](https://github.com/npm/hosted-git-info/pull/332) bump to new node engine range (@owlstronaut)
+* [`f9f3550`](https://github.com/npm/hosted-git-info/commit/f9f3550e07c2e8a1476344329c3eea70b4c3c0d5) [#332](https://github.com/npm/hosted-git-info/pull/332) template-oss-apply (@owlstronaut)
+### Chores
+* [`0feb6fa`](https://github.com/npm/hosted-git-info/commit/0feb6fa27268c86ae0eb0f128715eed549f2168f) [#332](https://github.com/npm/hosted-git-info/pull/332) template-oss-apply (@owlstronaut)
+
 ## [9.0.3](https://github.com/npm/hosted-git-info/compare/v9.0.2...v9.0.3) (2026-05-01)
 ### Bug Fixes
 * [`ac3c890`](https://github.com/npm/hosted-git-info/commit/ac3c8903fc7e00a55f61e0f50ebc223ccc96f124) [#327](https://github.com/npm/hosted-git-info/pull/327) use GitLab API v4 endpoint for tarball URLs (@304)
