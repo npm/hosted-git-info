@@ -1,5 +1,9 @@
 # Changelog
 
+## [10.1.0](https://github.com/npm/hosted-git-info/compare/v10.0.0...v10.1.0) (2026-05-11)
+### Features
+* [`5a2b44d`](https://github.com/npm/hosted-git-info/commit/5a2b44d74f24b43662926909be2f5120746aa80d) [#334](https://github.com/npm/hosted-git-info/pull/334) drop `url` dependency (#334) (@fregante)
+
 ## [10.0.0](https://github.com/npm/hosted-git-info/compare/v9.0.3...v10.0.0) (2026-05-08)
 ### ⚠️ BREAKING CHANGES
 * `hosted-git-info` now supports node `^22.22.2 || ^24.15.0 || >=26.0.0`
