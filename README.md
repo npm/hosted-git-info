@@ -54,7 +54,7 @@ Implications:
 
 ### const info = hostedGitInfo.fromUrl(gitSpecifier[, options])
 
-* *gitSpecifer* is a URL of a git repository or a SCP-style specifier of one.
+* *gitSpecifier* is a URL of a git repository or a SCP-style specifier of one.
 * *options* is an optional object. It can have the following properties:
   * *noCommittish* — If true then committishes won't be included in generated URLs.
   * *noGitPlus* — If true then `git+` won't be prefixed on URLs.
