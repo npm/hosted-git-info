@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.1.1](https://github.com/npm/hosted-git-info/compare/v10.1.0...v10.1.1) (2026-05-18)
+### Bug Fixes
+* [`935947a`](https://github.com/npm/hosted-git-info/commit/935947aba8634eabd16cf9803642d2bdac95c6d7) [#337](https://github.com/npm/hosted-git-info/pull/337) correct typo gitSpecifer -> gitSpecifier in README (Pete Ross)
+### Chores
+* [`7d2d31f`](https://github.com/npm/hosted-git-info/commit/7d2d31ff44115380ca9c08a3cdcd8f4659184115) [#336](https://github.com/npm/hosted-git-info/pull/336) postinstall for dependabot template-oss PR (@npm-cli-bot)
+* [`84401d8`](https://github.com/npm/hosted-git-info/commit/84401d8384ad5606193619f9709909f03c003bed) [#336](https://github.com/npm/hosted-git-info/pull/336) bump @npmcli/template-oss from 5.0.0 to 5.1.0 (@dependabot[bot])
+
 ## [10.1.0](https://github.com/npm/hosted-git-info/compare/v10.0.0...v10.1.0) (2026-05-11)
 ### Features
 * [`5a2b44d`](https://github.com/npm/hosted-git-info/commit/5a2b44d74f24b43662926909be2f5120746aa80d) [#334](https://github.com/npm/hosted-git-info/pull/334) drop `url` dependency (#334) (@fregante)
