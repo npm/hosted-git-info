@@ -134,5 +134,5 @@ SSH connect strings will be normalized into `git+ssh` URLs.
 
 ## Supported hosts
 
-Currently this supports GitHub (including Gists), Bitbucket, GitLab and Sourcehut.
+Currently this supports GitHub (including Gists), Bitbucket, GitLab, Sourcehut and Codeberg.
 Pull requests for additional hosts welcome.
