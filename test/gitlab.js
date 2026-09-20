@@ -16,6 +16,8 @@ const invalid = [
   'https://gitlab.com/foo/-/something',
   // missing project
   'https://gitlab.com/foo',
+  'https://gitlab.com/foo/.git',
+  'https://gitlab.com/foo/bar/',
   // tarball, this should not parse so that it can be used for pacote's remote fetcher
   'https://gitlab.com/api/v4/projects/foo%2Fbar/repository/archive.tar.gz',
   'https://gitlab.com/api/v4/projects/foo%2Fbar/repository/archive.tar.gz?sha=49b393e2ded775f2df36ef2ffcb61b0359c194c9',
@@ -27,7 +29,7 @@ const valid = {
   // shortcuts
   //
   // NOTE auth is accepted but ignored
-  // NOTE subgroups are respected, but the subgroup is treated as the project and the real project is lost
+  // NOTE subgroups are kept on user (foo/bar) with the project as the last segment
   'gitlab:foo/bar': { ...defaults, default: 'shortcut' },
   'gitlab:foo/bar#branch': { ...defaults, default: 'shortcut', committish: 'branch' },
   'gitlab:user@foo/bar': { ...defaults, default: 'shortcut', auth: null },
@@ -98,7 +100,7 @@ const valid = {
   // git+ssh urls
   //
   // NOTE auth is accepted but ignored
-  // NOTE subprojects are accepted, but the subproject is treated as the project and the real project is lost
+  // NOTE subgroups are kept on user (foo/bar) with the project as the last segment
   'git+ssh://gitlab.com:foo/bar': { ...defaults, default: 'sshurl' },
   'git+ssh://gitlab.com:foo/bar#branch': { ...defaults, default: 'sshurl', committish: 'branch' },
   'git+ssh://user@gitlab.com:foo/bar': { ...defaults, default: 'sshurl', auth: null },
@@ -138,7 +140,7 @@ const valid = {
   // ssh urls
   //
   // NOTE auth is accepted but ignored
-  // NOTE subprojects are accepted, but the subproject is treated as the project and the real project is lost
+  // NOTE subgroups are kept on user (foo/bar) with the project as the last segment
   'ssh://gitlab.com:foo/bar': { ...defaults, default: 'sshurl' },
   'ssh://gitlab.com:foo/bar#branch': { ...defaults, default: 'sshurl', committish: 'branch' },
   'ssh://user@gitlab.com:foo/bar': { ...defaults, default: 'sshurl', auth: null },
@@ -178,7 +180,7 @@ const valid = {
   // git+https urls
   //
   // NOTE auth is accepted and respected
-  // NOTE subprojects are accepted, but the subproject is treated as the project and the real project is lost
+  // NOTE subgroups are kept on user (foo/bar) with the project as the last segment
   'git+https://gitlab.com/foo/bar': { ...defaults, default: 'https' },
   'git+https://gitlab.com/foo/bar#branch': { ...defaults, default: 'https', committish: 'branch' },
   'git+https://user@gitlab.com/foo/bar': { ...defaults, default: 'https', auth: 'user' },
@@ -218,7 +220,7 @@ const valid = {
   // https urls
   //
   // NOTE auth is accepted and respected
-  // NOTE subprojects are accepted, but the subproject is treated as the project and the real project is lost
+  // NOTE subgroups are kept on user (foo/bar) with the project as the last segment
   'https://gitlab.com/foo/bar': { ...defaults, default: 'https' },
   'https://gitlab.com/foo/bar#branch': { ...defaults, default: 'https', committish: 'branch' },
   'https://user@gitlab.com/foo/bar': { ...defaults, default: 'https', auth: 'user' },

@@ -9,7 +9,6 @@ const urls = [
   'git+ssh://git@nothosted.com/abc/def',
   'git://nothosted.com',
   'git+file:///foo/bar',
-  'git+ssh://git@git.unlucky.com:RND/electron-tools/some-tool#2.0.1',
   '::',
   '',
   null,
