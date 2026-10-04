@@ -1,7 +1,7 @@
 const { test } = require('node:test')
 const assert = require('node:assert')
 const HostedGit = require('..')
-const { LRUCache } = require('lru-cache')
+const { LRUCache } = require('../lib/lru-cache')
 
 // each of these urls should return `undefined`
 // none should throw
