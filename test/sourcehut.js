@@ -61,6 +61,14 @@ const valid = {
 
   'https://git.sr.ht/~foo/bar.git': { ...defaults, default: 'https' },
   'https://git.sr.ht/~foo/bar.git#branch': { ...defaults, default: 'https', committish: 'branch' },
+
+  // git+https urls
+  'git+https://git.sr.ht/~foo/bar': { ...defaults, default: 'https' },
+  'git+https://git.sr.ht/~foo/bar#branch': { ...defaults, default: 'https', committish: 'branch' },
+
+  // git+https urls (.git)
+  'git+https://git.sr.ht/~foo/bar.git': { ...defaults, default: 'https' },
+  'git+https://git.sr.ht/~foo/bar.git#branch': { ...defaults, default: 'https', committish: 'branch' },
 }
 
 test('valid urls parse properly', () => {
@@ -73,6 +81,17 @@ test('valid urls parse properly', () => {
 test('invalid urls return undefined', () => {
   for (const url of invalid) {
     assert.strictEqual(HostedGit.fromUrl(url), undefined, `${url} returns undefined`)
+  }
+})
+
+test('git+https urls normalize to the same https url as https urls', () => {
+  for (const url of [
+    'git+https://git.sr.ht/~foo/bar',
+    'git+https://git.sr.ht/~foo/bar.git',
+  ]) {
+    const parsed = HostedGit.fromUrl(url)
+    assert.strictEqual(parsed.https(), 'https://git.sr.ht/~foo/bar', `${url} https()`)
+    assert.strictEqual(parsed.toString(), 'https://git.sr.ht/~foo/bar', `${url} toString()`)
   }
 })
 
