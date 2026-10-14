@@ -58,11 +58,23 @@ Implications:
 * *options* is an optional object. It can have the following properties:
   * *noCommittish* — If true then committishes won't be included in generated URLs.
   * *noGitPlus* — If true then `git+` won't be prefixed on URLs.
+  * *directory* — A subdirectory of the repository (eg, a package in a
+    monorepo). If set, `file()` resolves its `path` relative to this directory.
+    A `directory` containing a `..` segment is ignored.
 
 ### const infoOrURL = hostedGitInfo.fromManifest(manifest[, options])
 
 * *manifest* is a package manifest, such as that returned by [`pacote.manifest()`](https://npmjs.com/pacote)
-* *options* is an optional object. It can have the same properties as `fromUrl` above.
+* *options* is an optional object. It can have the same properties as `fromUrl` above, plus:
+  * *useDirectory* — If true, and the manifest's `repository` is an object
+    with a string `directory` field, then that is used as the `directory`
+    option, so `file()` URLs point inside that subdirectory. Defaults to
+    `false`, in which case `repository.directory` is ignored.
+
+For example, given a manifest with
+`"repository": { "url": "git+https://github.com/npm/cli.git", "directory": "workspaces/arborist" }`,
+`hostedGitInfo.fromManifest(manifest, { useDirectory: true }).file("package.json")`
+would return `https://raw.githubusercontent.com/npm/cli/HEAD/workspaces/arborist/package.json`
 
 ## Methods
 
