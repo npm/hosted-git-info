@@ -19,7 +19,7 @@ const info = hostedGitInfo.fromUrl("git@github.com:npm/hosted-git-info.git", opt
 */
 ```
 
-If the URL can't be matched with a git host, `null` will be returned. We
+If the URL can't be matched with a git host, `undefined` will be returned. We
 can match git, ssh and https urls.  Additionally, we can match ssh connect
 strings (`git@github.com:npm/hosted-git-info`) and shortcuts (eg,
 `github:npm/hosted-git-info`).  GitHub specifically, is detected in the case
