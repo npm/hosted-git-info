@@ -170,3 +170,16 @@ test('directory with `..` segments is ignored', () => {
     'https://raw.githubusercontent.com/foo/bar/HEAD/package.json'
   )
 })
+
+test('directory segments are url-encoded', () => {
+  const github = HostedGit.fromUrl('github:foo/bar')
+  assert.strictEqual(
+    github.file('a b.js', { directory: 'my packages/foo#1' }),
+    'https://raw.githubusercontent.com/foo/bar/HEAD/my%20packages/foo%231/a%20b.js'
+  )
+  assert.strictEqual(
+    github.file('a.js', { directory: 'x\uDC00' }),
+    'https://raw.githubusercontent.com/foo/bar/HEAD/x%EF%BF%BD/a.js',
+    'lone surrogates in the directory do not throw'
+  )
+})

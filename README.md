@@ -85,7 +85,11 @@ provided to a method override those provided to the constructor.
 
 Given the path of a file relative to the repository, returns a URL for
 directly fetching it from the githost.  If no committish was set then
-`HEAD` will be used as the default.
+`HEAD` will be used as the default.  Each `/`-separated segment of `path` is
+URL-encoded, so `path` should be a plain (unencoded) file path; an
+already-encoded path will be encoded again (eg, `a%20b` becomes `a%2520b`).
+Characters that are already valid in a URL path, such as the `@` in
+`node_modules/@scope`, are left as-is.
 
 For example `hostedGitInfo.fromUrl("git@github.com:npm/hosted-git-info.git#v1.0.0").file("package.json")`
 would return `https://raw.githubusercontent.com/npm/hosted-git-info/v1.0.0/package.json`
