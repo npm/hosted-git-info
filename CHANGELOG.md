@@ -1,5 +1,15 @@
 # Changelog
 
+## [10.2.0](https://github.com/npm/hosted-git-info/compare/v10.1.1...v10.2.0) (2026-10-30)
+### Features
+* [`477bef8`](https://github.com/npm/hosted-git-info/commit/477bef8d76264411d911c860c8e6ca9b1e22a28d) [#345](https://github.com/npm/hosted-git-info/pull/345) parse git+https sourcehut urls (#345) (@ljharb)
+* [`265a01f`](https://github.com/npm/hosted-git-info/commit/265a01fea05db2371e43d2add4eaa107a2d5dbde) [#344](https://github.com/npm/hosted-git-info/pull/344) add opt-in support for repository.directory in file() (#344) (@ljharb)
+### Bug Fixes
+* [`1a57d60`](https://github.com/npm/hosted-git-info/commit/1a57d60e136075e8d9777f99a8f9ff3d414c4f0c) [#347](https://github.com/npm/hosted-git-info/pull/347) cache unsuccessful hosted Git URL parses (#347) (@jeffwidman)
+### Chores
+* [`25f53ac`](https://github.com/npm/hosted-git-info/commit/25f53ac254b166de73c39d5e549d3dd029d6f54f) [#339](https://github.com/npm/hosted-git-info/pull/339) bump @npmcli/eslint-config from 6.0.1 to 7.0.0 (#339) (@dependabot[bot])
+* [`8c3bebb`](https://github.com/npm/hosted-git-info/commit/8c3bebb5e42142b7bce06b085b4c1bd1adba7371) [#340](https://github.com/npm/hosted-git-info/pull/340) bump @npmcli/template-oss from 5.1.0 to 5.1.1 (#340) (@dependabot[bot], @npm-cli-bot)
+
 ## [10.1.1](https://github.com/npm/hosted-git-info/compare/v10.1.0...v10.1.1) (2026-05-18)
 ### Bug Fixes
 * [`935947a`](https://github.com/npm/hosted-git-info/commit/935947aba8634eabd16cf9803642d2bdac95c6d7) [#337](https://github.com/npm/hosted-git-info/pull/337) correct typo gitSpecifer -> gitSpecifier in README (Pete Ross)
