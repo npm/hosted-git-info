@@ -136,3 +136,33 @@ SSH connect strings will be normalized into `git+ssh` URLs.
 
 Currently this supports GitHub (including Gists), Bitbucket, GitLab and Sourcehut.
 Pull requests for additional hosts welcome.
+
+### Bitbucket Cloud SSH migration
+
+Bitbucket SSH output uses `ssh.bitbucket.org`; HTTPS and web URLs use
+`bitbucket.org`. Legacy SSH inputs and `bitbucket:` shortcuts are still
+recognized. [Atlassian's October 21, 2026 update](https://community.atlassian.com/forums/discussion/3234032/upcoming-change-to-bitbucket-cloud-ssh-access-move-from-bitbucket-org-to-ssh-bitbucket-org)
+schedules SSH brownouts on the legacy hostname from November 12 and final
+removal on December 10, 2026. HTTPS is unaffected.
+
+SSH URLs on `ssh.bitbucket.org` with explicit ports, including `:22`, return
+`undefined` from `fromUrl()`. This lets callers such as npm-package-arg keep
+the port through their generic Git URL handling, since hosted-git-info's
+SSH templates do not represent ports. For npm, use the full `git+ssh://`
+form; its generic parser rejects `ssh://`.
+
+npm bundles its own hosted-git-info; updating a project's dependency does
+not update npm's copy. Older npm versions can parse a full new-host
+`git+ssh://` URL as generic Git, without Bitbucket's HTTPS/archive handling.
+However, a `bitbucket:` requirement in `package.json` paired with a
+new-host resolution in the lockfile can be considered mismatched and
+regenerated with the legacy hostname. Check the npm versions used to
+generate and consume shared lockfiles. Existing lockfiles may still use
+HTTPS fetch paths, so the SSH migration does not imply that all old
+lockfiles will fail.
+
+An SSH configuration block matching only `Host bitbucket.org` does not
+match `ssh.bitbucket.org`. Review the new hostname's matching settings for
+custom keys, ports and `HostName` overrides, and verify its host key using
+Atlassian's published guidance. A legacy-only `HostName` remap does not
+apply that block's settings to URLs naming the new host.

@@ -272,6 +272,15 @@ test('Bitbucket SSH domain is only accepted for SSH', () => {
   }
 })
 
+test('Bitbucket SSH domain with an explicit port stays unclassified', () => {
+  for (const protocol of ['ssh:', 'git+ssh:']) {
+    for (const port of [22, 443, 2222]) {
+      const url = `${protocol}//git@ssh.bitbucket.org:${port}/foo/bar.git#fix%2Fbug`
+      assert.strictEqual(HostedGit.fromUrl(url), undefined, url)
+    }
+  }
+})
+
 test('Bitbucket SSH migration preserves options and decoded references', () => {
   const parsed = HostedGit.fromUrl('git@ssh.bitbucket.org:f%6Fo/b%61r.git#semver%3A%5E1.0.0', {
     noGitPlus: true,
