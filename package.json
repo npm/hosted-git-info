@@ -32,9 +32,6 @@
     "test:node20": "node --test test",
     "test:cover": "node --test --experimental-test-coverage --test-timeout=3000 --test-coverage-lines=100 --test-coverage-functions=100 --test-coverage-branches=100 './test/**/*.js'"
   },
-  "dependencies": {
-    "lru-cache": "^11.1.0"
-  },
   "devDependencies": {
     "@npmcli/eslint-config": "^7.0.0",
     "@npmcli/template-oss": "5.1.1"
