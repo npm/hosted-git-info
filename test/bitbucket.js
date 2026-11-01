@@ -65,6 +65,13 @@ const valid = {
   ':password@bitbucket.org:foo/bar.git': { ...defaults, default: 'sshurl', auth: null },
   ':password@bitbucket.org:foo/bar.git#branch': { ...defaults, default: 'sshurl', auth: null, committish: 'branch' },
 
+  // New Bitbucket Cloud SSH hostname (ssh.bitbucket.org)
+  'git@ssh.bitbucket.org:foo/bar': { ...defaults, default: 'sshurl', auth: null },
+  'git@ssh.bitbucket.org:foo/bar.git': { ...defaults, default: 'sshurl', auth: null },
+  'git@ssh.bitbucket.org:foo/bar.git#branch': { ...defaults, default: 'sshurl', auth: null, committish: 'branch' },
+  'git+ssh://git@ssh.bitbucket.org/foo/bar.git': { ...defaults, default: 'sshurl', auth: null },
+  'ssh://git@ssh.bitbucket.org/foo/bar.git': { ...defaults, default: 'sshurl', auth: null },
+
   // git+ssh urls
   //
   // NOTE auth is accepted but ignored
@@ -181,8 +188,8 @@ test('string methods populate correctly', () => {
   const parsed = HostedGit.fromUrl('git+ssh://bitbucket.org/foo/bar')
   assert.strictEqual(parsed.getDefaultRepresentation(), parsed.default, 'getDefaultRepresentation()')
   assert.strictEqual(parsed.hash(), '', 'hash() returns empty string when committish is unset')
-  assert.strictEqual(parsed.ssh(), 'git@bitbucket.org:foo/bar.git')
-  assert.strictEqual(parsed.sshurl(), 'git+ssh://git@bitbucket.org/foo/bar.git')
+  assert.strictEqual(parsed.ssh(), 'git@ssh.bitbucket.org:foo/bar.git')
+  assert.strictEqual(parsed.sshurl(), 'git+ssh://git@ssh.bitbucket.org/foo/bar.git')
   assert.strictEqual(parsed.edit(), 'https://bitbucket.org/foo/bar')
   assert.strictEqual(parsed.edit('/lib/index.js'), 'https://bitbucket.org/foo/bar/src/HEAD/lib/index.js?mode=edit')
   assert.strictEqual(parsed.browse(), 'https://bitbucket.org/foo/bar')
@@ -205,8 +212,8 @@ test('string methods populate correctly', () => {
   assert.strictEqual(extra.hash(), '#fix/bug')
   assert.strictEqual(extra.https(), 'git+https://user@bitbucket.org/foo/bar.git#fix/bug')
   assert.strictEqual(extra.shortcut(), 'bitbucket:foo/bar#fix/bug')
-  assert.strictEqual(extra.ssh(), 'git@bitbucket.org:foo/bar.git#fix/bug')
-  assert.strictEqual(extra.sshurl(), 'git+ssh://git@bitbucket.org/foo/bar.git#fix/bug')
+  assert.strictEqual(extra.ssh(), 'git@ssh.bitbucket.org:foo/bar.git#fix/bug')
+  assert.strictEqual(extra.sshurl(), 'git+ssh://git@ssh.bitbucket.org/foo/bar.git#fix/bug')
   assert.strictEqual(extra.browse(), 'https://bitbucket.org/foo/bar/src/fix%2Fbug')
   assert.strictEqual(extra.browse('/lib/index.js'), 'https://bitbucket.org/foo/bar/src/fix%2Fbug/lib/index.js')
   assert.strictEqual(extra.browse('/lib/index.js', 'L200'), 'https://bitbucket.org/foo/bar/src/fix%2Fbug/lib/index.js#l200')
@@ -214,6 +221,12 @@ test('string methods populate correctly', () => {
   assert.strictEqual(extra.file(), 'https://bitbucket.org/foo/bar/raw/fix%2Fbug/')
   assert.strictEqual(extra.file('/lib/index.js'), 'https://bitbucket.org/foo/bar/raw/fix%2Fbug/lib/index.js')
 
-  assert.strictEqual(extra.sshurl({ noCommittish: true }), 'git+ssh://git@bitbucket.org/foo/bar.git', 'noCommittish drops committish from urls')
-  assert.strictEqual(extra.sshurl({ noGitPlus: true }), 'ssh://git@bitbucket.org/foo/bar.git#fix/bug', 'noGitPlus drops git+ prefix from urls')
+  assert.strictEqual(extra.sshurl({ noCommittish: true }), 'git+ssh://git@ssh.bitbucket.org/foo/bar.git', 'noCommittish drops committish from urls')
+  assert.strictEqual(extra.sshurl({ noGitPlus: true }), 'ssh://git@ssh.bitbucket.org/foo/bar.git#fix/bug', 'noGitPlus drops git+ prefix from urls')
+
+  // New Bitbucket SSH host still parses as bitbucket; generated ssh urls use it.
+  const newSsh = HostedGit.fromUrl('git@ssh.bitbucket.org:foo/bar.git')
+  assert.strictEqual(newSsh.type, 'bitbucket')
+  assert.strictEqual(newSsh.ssh(), 'git@ssh.bitbucket.org:foo/bar.git')
+  assert.strictEqual(newSsh.https(), 'git+https://bitbucket.org/foo/bar.git')
 })
