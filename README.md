@@ -100,6 +100,19 @@ eg, `https://github.com/npm/hosted-git-info/tree/v1.2.0`,
 `https://github.com/npm/hosted-git-info/tree/v1.2.0/package.json`,
 `https://github.com/npm/hosted-git-info/tree/v1.2.0/README.md#supported-hosts`
 
+* info.commit(committish, opts)
+
+Returns a direct commit URL for GitHub and GitLab repositories, including GitLab
+subgroups. For example,
+`hostedGitInfo.fromUrl("github:microsoft/vscode-extension-samples").commit("5196195")`
+returns `https://github.com/microsoft/vscode-extension-samples/commit/5196195`.
+
+The explicit `committish` is required and is URL-encoded as one path segment.
+It takes precedence over a ref in the repository URL or `opts.committish`.
+This method ignores `noCommittish` because a commit URL requires a ref.
+It returns `null` if the host does not support commit links or the ref is
+missing, empty, a non-string, `.`, `..`, or contains invalid Unicode.
+
 * info.bugs(opts)
 
 eg, `https://github.com/npm/hosted-git-info/issues`
