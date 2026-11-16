@@ -193,6 +193,9 @@ const valid = {
   'foo/bar#branch with space': { ...defaults, default: 'shortcut', committish: 'branch with space' },
   'foo/bar#branch:with:colons': { ...defaults, default: 'shortcut', committish: 'branch:with:colons' },
   'https://github.com/foo/bar/tree/branch': { ...defaults, default: 'https', committish: 'branch' },
+  // a /tree link without a ref has no committish (not the string 'undefined')
+  'https://github.com/foo/bar/tree': { ...defaults, default: 'https', committish: '' },
+  'https://github.com/foo/bar/tree#branch': { ...defaults, default: 'https', committish: 'branch' },
   'user..blerg--/..foo-js# . . . . . some . tags / / /': { ...defaults, default: 'shortcut', user: 'user..blerg--', project: '..foo-js', committish: ' . . . . . some . tags / / /' },
 
   // full committish lengths
@@ -211,6 +214,12 @@ test('invalid urls return undefined', () => {
   for (const url of invalid) {
     assert.strictEqual(HostedGit.fromUrl(url), undefined, `${url} returns undefined`)
   }
+})
+
+test('a /tree link without a ref', () => {
+  const parsed = HostedGit.fromUrl('https://github.com/foo/bar/tree')
+  assert.strictEqual(parsed.toString(), 'git+https://github.com/foo/bar.git')
+  assert.strictEqual(parsed.tarball(), 'https://codeload.github.com/foo/bar/tar.gz/HEAD')
 })
 
 test('toString respects defaults', () => {
