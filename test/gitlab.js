@@ -16,6 +16,8 @@ const invalid = [
   'https://gitlab.com/foo/-/something',
   // missing project
   'https://gitlab.com/foo',
+  'https://gitlab.com/foo/',
+  'https://gitlab.com/foo//',
   // tarball, this should not parse so that it can be used for pacote's remote fetcher
   'https://gitlab.com/api/v4/projects/foo%2Fbar/repository/archive.tar.gz',
   'https://gitlab.com/api/v4/projects/foo%2Fbar/repository/archive.tar.gz?sha=49b393e2ded775f2df36ef2ffcb61b0359c194c9',
@@ -196,6 +198,14 @@ const valid = {
   'git+https://user:password@gitlab.com/foo/bar.git#branch': { ...defaults, default: 'https', auth: 'user:password', committish: 'branch' },
   'git+https://:password@gitlab.com/foo/bar.git': { ...defaults, default: 'https', auth: ':password' },
   'git+https://:password@gitlab.com/foo/bar.git#branch': { ...defaults, default: 'https', auth: ':password', committish: 'branch' },
+
+  // a trailing slash is ignored, as it is for the other hosts
+  'https://gitlab.com/foo/bar/': { ...defaults, default: 'https', committish: '' },
+  'https://gitlab.com/foo/bar.git/': { ...defaults, default: 'https', committish: '' },
+  'https://gitlab.com/foo/bar/#branch': { ...defaults, default: 'https', committish: 'branch' },
+  'https://gitlab.com/foo/bar/baz/': { ...subgroup, default: 'https', committish: '' },
+  'git+ssh://git@gitlab.com/foo/bar/': { ...defaults, default: 'sshurl', committish: '' },
+  'git@gitlab.com:foo/bar.git/': { ...defaults, default: 'sshurl', committish: '' },
 
   'git+https://gitlab.com/foo/bar/baz': { ...subgroup, default: 'https' },
   'git+https://gitlab.com/foo/bar/baz#branch': { ...subgroup, default: 'https', committish: 'branch' },
